@@ -14,11 +14,39 @@ claude plugins add /path/to/skills-marketplace
 
 ### shadcn
 
-Token-efficient shadcn/ui component selection and implementation.
+Token-efficient shadcn/ui component selection (98% token savings).
 
-- **Code-mode scripts**: Wrap MCP tools for 98% token savings
-- **Two workflows**: Feature-driven selection + component discovery
-- **Registry access**: Search 438 components, blocks, and examples
+- Code-mode scripts wrapping MCP tools via JSON-RPC
+- 438+ components, blocks, examples across registries (@shadcn, @tweakcn, etc.)
+- Feature-driven selection + component discovery workflows
+
+[Full Documentation](plugins/shadcn/README.md)
+
+---
+
+### presentation-generator
+
+Generate dark-themed HTML presentations from any document.
+
+- Auto-detect document type (PRD, transcript, notes, articles)
+- Auto-detect language for RTL/LTR support
+- Dynamic theme colors, keyboard navigation, chapter sidebar
+- Print-friendly CSS for PDF export
+
+[Full Documentation](plugins/presentation-generator/README.md)
+
+---
+
+### nextjs
+
+Next.js DevTools with MCP integration (98.7% token savings).
+
+- Debug errors, list routes, search docs via code-mode scripts
+- Upgrade assistant for Next.js 16 migration with codemods
+- Cache Components enablement and migration
+- Browser automation for testing
+
+[Full Documentation](plugins/nextjs/README.md)
 
 ## Contributing
 

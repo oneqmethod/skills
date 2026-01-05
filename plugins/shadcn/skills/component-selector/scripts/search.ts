@@ -1,9 +1,9 @@
 /**
  * Search shadcn registry and auto-fetch details for top results
- * Usage: npx tsx search.ts "query" [--type ui|block|example] [--limit N]
+ * Usage: npx tsx search.ts [@registry] "query" [--type ui|block|example] [--limit N]
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client";
+import { callMcp, extractText, closeMcp, getRegistries, parseRegistryArg } from "./mcp-client";
 import { parseArgs } from "util";
 
 const { values, positionals } = parseArgs({
@@ -15,9 +15,10 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
 });
 
-const query = positionals[0];
+const { registries: argRegistries, remaining } = parseRegistryArg(positionals);
+const query = remaining[0];
 if (!query) {
-  console.error("Usage: npx tsx search.ts <query> [--type ui|block|example] [--limit N]");
+  console.error("Usage: npx tsx search.ts [@registry] <query> [--type ui|block|example] [--limit N]");
   process.exit(1);
 }
 
@@ -31,8 +32,9 @@ interface SearchItem {
 async function main() {
   try {
     // Search registry
+    const registries = argRegistries ?? await getRegistries();
     const searchResult = await callMcp("search_items_in_registries", {
-      registries: ["@shadcn"],
+      registries,
       query,
       limit: parseInt(values.limit || "10"),
     });

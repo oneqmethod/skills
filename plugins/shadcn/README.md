@@ -39,12 +39,17 @@ Find and implement shadcn/ui components efficiently.
 
 **Triggers**: "add shadcn", "find components", "build dashboard", "search registry"
 
-**Scripts**:
-- `search.ts` - Search components, auto-fetch details for top results
-- `list.ts` - Browse registry by type (ui, block, example)
-- `examples.ts` - Get full TSX code for component demos
-- `add.ts` - Generate `npx shadcn add` commands
-- `audit.ts` - Post-install verification checklist
+**Scripts** (7 total, covering all shadcn MCP tools):
+
+| Script | MCP Tool | Purpose |
+|--------|----------|---------|
+| `search.ts` | `search_items_in_registries` | Fuzzy search, auto-fetch top 5 details |
+| `view.ts` | `view_items_in_registries` | View specific items by name |
+| `list.ts` | `list_items_in_registries` | Browse/paginate by type |
+| `examples.ts` | `get_item_examples_from_registries` | Get full TSX demo code |
+| `add.ts` | `get_add_command_for_items` | Generate install commands |
+| `audit.ts` | `get_audit_checklist` | Post-install verification |
+| `registries.ts` | `get_project_registries` | List configured registries |
 
 ## Prerequisites
 

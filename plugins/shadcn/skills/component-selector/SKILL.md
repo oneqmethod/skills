@@ -22,13 +22,50 @@ Execute TypeScript scripts via Bash instead of calling MCP tools directly. Scrip
 
 ## Registry Structure
 
-| Type | Count | Description |
-|------|-------|-------------|
-| ui | ~55 | Core primitives: button, card, dialog, form, input, table |
-| block | ~180 | Pre-built features: dashboard-*, sidebar-*, login-*, calendar-* |
-| example | ~200 | Demo implementations: *-demo, *-with-* |
-| theme | 5 | Color schemes |
-| hook | 1 | use-mobile |
+| Type | Count | Description | Searchable |
+|------|-------|-------------|------------|
+| ui | ~55 | Core primitives: button, card, dialog, form, input, table | Yes |
+| block | ~180 | Pre-built features: dashboard-*, sidebar-*, login-*, calendar-* | Yes |
+| example | ~200 | Demo implementations: *-demo, *-with-* | Yes |
+| style | varies | Themes and color schemes | No* |
+| hook | 1 | use-mobile | Yes |
+
+*Styles are not indexed by search. Use `list.ts @registry | grep pattern` instead.
+
+## Multi-Registry Support
+
+Scripts support multiple registries (e.g., @shadcn + @tweakcn). By default, all configured registries are searched.
+
+### Filter to Single Registry
+
+Use `@registry` prefix to filter commands to a specific registry:
+
+```bash
+# List from specific registry
+npx tsx list.ts @tweakcn
+
+# Search specific registry
+npx tsx search.ts @shadcn "button"
+
+# Get examples from specific registry
+npx tsx examples.ts @shadcn/button-demo
+
+# View/add already support @registry/item format
+npx tsx view.ts @tweakcn/claude
+npx tsx add.ts @tweakcn/cyberpunk
+```
+
+### Style/Theme Discovery
+
+Style types (themes) are not indexed by the search endpoint. To find themes:
+
+```bash
+# List all styles from a registry
+npx tsx list.ts @tweakcn --limit 100
+
+# Filter with grep
+npx tsx list.ts @tweakcn | grep -i twitter
+```
 
 ## Two Workflows
 
@@ -64,19 +101,36 @@ Search registry with optional type filter. Auto-fetches details for top 5 result
 npx tsx search.ts "form validation"
 npx tsx search.ts "sidebar" --type block
 npx tsx search.ts "calendar" --limit 20
+npx tsx search.ts @shadcn "button"      # Single registry
 ```
 
 **Output**: Consolidated results with dependencies, file counts, grouped by type.
+
+**Note**: Search only indexes ui/block/example types. For styles, use `list.ts | grep`.
+
+### view.ts - View Item Details
+
+View detailed information about specific items by name. Use when you know which components you want to inspect.
+
+```bash
+npx tsx view.ts button
+npx tsx view.ts button card dialog
+npx tsx view.ts sidebar-01 dashboard-01
+```
+
+**Output**: Name, description, type, and file contents for each item.
 
 ### list.ts - Browse Registry
 
 List and paginate registry items by type.
 
 ```bash
-npx tsx list.ts                    # All types
+npx tsx list.ts                    # All types, all registries
+npx tsx list.ts @tweakcn           # Single registry only
 npx tsx list.ts --type ui          # Core components only
 npx tsx list.ts --type block       # Pre-built features only
 npx tsx list.ts --offset 50        # Page 2
+npx tsx list.ts @tweakcn | grep -i twitter  # Find styles by pattern
 ```
 
 **Output**: Items grouped by type with counts, pagination hints.
@@ -89,6 +143,7 @@ Fetch complete TSX code with imports for component demos.
 npx tsx examples.ts "button-demo"
 npx tsx examples.ts "form-rhf-demo"
 npx tsx examples.ts "card-with-form"
+npx tsx examples.ts @shadcn/button-demo  # Single registry
 ```
 
 **Output**: Full implementation code with highlighted imports.
@@ -114,6 +169,16 @@ npx tsx audit.ts
 ```
 
 **Output**: Checklist for imports, dependencies, TypeScript, Tailwind.
+
+### registries.ts - List Configured Registries
+
+Show configured registries from components.json. Useful for multi-registry setups.
+
+```bash
+npx tsx registries.ts
+```
+
+**Output**: List of registry names (e.g., @shadcn, @acme).
 
 ## Quick Examples
 
@@ -154,6 +219,19 @@ npx tsx search.ts "table"
 # Review: table, pagination, dropdown-menu
 
 npx tsx add.ts table pagination
+```
+
+### Install Theme from External Registry
+
+```bash
+# List available themes
+npx tsx list.ts @tweakcn --limit 50
+
+# Find specific theme
+npx tsx list.ts @tweakcn | grep -i cyber
+
+# Install theme
+npx tsx add.ts @tweakcn/cyberpunk
 ```
 
 ## Prerequisites

@@ -3,7 +3,7 @@
  * Usage: npx tsx add.ts <component1> [component2] [component3] ...
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client";
+import { callMcp, extractText, closeMcp, getRegistries } from "./mcp-client";
 
 const components = process.argv.slice(2);
 if (components.length === 0) {
@@ -18,9 +18,12 @@ if (components.length === 0) {
 
 async function main() {
   try {
-    // Format as @shadcn/component
+    const registries = await getRegistries();
+    const defaultRegistry = registries[0];
+
+    // Format as @registry/component (use first configured registry as default)
     const items = components.map((c) =>
-      c.startsWith("@") ? c : `@shadcn/${c}`
+      c.startsWith("@") ? c : `${defaultRegistry}/${c}`
     );
 
     const result = await callMcp("get_add_command_for_items", {

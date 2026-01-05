@@ -1,31 +1,36 @@
 /**
  * Get usage examples for shadcn components
- * Usage: npx tsx examples.ts <query>
+ * Usage: npx tsx examples.ts [@registry/]<query>
  *
  * Common patterns:
  *   npx tsx examples.ts "button-demo"
+ *   npx tsx examples.ts "@shadcn/button-demo"
  *   npx tsx examples.ts "form-rhf-demo"
  *   npx tsx examples.ts "accordion example"
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client";
+import { callMcp, extractText, closeMcp, getRegistries, parseRegistryQuery } from "./mcp-client";
 
-const query = process.argv[2];
-if (!query) {
-  console.error("Usage: npx tsx examples.ts <query>");
+const arg = process.argv[2];
+if (!arg) {
+  console.error("Usage: npx tsx examples.ts [@registry/]<query>");
   console.error("");
   console.error("Examples:");
   console.error('  npx tsx examples.ts "button-demo"');
+  console.error('  npx tsx examples.ts "@shadcn/button-demo"');
   console.error('  npx tsx examples.ts "form-rhf-demo"');
   console.error('  npx tsx examples.ts "accordion example"');
   console.error('  npx tsx examples.ts "card-with-form"');
   process.exit(1);
 }
 
+const { registry, query } = parseRegistryQuery(arg);
+
 async function main() {
   try {
+    const registries = registry ? [registry] : await getRegistries();
     const result = await callMcp("get_item_examples_from_registries", {
-      registries: ["@shadcn"],
+      registries,
       query,
     });
 

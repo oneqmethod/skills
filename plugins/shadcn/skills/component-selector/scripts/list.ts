@@ -1,20 +1,22 @@
 /**
  * List and browse shadcn registry items
- * Usage: npx tsx list.ts [--type ui|block|example|theme|hook] [--offset N] [--limit N]
+ * Usage: npx tsx list.ts [@registry] [--type ui|block|example|theme|hook] [--offset N] [--limit N]
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client";
+import { callMcp, extractText, closeMcp, getRegistries, parseRegistryArg } from "./mcp-client";
 import { parseArgs } from "util";
 
-const { values } = parseArgs({
+const { values, positionals } = parseArgs({
   args: process.argv.slice(2),
   options: {
     type: { type: "string", short: "t" },
     offset: { type: "string", short: "o", default: "0" },
     limit: { type: "string", short: "l", default: "30" },
   },
-  allowPositionals: false,
+  allowPositionals: true,
 });
+
+const { registries: argRegistries } = parseRegistryArg(positionals);
 
 interface RegistryItem {
   name: string;
@@ -23,8 +25,9 @@ interface RegistryItem {
 
 async function main() {
   try {
+    const registries = argRegistries ?? await getRegistries();
     const result = await callMcp("list_items_in_registries", {
-      registries: ["@shadcn"],
+      registries,
       offset: parseInt(values.offset || "0"),
       limit: parseInt(values.limit || "30"),
     });
@@ -53,12 +56,7 @@ async function main() {
 
     // Print summary
     console.log("=== REGISTRY SUMMARY ===\n");
-    console.log("@shadcn registry contains ~438 items:");
-    console.log("  - ui: ~55 core primitives (button, card, dialog, etc.)");
-    console.log("  - block: ~180 pre-built features (dashboard-*, sidebar-*, login-*)");
-    console.log("  - example: ~200 demo implementations (*-demo)");
-    console.log("  - theme: 5 color schemes");
-    console.log("  - hook: 1 (use-mobile)");
+    console.log(`Configured registries: ${registries.join(", ")}`);
     console.log();
 
     // Print filtered results

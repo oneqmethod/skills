@@ -46,6 +46,7 @@ async function main() {
 
     // Extract and highlight imports
     const importMatches = text.matchAll(/import\s+{[^}]+}\s+from\s+["'][^"']+["']/g);
+    // @ts-ignore
     const imports = [...importMatches].map((m) => m[0]);
 
     if (imports.length > 0) {

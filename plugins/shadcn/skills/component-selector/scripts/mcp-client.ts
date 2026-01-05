@@ -153,3 +153,57 @@ export function extractText(result: unknown): string {
     .map((c) => c.text)
     .join("\n");
 }
+
+// Get configured registries from components.json
+export async function getRegistries(): Promise<string[]> {
+  try {
+    const result = await callMcp("get_project_registries", {});
+    const text = extractText(result);
+
+    // Parse "- @shadcn" lines
+    const registries: string[] = [];
+    for (const line of text.split("\n")) {
+      const match = line.match(/^- (@\w+)/);
+      if (match) {
+        registries.push(match[1]);
+      }
+    }
+
+    return registries.length > 0 ? registries : ["@shadcn"];
+  } catch {
+    return ["@shadcn"];
+  }
+}
+
+// Parse @registry from args
+// Returns { registries: string[] | null, remaining: string[] }
+// null registries = use all configured
+export function parseRegistryArg(args: string[]): {
+  registries: string[] | null;
+  remaining: string[];
+} {
+  if (args.length === 0) {
+    return { registries: null, remaining: [] };
+  }
+
+  const first = args[0];
+  if (first.startsWith("@") && !first.includes("/")) {
+    // Standalone @registry arg
+    return { registries: [first], remaining: args.slice(1) };
+  }
+
+  return { registries: null, remaining: args };
+}
+
+// Parse @registry/query format
+// Returns { registry: string | null, query: string }
+export function parseRegistryQuery(arg: string): {
+  registry: string | null;
+  query: string;
+} {
+  const match = arg.match(/^(@\w+)\/(.+)$/);
+  if (match) {
+    return { registry: match[1], query: match[2] };
+  }
+  return { registry: null, query: arg };
+}

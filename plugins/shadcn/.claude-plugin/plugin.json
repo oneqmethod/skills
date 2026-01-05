@@ -1,0 +1,8 @@
+{
+  "name": "shadcn",
+  "description": "Shadcn/ui integration with code-mode scripts for token-efficient component selection",
+  "author": {
+    "name": "Alon",
+    "email": "alon@example.com"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "presentation-generator",
+  "description": "Generate dark-themed HTML presentations from any document (PRD, transcript, notes, articles)",
+  "author": {
+    "name": "Alon"
+  }
+}

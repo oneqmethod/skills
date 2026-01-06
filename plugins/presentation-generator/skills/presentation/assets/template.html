@@ -412,6 +412,7 @@
     [dir="rtl"] .keyboard-hint {
       right: auto;
       left: 1.5rem;
+      direction: ltr; /* Prevent flex order reversal; arrow content swap handles RTL */
     }
 
     /* RTL: swap arrow meanings - left arrow goes forward (next), right goes back (prev) */

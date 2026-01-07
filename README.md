@@ -7,7 +7,7 @@ Community plugins for Claude Code with token-optimized skills using code-mode pa
 Add this marketplace to Claude Code:
 
 ```bash
-claude plugins add /path/to/skills-marketplace
+claude plugins add oneqmethod/skills
 ```
 
 ## Plugins

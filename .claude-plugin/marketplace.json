@@ -1,10 +1,10 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "skills-marketplace",
-  "description": "Community skills marketplace for Claude Code with token-optimized plugins",
+  "name": "oneq-skills",
+  "description": "OneQ's community skills marketplace for Claude Code with token-optimized plugins",
   "owner": {
     "name": "Alon",
-    "email": "alon@example.com"
+    "email": "alon@oneqmethod.com"
   },
   "plugins": [
     {

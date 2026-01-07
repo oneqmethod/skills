@@ -2,6 +2,7 @@
   "name": "presentation-generator",
   "description": "Generate dark-themed HTML presentations from any document (PRD, transcript, notes, articles)",
   "author": {
-    "name": "Alon"
+    "name": "Alon",
+    "email": "alon@oneqmethod.com"
   }
 }

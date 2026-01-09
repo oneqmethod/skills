@@ -13,7 +13,12 @@
  *   npx tsx browser.ts close
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js Browser Automation (Playwright)
@@ -120,9 +125,54 @@ async function browserAction(
     const mcpArgs: Record<string, unknown> = { action, ...options };
 
     const result = await callMcp("browser_eval", mcpArgs);
-
     const text = extractText(result);
-    if (text) {
+
+    // Try to parse JSON response
+    interface BrowserResponse {
+      success?: boolean;
+      url?: string;
+      title?: string;
+      screenshot?: string;
+      result?: unknown;
+      messages?: Array<{ level: string; text: string }>;
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<BrowserResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.success !== undefined) {
+      if (parsed.url) console.log(`URL: ${parsed.url}`);
+      if (parsed.title) console.log(`Title: ${parsed.title}`);
+      if (parsed.screenshot) console.log(`Screenshot: ${parsed.screenshot}`);
+      if (parsed.result !== undefined) {
+        console.log(
+          "Result:",
+          typeof parsed.result === "string"
+            ? parsed.result
+            : JSON.stringify(parsed.result, null, 2)
+        );
+      }
+      if (parsed.messages && parsed.messages.length > 0) {
+        console.log("Console messages:");
+        parsed.messages.forEach((m) => console.log(`  [${m.level}] ${m.text}`));
+      }
+      if (
+        !parsed.url &&
+        !parsed.title &&
+        !parsed.screenshot &&
+        parsed.result === undefined &&
+        !parsed.messages
+      ) {
+        console.log(`✓ Action '${action}' completed`);
+      }
+    } else if (text) {
+      // Fallback: print raw text
       console.log(text);
     } else {
       console.log(`✓ Action '${action}' completed`);

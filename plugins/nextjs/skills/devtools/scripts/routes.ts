@@ -7,7 +7,12 @@
  *   npx tsx routes.ts 3000 --type page|api|all
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js Route Lister
@@ -52,18 +57,44 @@ async function listRoutes(port: string, routeType: string = "all"): Promise<void
     }
 
     const result = await callMcp("nextjs_call", mcpArgs);
-
     const text = extractText(result);
-    if (text) {
-      console.log(text);
 
-      // Provide summary
+    // Try to parse JSON response
+    interface RouteInfo {
+      path: string;
+      type: string;
+      methods?: string[];
+    }
+    interface RoutesResponse {
+      success?: boolean;
+      count?: number;
+      routes?: RouteInfo[];
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<RoutesResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.routes && parsed.routes.length > 0) {
+      console.log(`Found ${parsed.count || parsed.routes.length} route(s):\n`);
+      for (const route of parsed.routes) {
+        const methods = route.methods ? ` [${route.methods.join(", ")}]` : "";
+        console.log(`  ${route.path} (${route.type})${methods}`);
+      }
       console.log("\n─".repeat(60));
       console.log("Route patterns:");
       console.log("  [param]     - Dynamic segment");
       console.log("  [...slug]   - Catch-all segment");
       console.log("  [[...opt]]  - Optional catch-all");
       console.log("  (group)     - Route group (no URL impact)");
+    } else if (text) {
+      // Fallback: print raw text
+      console.log(text);
     } else {
       console.log("No routes found or empty response.");
       console.log("\nCheck:");

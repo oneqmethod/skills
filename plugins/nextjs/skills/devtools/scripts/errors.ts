@@ -7,7 +7,12 @@
  *   npx tsx errors.ts 3000 --type runtime
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js Error Reporter
@@ -51,10 +56,47 @@ async function getErrors(port: string, errorType: string = "all"): Promise<void>
     }
 
     const result = await callMcp("nextjs_call", mcpArgs);
-
     const text = extractText(result);
-    if (text) {
-      // Check if there are actual errors
+
+    // Try to parse JSON response
+    interface ErrorInfo {
+      type: string;
+      message: string;
+      file?: string;
+      line?: number;
+      column?: number;
+    }
+    interface ErrorsResponse {
+      success?: boolean;
+      count?: number;
+      errors?: ErrorInfo[];
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<ErrorsResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.errors && parsed.errors.length > 0) {
+      console.log(`Found ${parsed.count || parsed.errors.length} error(s):\n`);
+      for (const err of parsed.errors) {
+        console.log(`  [${err.type}] ${err.message}`);
+        if (err.file) {
+          console.log(`    at ${err.file}${err.line ? `:${err.line}` : ""}`);
+        }
+      }
+      console.log("\n─".repeat(60));
+      console.log("Tips:");
+      console.log("  - Fix errors in order (first error may cause others)");
+      console.log("  - Re-run: npx tsx errors.ts " + port);
+    } else if (parsed?.count === 0 || (parsed?.errors && parsed.errors.length === 0)) {
+      console.log("✓ No errors found");
+    } else if (text) {
+      // Fallback: check raw text for error indicators
       if (
         text.toLowerCase().includes("no errors") ||
         text.toLowerCase().includes("0 errors")
@@ -62,13 +104,6 @@ async function getErrors(port: string, errorType: string = "all"): Promise<void>
         console.log("✓ No errors found");
       } else {
         console.log(text);
-
-        // Provide helpful context
-        console.log("\n─".repeat(60));
-        console.log("Tips:");
-        console.log("  - Fix errors in order (first error may cause others)");
-        console.log("  - Check 'references/error-solutions.md' for common fixes");
-        console.log("  - Re-run: npx tsx errors.ts " + port);
       }
     } else {
       console.log("✓ No errors reported");

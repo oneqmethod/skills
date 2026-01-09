@@ -150,12 +150,66 @@ export function closeMcp(): void {
 // Extract text content from MCP response
 export function extractText(result: unknown): string {
   if (!result || typeof result !== "object") return "";
-  const r = result as { content?: Array<{ type: string; text: string }> };
+  const r = result as { content?: Array<{ type: string; text: string }> | string };
+
+  // Handle direct string content
+  if (typeof r.content === "string") {
+    return r.content;
+  }
+
+  // Handle array format
   if (!r.content || !Array.isArray(r.content)) return "";
   return r.content
     .filter((c) => c.type === "text")
     .map((c) => c.text)
     .join("\n");
+}
+
+// Parse JSON from MCP text response
+export function parseJsonResponse<T>(text: string): T | null {
+  if (!text) return null;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+// Read MCP resource (for llms-index, etc.)
+export async function readResource(uri: string): Promise<string> {
+  if (!mcpProcess) {
+    await startMcpServer();
+  }
+
+  const id = ++requestId;
+  const request = {
+    jsonrpc: "2.0",
+    id,
+    method: "resources/read",
+    params: { uri },
+  };
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      pendingRequests.delete(id);
+      reject(new Error("MCP resource read timeout (30s)"));
+    }, 30000);
+
+    pendingRequests.set(id, {
+      resolve: (value) => {
+        clearTimeout(timeout);
+        const result = value as { contents?: Array<{ text?: string }> };
+        const text = result?.contents?.[0]?.text || "";
+        resolve(text);
+      },
+      reject: (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      },
+    });
+
+    mcpProcess?.stdin?.write(JSON.stringify(request) + "\n");
+  });
 }
 
 // Cleanup on process exit

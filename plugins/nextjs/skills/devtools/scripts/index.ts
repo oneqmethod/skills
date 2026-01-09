@@ -7,7 +7,12 @@
  *   npx tsx index.ts --port 3000
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js Dev Server Discovery
@@ -35,17 +40,47 @@ async function discoverServers(port?: string): Promise<void> {
     }
 
     const result = await callMcp("nextjs_index", args);
-
     const text = extractText(result);
-    if (text) {
-      console.log(text);
 
-      // Parse and summarize
+    // Try to parse JSON response
+    interface ServerInfo {
+      port: number;
+      url: string;
+      pid?: number;
+      tools?: Array<{ name: string; description?: string }>;
+    }
+    interface IndexResponse {
+      success?: boolean;
+      count?: number;
+      servers?: ServerInfo[];
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<IndexResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.servers && parsed.servers.length > 0) {
+      console.log(`Found ${parsed.count || parsed.servers.length} server(s):\n`);
+      for (const server of parsed.servers) {
+        console.log(`  Port ${server.port}: ${server.url}`);
+        if (server.pid) console.log(`    PID: ${server.pid}`);
+        if (server.tools && server.tools.length > 0) {
+          console.log(`    Tools: ${server.tools.map((t) => t.name).join(", ")}`);
+        }
+      }
       console.log("\n─".repeat(60));
       console.log("Quick commands:");
       console.log("  - Get errors:  npx tsx errors.ts <port>");
       console.log("  - List routes: npx tsx routes.ts <port>");
       console.log("  - Call tool:   npx tsx call.ts <port> <tool> [args]");
+    } else if (text) {
+      // Fallback: print raw text
+      console.log(text);
     } else {
       console.log("No running Next.js dev servers found.");
       console.log("\nTo start a dev server:");

@@ -8,7 +8,12 @@
  *   npx tsx call.ts 3000 get_build_status
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js MCP Tool Caller
@@ -62,9 +67,31 @@ async function callTool(
     }
 
     const result = await callMcp("nextjs_call", mcpArgs);
-
     const text = extractText(result);
-    if (text) {
+
+    // Try to parse JSON response
+    interface CallResponse {
+      success?: boolean;
+      result?: unknown;
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<CallResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.result !== undefined) {
+      console.log(
+        typeof parsed.result === "string"
+          ? parsed.result
+          : JSON.stringify(parsed.result, null, 2)
+      );
+    } else if (text) {
+      // Fallback: print raw text
       console.log(text);
     } else {
       console.log("Tool returned no output.");

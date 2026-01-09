@@ -7,7 +7,12 @@
  *   npx tsx upgrade.ts . --check
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js 16 Upgrade Assistant
@@ -59,9 +64,47 @@ async function runUpgrade(projectPath: string, checkOnly: boolean): Promise<void
     const result = await callMcp("upgrade_nextjs_16", {
       project_path: projectPath,
     });
-
     const text = extractText(result);
-    if (text) {
+
+    // Try to parse JSON response
+    interface UpgradeResponse {
+      success?: boolean;
+      compatible?: boolean;
+      currentVersion?: string;
+      targetVersion?: string;
+      changes?: string[];
+      steps?: string[];
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<UpgradeResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.currentVersion || parsed?.changes) {
+      if (parsed.currentVersion) {
+        console.log(`Current version: ${parsed.currentVersion}`);
+      }
+      if (parsed.targetVersion) {
+        console.log(`Target version: ${parsed.targetVersion}`);
+      }
+      if (parsed.compatible !== undefined) {
+        console.log(`Compatible: ${parsed.compatible ? "Yes" : "No"}`);
+      }
+      if (parsed.changes && parsed.changes.length > 0) {
+        console.log("\nRequired changes:");
+        parsed.changes.forEach((c) => console.log(`  - ${c}`));
+      }
+      if (parsed.steps && parsed.steps.length > 0) {
+        console.log("\nUpgrade steps:");
+        parsed.steps.forEach((s, i) => console.log(`  ${i + 1}. ${s}`));
+      }
+    } else if (text) {
+      // Fallback: print raw text
       console.log(text);
     } else {
       console.log("Upgrade guidance completed. Check output above.");

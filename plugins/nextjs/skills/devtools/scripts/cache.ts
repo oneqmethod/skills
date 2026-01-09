@@ -6,7 +6,12 @@
  *   npx tsx cache.ts /path/to/project
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Cache Components Migration Assistant
@@ -62,9 +67,37 @@ async function runCacheMigration(projectPath: string): Promise<void> {
     const result = await callMcp("enable_cache_components", {
       project_path: projectPath,
     });
-
     const text = extractText(result);
-    if (text) {
+
+    // Try to parse JSON response
+    interface CacheResponse {
+      success?: boolean;
+      enabled?: boolean;
+      changes?: string[];
+      warnings?: string[];
+      error?: string;
+      message?: string;
+    }
+
+    const parsed = parseJsonResponse<CacheResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.success || parsed?.enabled) {
+      console.log("✓ Cache components enabled\n");
+      if (parsed.changes && parsed.changes.length > 0) {
+        console.log("Changes made:");
+        parsed.changes.forEach((c) => console.log(`  - ${c}`));
+      }
+      if (parsed.warnings && parsed.warnings.length > 0) {
+        console.log("\nWarnings:");
+        parsed.warnings.forEach((w) => console.log(`  ⚠ ${w}`));
+      }
+    } else if (text) {
+      // Fallback: print raw text
       console.log(text);
     } else {
       console.log("Cache components migration completed.");

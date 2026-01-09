@@ -4,20 +4,20 @@
  *
  * Usage:
  *   npx tsx init.ts
- *   npx tsx init.ts --index    # Also fetch docs index
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js DevTools Initialization
 
 Usage:
   npx tsx init.ts
-  npx tsx init.ts --index
-
-Options:
-  --index   Also fetch and display the llms.txt documentation index
 
 What it does:
   - Initializes the Next.js DevTools MCP context
@@ -35,51 +35,49 @@ After init, use these scripts:
   - browser.ts - Browser automation
 `;
 
-async function initialize(fetchIndex: boolean): Promise<void> {
+interface InitResponse {
+  success?: boolean;
+  guidance?: string;
+  error?: string;
+  message?: string;
+}
+
+async function initialize(): Promise<void> {
   console.log("Initializing Next.js DevTools...");
   console.log("─".repeat(60));
 
   try {
     const result = await callMcp("init", {});
-
     const text = extractText(result);
-    if (text) {
-      // Extract key info, don't dump entire response
-      console.log("✓ Next.js DevTools MCP initialized\n");
 
-      console.log("Available tools:");
-      console.log("  - nextjs_docs    Search/get Next.js documentation");
-      console.log("  - nextjs_index   Discover running dev servers");
-      console.log("  - nextjs_call    Call tools on dev server");
-      console.log("  - browser_eval   Browser automation (Playwright)");
-      console.log("  - upgrade_nextjs_16       Upgrade guide");
-      console.log("  - enable_cache_components Cache components setup");
+    // Try to parse JSON response
+    const parsed = parseJsonResponse<InitResponse>(text);
 
-      console.log("\nKey guidance:");
-      console.log("  - Use docs.ts for ALL Next.js questions");
-      console.log("  - Use index.ts to find running servers");
-      console.log("  - Use call.ts to interact with dev server");
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
     }
 
-    if (fetchIndex) {
-      console.log("\n─".repeat(60));
-      console.log("Fetching documentation index...\n");
+    // Success
+    console.log("✓ Next.js DevTools MCP initialized\n");
 
-      // Fetch docs index via search with empty query or specific action
-      const indexResult = await callMcp("nextjs_docs", {
-        action: "search",
-        query: "llms.txt index",
-      });
+    console.log("Available tools:");
+    console.log("  - nextjs_docs    Search/get Next.js documentation");
+    console.log("  - nextjs_index   Discover running dev servers");
+    console.log("  - nextjs_call    Call tools on dev server");
+    console.log("  - browser_eval   Browser automation (Playwright)");
+    console.log("  - upgrade_nextjs_16       Upgrade guide");
+    console.log("  - enable_cache_components Cache components setup");
 
-      const indexText = extractText(indexResult);
-      if (indexText) {
-        // Show first part of index
-        const lines = indexText.split("\n").slice(0, 30);
-        console.log(lines.join("\n"));
-        if (indexText.split("\n").length > 30) {
-          console.log("\n... (truncated, use docs.ts to search specific topics)");
-        }
-      }
+    console.log("\nKey guidance:");
+    console.log("  - Use docs.ts for ALL Next.js questions");
+    console.log("  - Use index.ts to find running servers");
+    console.log("  - Use call.ts to interact with dev server");
+
+    // If parsed has guidance, show it
+    if (parsed?.guidance) {
+      console.log("\nServer guidance:");
+      console.log(parsed.guidance);
     }
 
     console.log("\n─".repeat(60));
@@ -105,6 +103,4 @@ if (args[0] === "--help" || args[0] === "-h") {
   process.exit(0);
 }
 
-const fetchIndex = args.includes("--index");
-
-initialize(fetchIndex);
+initialize();

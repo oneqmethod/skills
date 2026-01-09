@@ -8,7 +8,13 @@
  *   npx tsx docs.ts get "/docs/app/building-your-application/routing"
  */
 
-import { callMcp, extractText, closeMcp } from "./mcp-client.js";
+import {
+  callMcp,
+  extractText,
+  parseJsonResponse,
+  readResource,
+  closeMcp,
+} from "./mcp-client.js";
 
 const HELP = `
 Next.js Documentation Tool
@@ -28,6 +34,15 @@ Options:
   --anchor    Jump to specific section when fetching docs
 `;
 
+interface DocsResponse {
+  path: string;
+  anchor: string | null;
+  url: string;
+  content: string;
+  error?: string;
+  message?: string;
+}
+
 async function searchDocs(
   query: string,
   routerType: string = "all"
@@ -36,24 +51,56 @@ async function searchDocs(
   console.log("─".repeat(60));
 
   try {
-    const result = await callMcp("nextjs_docs", {
-      action: "search",
-      query,
-      routerType,
-    });
+    // Fetch the llms-index resource
+    const index = await readResource("nextjs-docs://llms-index");
 
-    const text = extractText(result);
-    if (text) {
-      console.log(text);
-    } else {
-      console.log("No results found.");
+    if (!index) {
+      console.log("Failed to fetch documentation index.");
+      return;
     }
 
-    // Suggest next steps
-    console.log("\n─".repeat(60));
+    // Split into lines and filter by router type
+    let lines = index.split("\n");
+    if (routerType === "app") {
+      lines = lines.filter((l) => l.includes("/docs/app/"));
+    } else if (routerType === "pages") {
+      lines = lines.filter((l) => l.includes("/docs/pages/"));
+    }
+
+    // Search for query (case-insensitive)
+    const queryLower = query.toLowerCase();
+    const matches = lines.filter((l) => l.toLowerCase().includes(queryLower));
+
+    if (matches.length === 0) {
+      console.log("No matching documentation found.");
+      console.log("\nTips:");
+      console.log("  - Try different keywords");
+      console.log("  - Use --router app or --router pages to filter");
+      return;
+    }
+
+    console.log(`Found ${matches.length} result(s):\n`);
+
+    // Show first 20 matches
+    const toShow = matches.slice(0, 20);
+    toShow.forEach((match) => {
+      // Parse markdown link format: - [Title](url): Description
+      const linkMatch = match.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      if (linkMatch) {
+        console.log(`  ${linkMatch[1]}`);
+        console.log(`    Path: ${linkMatch[2]}`);
+      } else {
+        console.log(`  ${match.trim()}`);
+      }
+    });
+
+    if (matches.length > 20) {
+      console.log(`\n  ... and ${matches.length - 20} more results`);
+    }
+
+    console.log("\n" + "─".repeat(60));
     console.log("Next steps:");
     console.log('  - Fetch full doc: npx tsx docs.ts get "<path>"');
-    console.log('  - Refine search: npx tsx docs.ts search "<query>" --router app');
   } catch (error) {
     console.error("Error:", error instanceof Error ? error.message : error);
   } finally {
@@ -66,18 +113,30 @@ async function getDocs(path: string, anchor?: string): Promise<void> {
   console.log("─".repeat(60));
 
   try {
-    const args: Record<string, unknown> = {
-      action: "get",
-      path,
-    };
+    // Build args with correct API signature: {path, anchor?}
+    const args: Record<string, unknown> = { path };
     if (anchor) {
       args.anchor = anchor;
     }
 
     const result = await callMcp("nextjs_docs", args);
-
     const text = extractText(result);
-    if (text) {
+
+    // Try to parse as JSON
+    const parsed = parseJsonResponse<DocsResponse>(text);
+
+    if (parsed?.error) {
+      console.log(`Error: ${parsed.message || parsed.error}`);
+      return;
+    }
+
+    if (parsed?.content) {
+      if (parsed.url) {
+        console.log(`URL: ${parsed.url}\n`);
+      }
+      console.log(parsed.content);
+    } else if (text) {
+      // Fallback: print raw text
       console.log(text);
     } else {
       console.log("Document not found or empty.");

@@ -1,0 +1,9 @@
+{
+  "name": "mcp-cli",
+  "version": "1.0.0",
+  "description": "Dynamic MCP server discovery and execution via CLI",
+  "author": {
+    "name": "Alon",
+    "email": "alon@oneqmethod.com"
+  }
+}

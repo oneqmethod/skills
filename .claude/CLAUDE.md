@@ -30,7 +30,6 @@ Use these skills when developing plugins:
 Detailed instructions in `.claude/rules/`:
 - @.claude/rules/plugin-structure.md
 - @.claude/rules/skill-development.md
-- @.claude/rules/mcp-integration.md
 - @.claude/rules/marketplace-registration.md
 - @.claude/rules/development-workflow.md
 - @.claude/rules/testing.md

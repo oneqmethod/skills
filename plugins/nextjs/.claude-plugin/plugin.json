@@ -1,8 +1,0 @@
-{
-  "name": "nextjs",
-  "description": "Next.js DevTools integration with code-mode scripts for token-efficient development workflows",
-  "author": {
-    "name": "Alon",
-    "email": "alon@oneqmethod.com"
-  }
-}

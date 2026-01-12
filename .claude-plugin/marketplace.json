@@ -24,6 +24,18 @@
       "description": "Next.js DevTools integration with code-mode scripts for token-efficient development workflows, debugging, and migration assistance",
       "source": "./plugins/nextjs",
       "category": "development"
+    },
+    {
+      "name": "mcp-cli",
+      "description": "Dynamic MCP server discovery and execution via CLI (99% token savings)",
+      "source": "./plugins/mcp-cli",
+      "category": "development"
+    },
+    {
+      "name": "agent-browser",
+      "description": "Browser automation for web testing, form filling, screenshots, and data extraction using agent-browser CLI",
+      "source": "./plugins/agent-browser",
+      "category": "development"
     }
   ]
 }

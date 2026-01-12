@@ -12,15 +12,23 @@ claude plugins add oneqmethod/skills
 
 ## Plugins
 
-### shadcn
 
-Token-efficient shadcn/ui component selection (98% token savings).
+### mcp-cli
 
-- Code-mode scripts wrapping MCP tools via JSON-RPC
-- 438+ components, blocks, examples across registries (@shadcn, @tweakcn, etc.)
-- Feature-driven selection + component discovery workflows
+Dynamic MCP server discovery and execution (99% token savings).
 
-[Full Documentation](plugins/shadcn/README.md)
+- List servers/tools, inspect schemas, execute tools
+- Supports stdio and HTTP MCP servers
+- Glob-based tool search
+
+[Full Documentation](plugins/mcp-cli/README.md)
+
+## Contributing
+
+1. Create plugin in `plugins/<name>/`
+2. Add `.claude-plugin/plugin.json`
+3. Add skills in `skills/<skill-name>/SKILL.md`
+4. Register in `.claude-plugin/marketplace.json`
 
 ---
 
@@ -37,20 +45,16 @@ Generate dark-themed HTML presentations from any document.
 
 ---
 
-### nextjs
+### agent-browser
 
-Next.js DevTools with MCP integration (98.7% token savings).
+Browser automation for web testing, form filling, and data extraction.
 
-- Debug errors, list routes, search docs via code-mode scripts
-- Upgrade assistant for Next.js 16 migration with codemods
-- Cache Components enablement and migration
-- Browser automation for testing
+- Snapshot workflow with element refs for reliable interactions
+- Form filling, checkboxes, dropdowns
+- Screenshots and PDF export
+- Parallel sessions, state persistence
 
-[Full Documentation](plugins/nextjs/README.md)
+**Prerequisites:** `npm install -g agent-browser && agent-browser install`
 
-## Contributing
+[Full Documentation](plugins/agent-browser/README.md)
 
-1. Create plugin in `plugins/<name>/`
-2. Add `.claude-plugin/plugin.json`
-3. Add skills in `skills/<skill-name>/SKILL.md`
-4. Register in `.claude-plugin/marketplace.json`

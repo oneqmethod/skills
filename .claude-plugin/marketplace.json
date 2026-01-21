@@ -8,22 +8,10 @@
   },
   "plugins": [
     {
-      "name": "shadcn",
-      "description": "Shadcn/ui component library integration with code-mode scripts for token-efficient component selection and implementation guidance",
-      "source": "./plugins/shadcn",
-      "category": "development"
-    },
-    {
       "name": "presentation-generator",
       "description": "Generate dark-themed HTML presentations from any document (PRD, transcript, notes, articles) with auto language detection and dynamic theming",
       "source": "./plugins/presentation-generator",
       "category": "productivity"
-    },
-    {
-      "name": "nextjs",
-      "description": "Next.js DevTools integration with code-mode scripts for token-efficient development workflows, debugging, and migration assistance",
-      "source": "./plugins/nextjs",
-      "category": "development"
     },
     {
       "name": "mcp-cli",

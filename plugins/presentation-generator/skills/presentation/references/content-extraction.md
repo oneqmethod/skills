@@ -63,7 +63,7 @@ Phase 1 – In scope:
 
 Extract as:
 - Chapter title: "Phase 1"
-- Card grid slide with 3 cards for each scope item
+- Card grid slide with 3 cards, each using Lucide icons in `.card-icon` (e.g., `<i data-lucide="shopping-cart"></i>`, `<i data-lucide="database"></i>`, `<i data-lucide="layout-dashboard"></i>`)
 
 **Technical options:**
 ```
@@ -225,7 +225,7 @@ Extract as:
 - Memorable phrase
 
 ### Use Card Grid When:
-- Features with icons
+- Features with Lucide icons (e.g., `<i data-lucide="zap"></i>`)
 - Team or roles
 - Multiple parallel concepts
 - Benefits or advantages

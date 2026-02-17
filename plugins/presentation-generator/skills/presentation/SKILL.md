@@ -74,6 +74,12 @@ Colors cycle for presentations with more than 6 chapters.
 - **Quote**: Large text with attribution
 - **Chapter title**: Section name, minimal
 
+**Card icons:**
+- Use Lucide icons via `<i data-lucide="icon-name"></i>` in `.card-icon` elements
+- Pick semantically relevant icon names (e.g., `shopping-cart`, `database`, `users`, `zap`, `shield`)
+- Browse available icons: https://lucide.dev/icons
+- Never use emoji characters — always use Lucide icons
+
 ## Language Detection & Fonts
 
 Detect RTL languages by checking for Hebrew (א-ת) or Arabic (ء-ي) characters:

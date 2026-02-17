@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family={{FONT_FAMILY}}:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
       --accent: {{ACCENT_COLOR}};
@@ -321,8 +322,10 @@
     }
 
     .card-icon {
-      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
       margin-bottom: 1rem;
+      color: var(--accent);
     }
 
     .card-title {
@@ -545,6 +548,9 @@
         goToChapter(link.dataset.chapter);
       });
     });
+
+    // Initialize Lucide icons
+    lucide.createIcons();
 
     // Initialize
     showSlide(0);

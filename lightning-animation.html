@@ -155,11 +155,11 @@ body {
 
 <script>
 // ── Config ──────────────────────────────────────────────
-const ORBIT_R       = 185;   // px from center to avatar center
-const INTERVAL      = 2500;  // ms between each avatar's thought
-const P_SPEED       = 3.2;   // particle px/frame (~60fps ≈ 1.1s travel)
-const BUZZ_DURATION = 2200;  // ms lightning stays charged + buzzing
-const RESET_PAUSE   = 1200;  // ms golden pause before reset
+const ORBIT_R       = 185;
+const P_SPEED       = 0.016;  // t/frame along bezier (0→1)
+const BUZZ_DURATION = 2200;
+const RESET_PAUSE   = 1200;
+const PULSE_GAP     = 0.09;   // t-space between the 3 co-traveling pulses
 
 // ── Avatar SVGs ─────────────────────────────────────────
 const AVATARS = [
@@ -239,10 +239,9 @@ const centerIcon = document.getElementById('centerIcon');
 const rings      = ['ring1','ring2','ring3','ring4'].map(id => document.getElementById(id));
 
 const W = 520, H = 520;
-const CX = W / 2, CY = H / 2;
+const CX = W/2, CY = H/2;
 
-// Place 5 avatars evenly, starting from top (-90°)
-const avatarAngles    = Array.from({length:5}, (_,i) => -90 + i * 72);
+const avatarAngles    = Array.from({length:5}, (_,i) => -90 + i*72);
 const avatarPositions = avatarAngles.map(deg => {
   const r = deg * Math.PI / 180;
   return { x: CX + ORBIT_R * Math.cos(r), y: CY + ORBIT_R * Math.sin(r) };
@@ -258,113 +257,164 @@ const avatarEls = AVATARS.map((svg, i) => {
   return wrap.querySelector('.avatar-circle');
 });
 
-// ── Neural paths (quadratic bezier per avatar) ─────────
-// Each path curves organically like an axon
-const CURVE_OFFSETS = [-38, 30, -22, 34, -28]; // perpendicular offset px
-const neuralPaths = avatarPositions.map((pos, i) => {
+// ── Vein paths: tapered bezier + Y-junction branches ───
+const CURVE_OFFSETS = [-42, 34, -24, 38, -30];
+
+const veinPaths = avatarPositions.map((pos, i) => {
   const dx = CX - pos.x, dy = CY - pos.y;
   const len = Math.hypot(dx, dy);
-  const px = -dy / len, py = dx / len; // perpendicular unit vector
-  const off = CURVE_OFFSETS[i];
+  const px = -dy/len, py = dx/len;
   const cp = {
-    x: pos.x + dx * 0.5 + px * off,
-    y: pos.y + dy * 0.5 + py * off
+    x: pos.x + dx*0.5 + px*CURVE_OFFSETS[i],
+    y: pos.y + dy*0.5 + py*CURVE_OFFSETS[i]
   };
-  // Pre-bake branch points at t=0.3, 0.55, 0.75
-  const branches = [0.28, 0.52, 0.74].map(t => {
-    const mt = 1 - t;
-    const bx = mt*mt*pos.x + 2*mt*t*cp.x + t*t*CX;
-    const by = mt*mt*pos.y + 2*mt*t*cp.y + t*t*CY;
-    // tangent direction
+
+  // Two Y-junction side veins along the main trunk
+  const branches = [0.3, 0.64].map((t, j) => {
+    const mt  = 1-t;
+    const bx  = mt*mt*pos.x + 2*mt*t*cp.x + t*t*CX;
+    const by  = mt*mt*pos.y + 2*mt*t*cp.y + t*t*CY;
     const tx2 = 2*(mt*(cp.x-pos.x) + t*(CX-cp.x));
     const ty2 = 2*(mt*(cp.y-pos.y) + t*(CY-cp.y));
-    const tlen = Math.hypot(tx2, ty2);
-    // perpendicular to tangent
-    const nx = -ty2/tlen, ny = tx2/tlen;
-    const side = (i + Math.floor(t*10)) % 2 === 0 ? 1 : -1;
-    return { bx, by, nx: nx*side, ny: ny*side };
+    const tl  = Math.hypot(tx2, ty2);
+    const ux  = tx2/tl, uy = ty2/tl;   // unit tangent
+    const nx  = -uy,    ny = ux;        // perpendicular
+    const side   = (j + i) % 2 === 0 ? 1 : -1;
+    const brLen  = 15 + j*12;
+    const bdx    = (ux*0.55 + nx*side*0.85) * brLen;
+    const bdy    = (uy*0.55 + ny*side*0.85) * brLen;
+    // Tiny tertiary capillary at branch tip
+    const capLen = 7;
+    return {
+      t,
+      at:     { x: bx,           y: by },
+      end:    { x: bx+bdx,       y: by+bdy },
+      cap:    { x: bx+bdx + (ux*0.35 + nx*side*0.94)*capLen,
+                y: by+bdy + (uy*0.35 + ny*side*0.94)*capLen }
+    };
   });
+
   return { start: pos, cp, end: { x: CX, y: CY }, branches };
 });
 
 function bezierPt(path, t) {
   const { start: s, cp, end: e } = path;
-  const mt = 1 - t;
-  return {
-    x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
-    y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y
-  };
+  const mt = 1-t;
+  return { x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
+           y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y };
 }
 
-// ── Neural Pulse class ─────────────────────────────────
-// Multiple pulses fire together along the curved axon path
-const PULSE_OFFSETS = [0, 0.06, 0.12]; // stagger 3 pulses in t-space
+// ── Draw one vein (tapered trunk + branch veins) ───────
+function drawVein(path, act) {
+  const base = 0.07 + act * 0.22;
 
-class NeuralPulse {
-  constructor(pathIdx, pulseOffset) {
-    this.path   = neuralPaths[pathIdx];
-    this.offset = pulseOffset; // head-start in t
-    this.t      = -pulseOffset; // start before 0 so stagger works
-    this.speed  = P_SPEED / 185; // convert px/frame to t/frame
+  // Trunk: drawn segment-by-segment so width can taper
+  const N = 40;
+  for (let s = 0; s < N; s++) {
+    const t0 = s/N, t1 = (s+1)/N;
+    const p0 = bezierPt(path, t0), p1 = bezierPt(path, t1);
+    const taper = Math.pow((t0+t1)*0.5, 0.5); // 0 at avatar → 1 at hub
+    const mW    = 1.0 + taper * 6.5;           // 1px → 7.5px
+
+    // Soft outer glow halo
+    ctx.strokeStyle = `rgba(150,150,150,${base * 0.18})`;
+    ctx.lineWidth   = mW + 6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+
+    // Main vein wall
+    ctx.strokeStyle = `rgba(125,125,125,${base * 0.8})`;
+    ctx.lineWidth   = mW;
+    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+
+    // Specular highlight (top edge of tube)
+    ctx.strokeStyle = `rgba(220,220,220,${base * 0.32})`;
+    ctx.lineWidth   = Math.max(0.4, mW * 0.26);
+    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+  }
+
+  // Branch veins at Y-junctions
+  path.branches.forEach(br => {
+    const taper = Math.pow(br.t, 0.5);
+    const bW    = Math.max(0.5, 0.7 + taper * 2.8);
+
+    // Branch trunk
+    ctx.strokeStyle = `rgba(115,115,115,${base * 0.7})`;
+    ctx.lineWidth   = bW; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(br.at.x, br.at.y); ctx.lineTo(br.end.x, br.end.y); ctx.stroke();
+    ctx.strokeStyle = `rgba(200,200,200,${base * 0.28})`;
+    ctx.lineWidth   = Math.max(0.3, bW*0.28);
+    ctx.beginPath(); ctx.moveTo(br.at.x, br.at.y); ctx.lineTo(br.end.x, br.end.y); ctx.stroke();
+
+    // Capillary tip
+    ctx.strokeStyle = `rgba(105,105,105,${base * 0.5})`;
+    ctx.lineWidth   = Math.max(0.3, bW * 0.5);
+    ctx.beginPath(); ctx.moveTo(br.end.x, br.end.y); ctx.lineTo(br.cap.x, br.cap.y); ctx.stroke();
+  });
+
+  // Junction node at avatar end
+  const h = bezierPt(path, 0);
+  ctx.fillStyle = `rgba(160,160,160,${base})`;
+  ctx.beginPath(); ctx.arc(h.x, h.y, 2.2, 0, Math.PI*2); ctx.fill();
+}
+
+// ── Vein Pulse: 3 cells flowing together ───────────────
+class VeinPulse {
+  constructor(pathIdx, tOffset) {
+    this.path   = veinPaths[pathIdx];
+    this.t      = -tOffset;
+    this.isLead = tOffset === 0;
     this.done   = false;
-    this.isLead = pulseOffset === 0; // only lead pulse triggers arrival
   }
   update() {
-    this.t += this.speed;
+    this.t += P_SPEED;
     if (this.t >= 1) { this.t = 1; this.done = true; }
   }
   draw() {
     if (this.t <= 0) return;
-    const tc = Math.min(1, this.t);
-    const alpha = 1 - tc * 0.35;
+    const tc  = Math.min(1, this.t);
+    const pos = bezierPt(this.path, tc);
 
-    // ── Trail: sample back along the bezier ──
-    const TRAIL_STEPS = 14;
-    const trailDt = 0.055;
-    ctx.lineWidth = 1.8;
-    for (let s = 0; s < TRAIL_STEPS; s++) {
-      const t1 = Math.max(0, tc - s * trailDt);
-      const t2 = Math.max(0, tc - (s+1) * trailDt);
-      if (t1 === t2) break;
-      const p1 = bezierPt(this.path, t1);
-      const p2 = bezierPt(this.path, t2);
-      const a = alpha * (1 - s / TRAIL_STEPS) * 0.7;
-      ctx.strokeStyle = `rgba(220,220,220,${a})`;
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.stroke();
+    // Lit trail following the curved vein wall
+    const steps = 22, dt = 0.036;
+    for (let s = 1; s < steps; s++) {
+      const tA = Math.max(0, tc - s*dt);
+      const tB = Math.max(0, tc - (s-1)*dt);
+      if (tA === tB) break;
+      const pA = bezierPt(this.path, tA);
+      const pB = bezierPt(this.path, tB);
+      const a  = (1 - s/steps) * 0.6 * (1 - tc*0.2);
+      const w  = 1.2 + tA * 5.5; // matches vein taper
+      ctx.strokeStyle = `rgba(215,215,215,${a})`;
+      ctx.lineWidth   = w; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pA.x, pA.y); ctx.stroke();
     }
 
-    // ── Head glow ──
-    const head = bezierPt(this.path, tc);
-    const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 9);
-    glow.addColorStop(0, `rgba(255,255,255,${alpha * 0.6})`);
-    glow.addColorStop(1, `rgba(255,255,255,0)`);
-    ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(head.x, head.y, 9, 0, Math.PI*2); ctx.fill();
+    // Blood-cell glow at head
+    const alpha = 0.9 - tc*0.15;
+    const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 11);
+    g.addColorStop(0,    `rgba(255,255,255,${alpha*0.8})`);
+    g.addColorStop(0.4,  `rgba(255,255,255,${alpha*0.35})`);
+    g.addColorStop(1,    `rgba(255,255,255,0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(pos.x, pos.y, 11, 0, Math.PI*2); ctx.fill();
 
-    // ── Core dot ──
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.beginPath(); ctx.arc(head.x, head.y, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pos.x, pos.y, 3.0, 0, Math.PI*2); ctx.fill();
   }
 }
 
 // ── State ──────────────────────────────────────────────
-let pulses       = [];
-let arrivedCount = 0;
-let cyclePhase   = 'idle';
-let thoughtIndex = 0;
-let thoughtTimer = null;
-let pathActivity = new Array(5).fill(0); // 0-1 glow per path
+let pulses        = [];
+let arrivedCount  = 0;
+let cyclePhase    = 'idle';
+let thoughtTimers = [];
+let pathActivity  = new Array(5).fill(0);
 
 // ── Helpers ────────────────────────────────────────────
 function pulseRings() {
   rings.forEach((ring, i) => {
     setTimeout(() => {
-      ring.classList.remove('pulse');
-      void ring.offsetWidth;
-      ring.classList.add('pulse');
+      ring.classList.remove('pulse'); void ring.offsetWidth; ring.classList.add('pulse');
     }, i * 55);
   });
 }
@@ -372,10 +422,7 @@ function pulseRings() {
 function sendThought(idx) {
   avatarEls[idx].classList.add('sent');
   pathActivity[idx] = 1.0;
-  // Fire 3 pulses together along the neural path
-  PULSE_OFFSETS.forEach(off => {
-    pulses.push(new NeuralPulse(idx, off));
-  });
+  [0, PULSE_GAP, PULSE_GAP*2].forEach(off => pulses.push(new VeinPulse(idx, off)));
   pulseRings();
 }
 
@@ -391,98 +438,41 @@ function chargeLightning() {
 function resetCycle() {
   cyclePhase    = 'resetting';
   arrivedCount  = 0;
-  thoughtIndex  = 0;
   pulses        = [];
   pathActivity  = new Array(5).fill(0);
-  clearTimeout(thoughtTimer);
+  thoughtTimers.forEach(t => clearTimeout(t));
+  thoughtTimers = [];
   centerIcon.classList.remove('charged', 'buzzing');
   avatarEls.forEach(el => el.classList.remove('sent'));
   setTimeout(startCycle, 600);
 }
 
-function scheduleThought() {
-  if (thoughtIndex >= 5) return;
-  sendThought(thoughtIndex);
-  thoughtIndex++;
-  if (thoughtIndex < 5) {
-    thoughtTimer = setTimeout(scheduleThought, INTERVAL);
-  }
-}
-
 function startCycle() {
   cyclePhase = 'running';
-  scheduleThought();
-}
-
-// ── Draw neural axon paths ─────────────────────────────
-function drawNeuralPaths() {
-  neuralPaths.forEach((path, i) => {
-    const act  = pathActivity[i];
-    const base = 0.045 + act * 0.22;
-
-    // ── Axon: smooth bezier curve ──
-    ctx.beginPath();
-    ctx.moveTo(path.start.x, path.start.y);
-    ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.end.x, path.end.y);
-    ctx.strokeStyle = `rgba(255,255,255,${base})`;
-    ctx.lineWidth   = 1;
-    ctx.setLineDash([]);
-    ctx.stroke();
-
-    // ── Glow layer when active ──
-    if (act > 0.05) {
-      ctx.beginPath();
-      ctx.moveTo(path.start.x, path.start.y);
-      ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.end.x, path.end.y);
-      ctx.strokeStyle = `rgba(200,200,200,${act * 0.15})`;
-      ctx.lineWidth   = 4;
-      ctx.stroke();
-      pathActivity[i] *= 0.96; // fade out
-    }
-
-    // ── Dendritic branches ──
-    ctx.lineWidth = 0.7;
-    path.branches.forEach(({ bx, by, nx, ny }) => {
-      const brAlpha = base * 0.9;
-      const brLen   = 9 + act * 4;
-      ctx.strokeStyle = `rgba(255,255,255,${brAlpha})`;
-      ctx.beginPath();
-      ctx.moveTo(bx, by);
-      ctx.lineTo(bx + nx * brLen, by + ny * brLen);
-      ctx.stroke();
-      // tiny tip fork
-      ctx.strokeStyle = `rgba(255,255,255,${brAlpha * 0.5})`;
-      ctx.beginPath();
-      ctx.moveTo(bx + nx * brLen, by + ny * brLen);
-      ctx.lineTo(bx + nx * brLen + ny * 4, by + ny * brLen - nx * 4);
-      ctx.stroke();
-    });
-
-    // ── Node dots along path ──
-    [0, 0.33, 0.66, 1].forEach(t => {
-      const p   = bezierPt(path, t);
-      const dot = t === 0 || t === 1 ? 2.5 : 1.5;
-      ctx.fillStyle = `rgba(255,255,255,${base * 1.4})`;
-      ctx.beginPath(); ctx.arc(p.x, p.y, dot, 0, Math.PI*2); ctx.fill();
-    });
+  // All 5 fire at random times — organic, overlapping flow
+  [0,1,2,3,4].forEach(idx => {
+    const delay = Math.random() * 3500;
+    thoughtTimers.push(setTimeout(() => sendThought(idx), delay));
   });
 }
 
 // ── Animation loop ─────────────────────────────────────
 function animate() {
   ctx.clearRect(0, 0, W, H);
-  drawNeuralPaths();
 
-  // Track lead pulse arrivals (one per thought)
+  // Draw all vein paths (with activity glow)
+  veinPaths.forEach((path, i) => {
+    drawVein(path, pathActivity[i]);
+    if (pathActivity[i] > 0.01) pathActivity[i] *= 0.97;
+  });
+
+  // Advance & draw pulses
   pulses = pulses.filter(p => {
-    p.update();
-    p.draw();
+    p.update(); p.draw();
     if (p.done) {
       if (p.isLead) {
         arrivedCount++;
-        if (arrivedCount >= 5 && cyclePhase === 'running') {
-          chargeLightning();
-        }
+        if (arrivedCount >= 5 && cyclePhase === 'running') chargeLightning();
       }
       return false;
     }

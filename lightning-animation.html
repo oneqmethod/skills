@@ -364,11 +364,11 @@ function resetCycle() {
 
 function scheduleThought() {
   if (thoughtIndex >= 5) return;
-  thoughtTimer = setTimeout(() => {
-    sendThought(thoughtIndex);
-    thoughtIndex++;
-    scheduleThought();
-  }, INTERVAL);
+  sendThought(thoughtIndex);
+  thoughtIndex++;
+  if (thoughtIndex < 5) {
+    thoughtTimer = setTimeout(scheduleThought, INTERVAL);
+  }
 }
 
 function startCycle() {

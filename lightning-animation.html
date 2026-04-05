@@ -242,7 +242,7 @@ const W = 520, H = 520;
 const CX = W / 2, CY = H / 2;
 
 // Place 5 avatars evenly, starting from top (-90°)
-const avatarAngles   = Array.from({length:5}, (_,i) => -90 + i * 72);
+const avatarAngles    = Array.from({length:5}, (_,i) => -90 + i * 72);
 const avatarPositions = avatarAngles.map(deg => {
   const r = deg * Math.PI / 180;
   return { x: CX + ORBIT_R * Math.cos(r), y: CY + ORBIT_R * Math.sin(r) };
@@ -258,107 +258,145 @@ const avatarEls = AVATARS.map((svg, i) => {
   return wrap.querySelector('.avatar-circle');
 });
 
-// ── Particle class ─────────────────────────────────────
-class Particle {
-  constructor(sx, sy) {
-    this.sx = sx; this.sy = sy;
-    this.x  = sx; this.y  = sy;
-    this.ex = CX; this.ey = CY;
-    const dx = this.ex - sx, dy = this.ey - sy;
-    this.dist  = Math.hypot(dx, dy);
-    this.angle = Math.atan2(dy, dx);
-    this.prog  = 0;
-    this.done  = false;
+// ── Neural paths (quadratic bezier per avatar) ─────────
+// Each path curves organically like an axon
+const CURVE_OFFSETS = [-38, 30, -22, 34, -28]; // perpendicular offset px
+const neuralPaths = avatarPositions.map((pos, i) => {
+  const dx = CX - pos.x, dy = CY - pos.y;
+  const len = Math.hypot(dx, dy);
+  const px = -dy / len, py = dx / len; // perpendicular unit vector
+  const off = CURVE_OFFSETS[i];
+  const cp = {
+    x: pos.x + dx * 0.5 + px * off,
+    y: pos.y + dy * 0.5 + py * off
+  };
+  // Pre-bake branch points at t=0.3, 0.55, 0.75
+  const branches = [0.28, 0.52, 0.74].map(t => {
+    const mt = 1 - t;
+    const bx = mt*mt*pos.x + 2*mt*t*cp.x + t*t*CX;
+    const by = mt*mt*pos.y + 2*mt*t*cp.y + t*t*CY;
+    // tangent direction
+    const tx2 = 2*(mt*(cp.x-pos.x) + t*(CX-cp.x));
+    const ty2 = 2*(mt*(cp.y-pos.y) + t*(CY-cp.y));
+    const tlen = Math.hypot(tx2, ty2);
+    // perpendicular to tangent
+    const nx = -ty2/tlen, ny = tx2/tlen;
+    const side = (i + Math.floor(t*10)) % 2 === 0 ? 1 : -1;
+    return { bx, by, nx: nx*side, ny: ny*side };
+  });
+  return { start: pos, cp, end: { x: CX, y: CY }, branches };
+});
+
+function bezierPt(path, t) {
+  const { start: s, cp, end: e } = path;
+  const mt = 1 - t;
+  return {
+    x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
+    y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y
+  };
+}
+
+// ── Neural Pulse class ─────────────────────────────────
+// Multiple pulses fire together along the curved axon path
+const PULSE_OFFSETS = [0, 0.06, 0.12]; // stagger 3 pulses in t-space
+
+class NeuralPulse {
+  constructor(pathIdx, pulseOffset) {
+    this.path   = neuralPaths[pathIdx];
+    this.offset = pulseOffset; // head-start in t
+    this.t      = -pulseOffset; // start before 0 so stagger works
+    this.speed  = P_SPEED / 185; // convert px/frame to t/frame
+    this.done   = false;
+    this.isLead = pulseOffset === 0; // only lead pulse triggers arrival
   }
   update() {
-    this.prog += P_SPEED;
-    if (this.prog >= this.dist) { this.x = this.ex; this.y = this.ey; this.done = true; return; }
-    const t = this.prog / this.dist;
-    this.x = this.sx + (this.ex - this.sx) * t;
-    this.y = this.sy + (this.ey - this.sy) * t;
+    this.t += this.speed;
+    if (this.t >= 1) { this.t = 1; this.done = true; }
   }
   draw() {
-    const t = Math.min(1, this.prog / this.dist);
-    const alpha = 1 - t * 0.5;
+    if (this.t <= 0) return;
+    const tc = Math.min(1, this.t);
+    const alpha = 1 - tc * 0.35;
 
-    // Trail
-    const trailLen = 28;
-    const tx = this.x - Math.cos(this.angle) * trailLen;
-    const ty = this.y - Math.sin(this.angle) * trailLen;
-    const grad = ctx.createLinearGradient(this.x, this.y, tx, ty);
-    grad.addColorStop(0, `rgba(230,230,230,${alpha * 0.7})`);
-    grad.addColorStop(1, `rgba(230,230,230,0)`);
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(tx, ty);
-    ctx.stroke();
+    // ── Trail: sample back along the bezier ──
+    const TRAIL_STEPS = 14;
+    const trailDt = 0.055;
+    ctx.lineWidth = 1.8;
+    for (let s = 0; s < TRAIL_STEPS; s++) {
+      const t1 = Math.max(0, tc - s * trailDt);
+      const t2 = Math.max(0, tc - (s+1) * trailDt);
+      if (t1 === t2) break;
+      const p1 = bezierPt(this.path, t1);
+      const p2 = bezierPt(this.path, t2);
+      const a = alpha * (1 - s / TRAIL_STEPS) * 0.7;
+      ctx.strokeStyle = `rgba(220,220,220,${a})`;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    }
 
-    // Glow halo
-    const glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 10);
-    glow.addColorStop(0, `rgba(255,255,255,${alpha * 0.5})`);
+    // ── Head glow ──
+    const head = bezierPt(this.path, tc);
+    const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 9);
+    glow.addColorStop(0, `rgba(255,255,255,${alpha * 0.6})`);
     glow.addColorStop(1, `rgba(255,255,255,0)`);
     ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(head.x, head.y, 9, 0, Math.PI*2); ctx.fill();
 
-    // Core dot
+    // ── Core dot ──
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(head.x, head.y, 2.5, 0, Math.PI*2); ctx.fill();
   }
 }
 
 // ── State ──────────────────────────────────────────────
-let particles = [];
+let pulses       = [];
 let arrivedCount = 0;
-let cyclePhase = 'idle'; // 'running' | 'charging' | 'resetting'
+let cyclePhase   = 'idle';
 let thoughtIndex = 0;
 let thoughtTimer = null;
+let pathActivity = new Array(5).fill(0); // 0-1 glow per path
 
 // ── Helpers ────────────────────────────────────────────
 function pulseRings() {
   rings.forEach((ring, i) => {
-    // stagger slightly inward (outermost first feels nice)
-    const delay = i * 55;
     setTimeout(() => {
       ring.classList.remove('pulse');
       void ring.offsetWidth;
       ring.classList.add('pulse');
-    }, delay);
+    }, i * 55);
   });
 }
 
 function sendThought(idx) {
-  const { x, y } = avatarPositions[idx];
   avatarEls[idx].classList.add('sent');
-  particles.push(new Particle(x, y));
+  pathActivity[idx] = 1.0;
+  // Fire 3 pulses together along the neural path
+  PULSE_OFFSETS.forEach(off => {
+    pulses.push(new NeuralPulse(idx, off));
+  });
   pulseRings();
 }
 
 function chargeLightning() {
   cyclePhase = 'charging';
   centerIcon.classList.add('charged', 'buzzing');
-
   setTimeout(() => {
-    centerIcon.classList.remove('buzzing');        // stop shaking, stay gold
+    centerIcon.classList.remove('buzzing');
     setTimeout(resetCycle, RESET_PAUSE);
   }, BUZZ_DURATION);
 }
 
 function resetCycle() {
-  cyclePhase = 'resetting';
-  arrivedCount = 0;
-  thoughtIndex = 0;
-  particles = [];
+  cyclePhase    = 'resetting';
+  arrivedCount  = 0;
+  thoughtIndex  = 0;
+  pulses        = [];
+  pathActivity  = new Array(5).fill(0);
   clearTimeout(thoughtTimer);
-
   centerIcon.classList.remove('charged', 'buzzing');
   avatarEls.forEach(el => el.classList.remove('sent'));
-
   setTimeout(startCycle, 600);
 }
 
@@ -376,36 +414,75 @@ function startCycle() {
   scheduleThought();
 }
 
-// ── Draw static orbit guide lines ─────────────────────
-function drawGuideLines() {
-  avatarPositions.forEach(({ x, y }) => {
-    const grad = ctx.createLinearGradient(x, y, CX, CY);
-    grad.addColorStop(0,   'rgba(255,255,255,0.04)');
-    grad.addColorStop(0.5, 'rgba(255,255,255,0.06)');
-    grad.addColorStop(1,   'rgba(255,255,255,0.01)');
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 6]);
+// ── Draw neural axon paths ─────────────────────────────
+function drawNeuralPaths() {
+  neuralPaths.forEach((path, i) => {
+    const act  = pathActivity[i];
+    const base = 0.045 + act * 0.22;
+
+    // ── Axon: smooth bezier curve ──
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(CX, CY);
-    ctx.stroke();
+    ctx.moveTo(path.start.x, path.start.y);
+    ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.end.x, path.end.y);
+    ctx.strokeStyle = `rgba(255,255,255,${base})`;
+    ctx.lineWidth   = 1;
     ctx.setLineDash([]);
+    ctx.stroke();
+
+    // ── Glow layer when active ──
+    if (act > 0.05) {
+      ctx.beginPath();
+      ctx.moveTo(path.start.x, path.start.y);
+      ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.end.x, path.end.y);
+      ctx.strokeStyle = `rgba(200,200,200,${act * 0.15})`;
+      ctx.lineWidth   = 4;
+      ctx.stroke();
+      pathActivity[i] *= 0.96; // fade out
+    }
+
+    // ── Dendritic branches ──
+    ctx.lineWidth = 0.7;
+    path.branches.forEach(({ bx, by, nx, ny }) => {
+      const brAlpha = base * 0.9;
+      const brLen   = 9 + act * 4;
+      ctx.strokeStyle = `rgba(255,255,255,${brAlpha})`;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(bx + nx * brLen, by + ny * brLen);
+      ctx.stroke();
+      // tiny tip fork
+      ctx.strokeStyle = `rgba(255,255,255,${brAlpha * 0.5})`;
+      ctx.beginPath();
+      ctx.moveTo(bx + nx * brLen, by + ny * brLen);
+      ctx.lineTo(bx + nx * brLen + ny * 4, by + ny * brLen - nx * 4);
+      ctx.stroke();
+    });
+
+    // ── Node dots along path ──
+    [0, 0.33, 0.66, 1].forEach(t => {
+      const p   = bezierPt(path, t);
+      const dot = t === 0 || t === 1 ? 2.5 : 1.5;
+      ctx.fillStyle = `rgba(255,255,255,${base * 1.4})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, dot, 0, Math.PI*2); ctx.fill();
+    });
   });
 }
 
 // ── Animation loop ─────────────────────────────────────
 function animate() {
   ctx.clearRect(0, 0, W, H);
-  drawGuideLines();
+  drawNeuralPaths();
 
-  particles = particles.filter(p => {
+  // Track lead pulse arrivals (one per thought)
+  pulses = pulses.filter(p => {
     p.update();
     p.draw();
     if (p.done) {
-      arrivedCount++;
-      if (arrivedCount >= 5 && cyclePhase === 'running') {
-        chargeLightning();
+      if (p.isLead) {
+        arrivedCount++;
+        if (arrivedCount >= 5 && cyclePhase === 'running') {
+          chargeLightning();
+        }
       }
       return false;
     }

@@ -24,6 +24,12 @@
       "description": "Browser automation for web testing, form filling, screenshots, and data extraction using agent-browser CLI",
       "source": "./plugins/agent-browser",
       "category": "development"
+    },
+    {
+      "name": "brainshop",
+      "description": "Business validation chart generator for Brainshop meetings — renders MVP J-Curve, Break-Even, and Viability Matrix as React components from live conversation context",
+      "source": "./plugins/brainshop",
+      "category": "productivity"
     }
   ]
 }

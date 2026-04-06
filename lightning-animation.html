@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lightning Thoughts</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0d0d0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.scene {
+  position: relative;
+  width: 520px;
+  height: 520px;
+}
+
+/* ── Orbit rings ── */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.07);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: border-color 0.1s;
+}
+.ring-1 { width: 140px; height: 140px; }
+.ring-2 { width: 240px; height: 240px; }
+.ring-3 { width: 340px; height: 340px; }
+.ring-4 { width: 460px; height: 460px; }
+
+@keyframes ringPulse {
+  0%   { border-color: rgba(255,255,255,0.07); box-shadow: none; }
+  25%  { border-color: rgba(255,255,255,0.55); box-shadow: 0 0 8px rgba(255,255,255,0.15); }
+  100% { border-color: rgba(255,255,255,0.07); box-shadow: none; }
+}
+.ring.pulse { animation: ringPulse 0.9s ease-out forwards; }
+
+/* ── Center icon ── */
+.center-icon {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82px; height: 82px;
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  border-radius: 22px;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+  z-index: 10;
+  transition: box-shadow 0.4s;
+}
+
+.lightning-path {
+  fill: #5a5a5a;
+  transition: fill 0.4s;
+  filter: drop-shadow(0 0 0px transparent);
+}
+
+/* Charged state */
+.center-icon.charged {
+  box-shadow:
+    0 0 0 2px rgba(255,215,0,0.3),
+    0 0 30px rgba(255,200,0,0.5),
+    0 0 70px rgba(255,180,0,0.25),
+    0 4px 24px rgba(0,0,0,0.6);
+}
+.center-icon.charged .lightning-path {
+  fill: #FFD700;
+  filter: drop-shadow(0 0 6px rgba(255,215,0,0.9)) drop-shadow(0 0 16px rgba(255,180,0,0.6));
+}
+
+/* Buzz animation */
+@keyframes buzz {
+  0%   { transform: translate(-50%,-50%) translate(0,0)    rotate(0deg)   scale(1);    }
+  10%  { transform: translate(-50%,-50%) translate(-2px,1px) rotate(-1.5deg) scale(1.04); }
+  20%  { transform: translate(-50%,-50%) translate(2px,-1px) rotate(1.5deg)  scale(0.97); }
+  30%  { transform: translate(-50%,-50%) translate(-1px,2px) rotate(-1deg)   scale(1.05); }
+  40%  { transform: translate(-50%,-50%) translate(1px,-2px) rotate(1deg)    scale(0.98); }
+  50%  { transform: translate(-50%,-50%) translate(-2px,0px) rotate(-2deg)   scale(1.04); }
+  60%  { transform: translate(-50%,-50%) translate(2px,1px)  rotate(2deg)    scale(0.97); }
+  70%  { transform: translate(-50%,-50%) translate(-1px,-1px) rotate(-1deg)  scale(1.03); }
+  80%  { transform: translate(-50%,-50%) translate(1px,1px)  rotate(1deg)    scale(0.99); }
+  90%  { transform: translate(-50%,-50%) translate(0,-1px)   rotate(0.5deg)  scale(1.01); }
+  100% { transform: translate(-50%,-50%) translate(0,0)      rotate(0deg)   scale(1);    }
+}
+.center-icon.buzzing {
+  animation: buzz 0.12s linear infinite;
+}
+
+/* ── Avatars ── */
+.avatar-wrapper {
+  position: absolute;
+  top: 0; left: 0;
+  width: 66px; height: 66px;
+  pointer-events: none;
+  z-index: 10;
+}
+.avatar-circle {
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  background: #1e1e1e;
+  border: 2px solid #2e2e2e;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.avatar-circle.sent {
+  border-color: #666;
+  box-shadow: 0 0 12px rgba(180,180,180,0.25);
+}
+
+/* ── Canvas ── */
+#particleCanvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 520px; height: 520px;
+  pointer-events: none;
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+<div class="scene" id="scene">
+
+  <!-- Orbit rings -->
+  <div class="ring ring-4" id="ring4"></div>
+  <div class="ring ring-3" id="ring3"></div>
+  <div class="ring ring-2" id="ring2"></div>
+  <div class="ring ring-1" id="ring1"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particleCanvas" width="520" height="520"></canvas>
+
+  <!-- Center icon -->
+  <div class="center-icon" id="centerIcon">
+    <svg width="38" height="38" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path class="lightning-path" d="M13 2L3 14h8l-1 8 10-12h-8z"/>
+    </svg>
+  </div>
+
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────
+const ORBIT_R       = 185;
+const P_SPEED       = 0.016;  // t/frame along bezier (0→1)
+const BUZZ_DURATION = 2200;
+const RESET_PAUSE   = 1200;
+const PULSE_GAP     = 0.09;   // t-space between the 3 co-traveling pulses
+
+// ── Avatar SVGs ─────────────────────────────────────────
+const AVATARS = [
+
+  // 1 – Round glasses + full beard
+  `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="f1" cx="42%" cy="30%" r="62%">
+        <stop offset="0%"   stop-color="#d4d4d4"/>
+        <stop offset="52%"  stop-color="#ababab"/>
+        <stop offset="100%" stop-color="#6e6e6e"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 52 33 51 Q56 52 64 66Z" fill="#383838"/>
+    <!-- Neck -->
+    <ellipse cx="33" cy="53" rx="7" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="28" rx="21" ry="23" fill="url(#f1)"/>
+    <!-- Hair -->
+    <path d="M12 20 Q12 3 33 3 Q54 3 54 20 L53 13 Q50 4 33 4 Q16 4 13 13Z" fill="#1e1e1e"/>
+    <path d="M12 20 Q11 10 13 8" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <path d="M54 20 Q55 10 53 8" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <!-- Beard -->
+    <path d="M12 34 Q11 58 33 59 Q55 58 54 34 Q49 47 33 47 Q17 47 12 34Z" fill="#252525"/>
+    <!-- Moustache -->
+    <path d="M22 37 Q27.5 41 33 40 Q38.5 41 44 37 Q38 34 33 35 Q28 34 22 37Z" fill="#1e1e1e"/>
+    <!-- Round glasses left -->
+    <circle cx="21" cy="29" r="8" fill="none" stroke="#5e5e5e" stroke-width="2.2"/>
+    <!-- Round glasses right -->
+    <circle cx="45" cy="29" r="8" fill="none" stroke="#5e5e5e" stroke-width="2.2"/>
+    <!-- Bridge -->
+    <line x1="29" y1="29" x2="37" y2="29" stroke="#5e5e5e" stroke-width="2"/>
+    <!-- Nose pads -->
+    <line x1="13" y1="28" x2="10" y2="31" stroke="#5e5e5e" stroke-width="1.4"/>
+    <line x1="53" y1="28" x2="56" y2="31" stroke="#5e5e5e" stroke-width="1.4"/>
+    <!-- Eyes -->
+    <circle cx="21" cy="29" r="3.2" fill="#1a1a1a"/>
+    <circle cx="45" cy="29" r="3.2" fill="#1a1a1a"/>
+    <circle cx="22.2" cy="27.8" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="46.2" cy="27.8" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Nose shadow -->
+    <path d="M30 34 Q33 38 36 34" fill="none" stroke="#909090" stroke-width="1" opacity="0.6"/>
+  </svg>`,
+
+  // 2 – Wide-brim hat + beard
+  `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="f2" cx="44%" cy="50%" r="58%">
+        <stop offset="0%"   stop-color="#d0d0d0"/>
+        <stop offset="50%"  stop-color="#acacac"/>
+        <stop offset="100%" stop-color="#6a6a6a"/>
+      </radialGradient>
+      <radialGradient id="hat2" cx="40%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#7a7a7a"/>
+        <stop offset="100%" stop-color="#3c3c3c"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 53 33 52 Q56 53 64 66Z" fill="#383838"/>
+    <!-- Neck -->
+    <ellipse cx="33" cy="54" rx="7" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="38" rx="19" ry="18" fill="url(#f2)"/>
+    <!-- Beard / stubble -->
+    <path d="M14 42 Q14 58 33 59 Q52 58 52 42 Q47 52 33 52 Q19 52 14 42Z" fill="#363636"/>
+    <!-- Short beard texture lines -->
+    <path d="M19 45 Q24 48 29 46" fill="none" stroke="#2a2a2a" stroke-width="0.8" opacity="0.7"/>
+    <path d="M37 46 Q42 48 47 45" fill="none" stroke="#2a2a2a" stroke-width="0.8" opacity="0.7"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="37" rx="3" ry="2.5" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="37" rx="3" ry="2.5" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="36" r="1" fill="white" opacity="0.65"/>
+    <circle cx="42.2" cy="36" r="1" fill="white" opacity="0.65"/>
+    <!-- Eyebrows -->
+    <path d="M21 33 Q25 31 29 33" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 33 Q41 31 45 33" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30 41 Q33 44 36 41" fill="none" stroke="#888" stroke-width="1.1" opacity="0.6"/>
+    <!-- Hat brim (wide) -->
+    <ellipse cx="33" cy="24" rx="29" ry="6" fill="url(#hat2)"/>
+    <!-- Hat crown -->
+    <path d="M14 24 Q14 8 33 7 Q52 8 52 24Z" fill="url(#hat2)"/>
+    <!-- Hat band -->
+    <path d="M14 22 Q14 26 33 27 Q52 26 52 22" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <!-- Hat highlight -->
+    <path d="M18 15 Q28 11 38 13" fill="none" stroke="#909090" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
+  </svg>`,
+
+  // 3 – Astronaut helmet
+  `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="helm" cx="38%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#e0e0e0"/>
+        <stop offset="60%"  stop-color="#c0c0c0"/>
+        <stop offset="100%" stop-color="#8a8a8a"/>
+      </radialGradient>
+      <radialGradient id="visor" cx="35%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#555"/>
+        <stop offset="100%" stop-color="#1a1a1a"/>
+      </radialGradient>
+    </defs>
+    <!-- Suit collar -->
+    <path d="M6 66 Q12 50 33 49 Q54 50 60 66Z" fill="#555"/>
+    <ellipse cx="33" cy="52" rx="14" ry="6" fill="#666"/>
+    <!-- Neck ring connector -->
+    <ellipse cx="33" cy="50" rx="11" ry="4" fill="#4a4a4a" stroke="#888" stroke-width="1"/>
+    <!-- Helmet sphere -->
+    <circle cx="33" cy="28" r="24" fill="url(#helm)"/>
+    <!-- Visor (dark, slightly recessed) -->
+    <ellipse cx="33" cy="27" rx="16" ry="12" fill="url(#visor)" rx="16" ry="12"/>
+    <!-- Visor reflection streak -->
+    <path d="M20 20 Q25 17 30 19" fill="none" stroke="white" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+    <!-- Visor frame -->
+    <ellipse cx="33" cy="27" rx="16" ry="12" fill="none" stroke="#999" stroke-width="1.5"/>
+    <!-- Eyes visible through visor -->
+    <circle cx="27" cy="27" r="2.5" fill="#4a4a4a"/>
+    <circle cx="39" cy="27" r="2.5" fill="#4a4a4a"/>
+    <circle cx="27.8" cy="26.1" r="0.9" fill="white" opacity="0.5"/>
+    <circle cx="39.8" cy="26.1" r="0.9" fill="white" opacity="0.5"/>
+    <!-- Helmet side bolts -->
+    <circle cx="10" cy="28" r="3.5" fill="#a0a0a0" stroke="#888" stroke-width="1"/>
+    <circle cx="56" cy="28" r="3.5" fill="#a0a0a0" stroke="#888" stroke-width="1"/>
+    <!-- Helmet top highlight -->
+    <path d="M22 10 Q33 5 44 10" fill="none" stroke="white" stroke-width="2.5" opacity="0.25" stroke-linecap="round"/>
+    <!-- Chin strap -->
+    <path d="M10 38 Q12 46 33 47 Q54 46 56 38" fill="none" stroke="#aaa" stroke-width="1.2" opacity="0.5"/>
+  </svg>`,
+
+  // 4 – Woman, curly hair
+  `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="f4" cx="42%" cy="32%" r="60%">
+        <stop offset="0%"   stop-color="#d6d6d6"/>
+        <stop offset="52%"  stop-color="#aeaeae"/>
+        <stop offset="100%" stop-color="#707070"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q8 53 33 52 Q58 53 64 66Z" fill="#3a3a3a"/>
+    <ellipse cx="33" cy="54" rx="8" ry="5" fill="#a0a0a0"/>
+    <!-- Curly hair volume (back layer) -->
+    <circle cx="33" cy="20" r="18" fill="#2a2a2a"/>
+    <circle cx="16" cy="26" r="10" fill="#2a2a2a"/>
+    <circle cx="50" cy="26" r="10" fill="#2a2a2a"/>
+    <circle cx="22" cy="14" r="9" fill="#2a2a2a"/>
+    <circle cx="44" cy="14" r="9" fill="#2a2a2a"/>
+    <circle cx="33" cy="10" r="9" fill="#2a2a2a"/>
+    <!-- Face -->
+    <ellipse cx="33" cy="34" rx="18" ry="20" fill="url(#f4)"/>
+    <!-- Curly hair front wisps -->
+    <circle cx="15" cy="30" r="6" fill="#2e2e2e"/>
+    <circle cx="51" cy="30" r="6" fill="#2e2e2e"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="42.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Eyebrows (arched) -->
+    <path d="M21 26.5 Q25 24.5 29 26" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 26 Q41 24.5 45 26.5" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30.5 35 Q33 38 35.5 35" fill="none" stroke="#909090" stroke-width="1" opacity="0.7"/>
+    <!-- Smile -->
+    <path d="M26 42 Q33 47 40 42" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Cheek blush hints -->
+    <ellipse cx="20" cy="38" rx="5" ry="3" fill="#aaa" opacity="0.2"/>
+    <ellipse cx="46" cy="38" rx="5" ry="3" fill="#aaa" opacity="0.2"/>
+  </svg>`,
+
+  // 5 – Side-part clean hair
+  `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="f5" cx="44%" cy="32%" r="60%">
+        <stop offset="0%"   stop-color="#d3d3d3"/>
+        <stop offset="52%"  stop-color="#ababab"/>
+        <stop offset="100%" stop-color="#6c6c6c"/>
+      </radialGradient>
+      <radialGradient id="hair5" cx="30%" cy="20%" r="70%">
+        <stop offset="0%"   stop-color="#6a6a6a"/>
+        <stop offset="100%" stop-color="#222"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 53 33 52 Q56 53 64 66Z" fill="#383838"/>
+    <ellipse cx="33" cy="54" rx="8" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="32" rx="20" ry="22" fill="url(#f5)"/>
+    <!-- Hair (side-part swept style) -->
+    <path d="M13 24 Q13 4 33 4 Q50 4 53 18 L50 12 Q46 5 33 5 Q20 5 15 12Z" fill="url(#hair5)"/>
+    <!-- Side part sweep -->
+    <path d="M13 24 Q18 18 28 20 Q36 21 42 17" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <!-- Ear hints -->
+    <ellipse cx="13" cy="34" rx="3.5" ry="4.5" fill="#a8a8a8"/>
+    <ellipse cx="53" cy="34" rx="3.5" ry="4.5" fill="#a8a8a8"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="42.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Eyebrows (straight) -->
+    <path d="M21 26 Q25 24.5 29 25.5" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 25.5 Q41 24.5 45 26" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30 36 Q33 40 36 36" fill="none" stroke="#909090" stroke-width="1.1" opacity="0.6"/>
+    <!-- Slight smile -->
+    <path d="M27 43 Q33 47 39 43" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>`
+
+];
+
+
+// ── DOM setup ──────────────────────────────────────────
+const scene      = document.getElementById('scene');
+const canvas     = document.getElementById('particleCanvas');
+const ctx        = canvas.getContext('2d');
+const centerIcon = document.getElementById('centerIcon');
+const rings      = ['ring1','ring2','ring3','ring4'].map(id => document.getElementById(id));
+
+const W = 520, H = 520;
+const CX = W/2, CY = H/2;
+
+const avatarAngles    = Array.from({length:5}, (_,i) => -90 + i*72);
+const avatarPositions = avatarAngles.map(deg => {
+  const r = deg * Math.PI / 180;
+  return { x: CX + ORBIT_R * Math.cos(r), y: CY + ORBIT_R * Math.sin(r) };
+});
+
+const avatarEls = AVATARS.map((svg, i) => {
+  const { x, y } = avatarPositions[i];
+  const wrap = document.createElement('div');
+  wrap.className = 'avatar-wrapper';
+  wrap.style.transform = `translate(${x-33}px, ${y-33}px)`;
+  wrap.innerHTML = `<div class="avatar-circle" id="av${i}">${svg}</div>`;
+  scene.appendChild(wrap);
+  return wrap.querySelector('.avatar-circle');
+});
+
+// ── Bezier helpers ──────────────────────────────────────
+function bezierPt(path, t) {
+  const { s, cp, e } = path;
+  const mt = 1-t;
+  return { x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
+           y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y };
+}
+function bezierPerp(path, t) {
+  const { s, cp, e } = path;
+  const mt = 1-t;
+  const tx = 2*(mt*(cp.x-s.x) + t*(e.x-cp.x));
+  const ty = 2*(mt*(cp.y-s.y) + t*(e.y-cp.y));
+  const l  = Math.hypot(tx, ty);
+  return { x: -ty/l, y: tx/l };   // unit perpendicular
+}
+
+// ── Nerve paths: bezier + pre-baked strand & branch data ─
+const CURVE_OFFSETS = [-38, 30, -20, 34, -28];
+const STRAND_SEP    = 2.8;   // px between parallel fibers
+const WAVE_AMP      = 2.2;   // sinusoidal undulation amplitude
+const WAVE_FREQ     = 7;     // oscillation cycles along full path
+const NODE_TS       = [0.18, 0.36, 0.55, 0.73, 0.90]; // Nodes of Ranvier
+
+const nervePaths = avatarPositions.map((pos, i) => {
+  const dx = CX-pos.x, dy = CY-pos.y;
+  const len = Math.hypot(dx, dy);
+  const px = -dy/len, py = dx/len;
+  const cp = {
+    x: pos.x + dx*0.5 + px*CURVE_OFFSETS[i],
+    y: pos.y + dy*0.5 + py*CURVE_OFFSETS[i]
+  };
+  const path = { s: pos, cp, e: { x: CX, y: CY } };
+
+  // Branch nerve: splits off at t≈0.45, grows ≈22px at an angle
+  const bt   = 0.44;
+  const mt   = 1-bt;
+  const bx   = mt*mt*pos.x + 2*mt*bt*cp.x + bt*bt*CX;
+  const by   = mt*mt*pos.y + 2*mt*bt*cp.y + bt*bt*CY;
+  const perp = bezierPerp(path, bt);
+  const tang = (() => { // unit tangent at bt
+    const tx = 2*(mt*(cp.x-pos.x)+bt*(CX-cp.x));
+    const ty = 2*(mt*(cp.y-pos.y)+bt*(CY-cp.y));
+    const l  = Math.hypot(tx,ty);
+    return { x: tx/l, y: ty/l };
+  })();
+  const side   = i % 2 === 0 ? 1 : -1;
+  const brLen  = 22;
+  const br2Len = 12;
+  const brEnd  = { x: bx+(tang.x*0.5+perp.x*side*0.87)*brLen,
+                   y: by+(tang.y*0.5+perp.y*side*0.87)*brLen };
+  const br2End = { x: brEnd.x+(tang.x*0.4+perp.x*side*0.92)*br2Len,
+                   y: brEnd.y+(tang.y*0.4+perp.y*side*0.92)*br2Len };
+
+  return { ...path, branch: { at:{x:bx,y:by}, end:brEnd, tip:br2End, side } };
+});
+
+// ── Draw one nerve fiber strand (wavy line) ─────────────
+function drawStrand(path, offsetPx, phaseDeg, alpha, lineW) {
+  const N = 80;
+  ctx.beginPath();
+  for (let s = 0; s <= N; s++) {
+    const t    = s/N;
+    const pt   = bezierPt(path, t);
+    const perp = bezierPerp(path, t);
+    const wave = Math.sin(t * Math.PI * WAVE_FREQ + phaseDeg) * WAVE_AMP;
+    const off  = offsetPx + wave;
+    s === 0
+      ? ctx.moveTo(pt.x + perp.x*off, pt.y + perp.y*off)
+      : ctx.lineTo(pt.x + perp.x*off, pt.y + perp.y*off);
+  }
+  ctx.strokeStyle = `rgba(190,190,190,${alpha})`;
+  ctx.lineWidth   = lineW;
+  ctx.lineCap     = 'round';
+  ctx.setLineDash([]);
+  ctx.stroke();
+}
+
+// ── Draw full nerve (3 strands + nodes + branch) ────────
+function drawNerve(path, act) {
+  const base = 0.06 + act * 0.22;
+
+  // Myelin sheath glow (wide soft layer behind strands)
+  if (act > 0.03) {
+    ctx.beginPath();
+    ctx.moveTo(path.s.x, path.s.y);
+    ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.e.x, path.e.y);
+    ctx.strokeStyle = `rgba(200,200,200,${act * 0.10})`;
+    ctx.lineWidth   = 14;
+    ctx.stroke();
+  }
+
+  // 3 parallel nerve fibers with staggered wave phase
+  const strands = [
+    { off: -STRAND_SEP, phase: 0 },
+    { off:  0,          phase: Math.PI * 0.66 },
+    { off:  STRAND_SEP, phase: Math.PI * 1.33 },
+  ];
+  strands.forEach(({ off, phase }) => {
+    drawStrand(path, off, phase, base * 0.75, 0.75);
+  });
+
+  // Nodes of Ranvier — small rings where myelin is absent
+  NODE_TS.forEach(t => {
+    const pt = bezierPt(path, t);
+    // Ring
+    ctx.strokeStyle = `rgba(210,210,210,${base * 1.4})`;
+    ctx.lineWidth   = 1.2;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.8, 0, Math.PI*2); ctx.stroke();
+    // Centre dot
+    ctx.fillStyle = `rgba(240,240,240,${base * 0.9})`;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 1.1, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Branch nerve (1 thinner fiber)
+  const br = path.branch;
+  drawStrand({ s: br.at, cp: {
+    x: (br.at.x+br.end.x)*0.5,
+    y: (br.at.y+br.end.y)*0.5
+  }, e: br.end }, 0, Math.PI*0.5, base*0.55, 0.55);
+  // Tiny secondary branch tip
+  drawStrand({ s: br.end, cp: {
+    x: (br.end.x+br.tip.x)*0.5,
+    y: (br.end.y+br.tip.y)*0.5
+  }, e: br.tip }, 0, Math.PI*1.1, base*0.38, 0.4);
+
+  // Terminal node at avatar end
+  const head = bezierPt(path, 0);
+  ctx.fillStyle   = `rgba(200,200,200,${base * 1.1})`;
+  ctx.beginPath(); ctx.arc(head.x, head.y, 2.5, 0, Math.PI*2); ctx.fill();
+}
+
+// ── Action Potential pulse ──────────────────────────────
+class NervePulse {
+  constructor(pathIdx, tOffset) {
+    this.path   = nervePaths[pathIdx];
+    this.t      = -tOffset;
+    this.isLead = tOffset === 0;
+    this.done   = false;
+  }
+  update() {
+    this.t += P_SPEED;
+    if (this.t >= 1) { this.t = 1; this.done = true; }
+  }
+  draw() {
+    if (this.t <= 0) return;
+    const tc = Math.min(1, this.t);
+
+    // Depolarisation front — covers all 3 strands width
+    const steps = 26, dt = 0.033;
+    for (let s = 1; s < steps; s++) {
+      const tA = Math.max(0, tc - s*dt);
+      const tB = Math.max(0, tc - (s-1)*dt);
+      if (tA === tB) break;
+      const pA = bezierPt(this.path, tA);
+      const pB = bezierPt(this.path, tB);
+      const a  = (1 - s/steps) * 0.65 * (1 - tc*0.15);
+      ctx.strokeStyle = `rgba(230,230,230,${a})`;
+      ctx.lineWidth   = 8 + (1-tA)*2; // slightly wider near avatar
+      ctx.lineCap     = 'round';
+      ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pA.x, pA.y); ctx.stroke();
+    }
+
+    // Flash at each Node of Ranvier as pulse passes
+    NODE_TS.forEach(nt => {
+      const dist = Math.abs(tc - nt);
+      if (dist < 0.06) {
+        const flash = (1 - dist/0.06) * 0.8;
+        const np = bezierPt(this.path, nt);
+        const fg = ctx.createRadialGradient(np.x, np.y, 0, np.x, np.y, 8);
+        fg.addColorStop(0, `rgba(255,255,255,${flash})`);
+        fg.addColorStop(1, `rgba(255,255,255,0)`);
+        ctx.fillStyle = fg;
+        ctx.beginPath(); ctx.arc(np.x, np.y, 8, 0, Math.PI*2); ctx.fill();
+      }
+    });
+
+    // Leading edge glow
+    const head  = bezierPt(this.path, tc);
+    const alpha = 0.92 - tc*0.12;
+    const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 13);
+    g.addColorStop(0,   `rgba(255,255,255,${alpha*0.85})`);
+    g.addColorStop(0.35,`rgba(255,255,255,${alpha*0.35})`);
+    g.addColorStop(1,   `rgba(255,255,255,0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(head.x, head.y, 13, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.beginPath(); ctx.arc(head.x, head.y, 2.8, 0, Math.PI*2); ctx.fill();
+  }
+}
+
+// ── State ──────────────────────────────────────────────
+let pulses        = [];
+let arrivedCount  = 0;
+let cyclePhase    = 'idle';
+let thoughtTimers = [];
+let pathActivity  = new Array(5).fill(0);
+
+// ── Helpers ────────────────────────────────────────────
+function pulseRings() {
+  rings.forEach((ring, i) => {
+    setTimeout(() => {
+      ring.classList.remove('pulse'); void ring.offsetWidth; ring.classList.add('pulse');
+    }, i * 55);
+  });
+}
+
+function sendThought(idx) {
+  avatarEls[idx].classList.add('sent');
+  pathActivity[idx] = 1.0;
+  [0, PULSE_GAP, PULSE_GAP*2].forEach(off => pulses.push(new NervePulse(idx, off)));
+  pulseRings();
+}
+
+function chargeLightning() {
+  cyclePhase = 'charging';
+  centerIcon.classList.add('charged', 'buzzing');
+  setTimeout(() => {
+    centerIcon.classList.remove('buzzing');
+    setTimeout(resetCycle, RESET_PAUSE);
+  }, BUZZ_DURATION);
+}
+
+function resetCycle() {
+  cyclePhase    = 'resetting';
+  arrivedCount  = 0;
+  pulses        = [];
+  pathActivity  = new Array(5).fill(0);
+  thoughtTimers.forEach(t => clearTimeout(t));
+  thoughtTimers = [];
+  centerIcon.classList.remove('charged', 'buzzing');
+  avatarEls.forEach(el => el.classList.remove('sent'));
+  setTimeout(startCycle, 600);
+}
+
+function startCycle() {
+  cyclePhase = 'running';
+  [0,1,2,3,4].forEach(idx => {
+    const delay = Math.random() * 3500;
+    thoughtTimers.push(setTimeout(() => sendThought(idx), delay));
+  });
+}
+
+// ── Animation loop ─────────────────────────────────────
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+
+  nervePaths.forEach((path, i) => {
+    drawNerve(path, pathActivity[i]);
+    if (pathActivity[i] > 0.01) pathActivity[i] *= 0.97;
+  });
+
+  pulses = pulses.filter(p => {
+    p.update(); p.draw();
+    if (p.done) {
+      if (p.isLead) {
+        arrivedCount++;
+        if (arrivedCount >= 5 && cyclePhase === 'running') chargeLightning();
+      }
+      return false;
+    }
+    return true;
+  });
+
+  requestAnimationFrame(animate);
+}
+
+// ── Boot ───────────────────────────────────────────────
+animate();
+setTimeout(startCycle, 800);
+</script>
+</body>
+</html>

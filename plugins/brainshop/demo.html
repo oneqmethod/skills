@@ -73,12 +73,13 @@ svg text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui
     <div class="section-label">Chart 1 of 3 — MVP Timeline</div>
     <div class="card">
       <h3>MVP Validation Curve</h3>
-      <p class="sub">Your startup journey from first line of code to first paying customer</p>
-      <svg id="jcurve" width="100%" height="300" viewBox="0 0 800 280"></svg>
+      <p class="sub">From first line of code to first paying customer — <strong style="color:#3b82f6">10 weeks</strong>, <strong style="color:#f59e0b">$5,000</strong> invested, est. company value <strong style="color:#a855f7">~$6K</strong></p>
+      <svg id="jcurve" width="100%" height="320" viewBox="0 0 800 300"></svg>
       <div class="metrics">
-        <div class="metric"><div class="metric-label">Total Burn</div><div class="metric-value" style="color:#f59e0b">$5,000</div></div>
-        <div class="metric"><div class="metric-label">Weeks to Launch</div><div class="metric-value" style="color:#3b82f6">8w</div></div>
-        <div class="metric"><div class="metric-label">First Revenue</div><div class="metric-value" style="color:#00d26a">$50</div></div>
+        <div class="metric"><div class="metric-label">MVP Cost</div><div class="metric-value" style="color:#f59e0b">$5,000</div><div style="font-size:11px;color:#8b949e;margin-top:2px">total investment</div></div>
+        <div class="metric"><div class="metric-label">Time to 1st Customer</div><div class="metric-value" style="color:#3b82f6">10 weeks</div><div style="font-size:11px;color:#8b949e;margin-top:2px">from start to revenue</div></div>
+        <div class="metric"><div class="metric-label">1st Customer MRR</div><div class="metric-value" style="color:#00d26a">$50/mo</div><div style="font-size:11px;color:#8b949e;margin-top:2px">ARR: $600</div></div>
+        <div class="metric"><div class="metric-label">Est. Co. Value</div><div class="metric-value" style="color:#a855f7">~$6K</div><div style="font-size:11px;color:#8b949e;margin-top:2px">10× ARR at validation</div></div>
       </div>
       <div class="explain">
         <h4>How to read this chart</h4>
@@ -172,53 +173,74 @@ function gridLines(svg, px, py, pw, ph, xTicks, yTicks, xMin, xMax, yMin, yMax) 
 /* ─────────────── CHART 1: J-CURVE ─────────────── */
 (function() {
   const svg = document.getElementById('jcurve');
-  const W=800, H=280, px=70, py=20, pw=700, ph=220;
+  const W=800, H=300, px=70, py=30, pw=680, ph=210;
 
-  // Generate data
-  const burnPerWk = 5000/8;
+  // Config: launch at week 8, first customer at week 10
+  const LAUNCH=8, FIRST_CUSTOMER=10, TOTAL_BURN=5000, PRICE=50;
+  const burnPerWk = TOTAL_BURN / LAUNCH;
+
   const pts = [];
-  for (let w=0; w<=8; w++) pts.push({w, v: -burnPerWk*w});
-  for (let w=9; w<12; w++) pts.push({w, v: -(5000 + 5000*0.04*(w-8))});
+  for (let w=0; w<=LAUNCH; w++) pts.push({w, v: -burnPerWk*w});
+  for (let w=LAUNCH+1; w<FIRST_CUSTOMER; w++) pts.push({w, v: -(TOTAL_BURN + TOTAL_BURN*0.04*(w-LAUNCH))});
   const bottom = pts[pts.length-1].v;
-  for (let w=12; w<=19; w++) pts.push({w, v: bottom + 50*Math.pow(w-12,1.6)*0.5});
+  for (let w=FIRST_CUSTOMER; w<=18; w++) pts.push({w, v: bottom + PRICE*Math.pow(w-FIRST_CUSTOMER,1.6)*0.5});
 
-  const xMin=0, xMax=19, yMin=-6500, yMax=1500;
+  const xMin=0, xMax=18, yMin=-6200, yMax=2000;
   const X = w => px + ((w-xMin)/(xMax-xMin))*pw;
   const Y = v => py + ph - ((v-yMin)/(yMax-yMin))*ph;
 
-  gridLines(svg, px, py, pw, ph, [0,4,8,12,16,19], [-6000,-4000,-2000,0,1000], xMin, xMax, yMin, yMax);
-
-  // Axis labels
+  gridLines(svg, px, py, pw, ph, [0,2,4,6,8,10,12,14,16,18], [-6000,-4000,-2000,0,1000], xMin, xMax, yMin, yMax);
   text(svg, px+pw/2, H-2, 'Time (Weeks)', C.muted, 11);
-  text(svg, 12, py+ph/2, '$', C.muted, 11, 'middle');
 
   // Zero line
   line(svg, px, Y(0), px+pw, Y(0), C.muted, 1, '4 4');
+  text(svg, px-4, Y(0)+4, '$0', C.muted, 9, 'end', '600');
 
-  // Build gradient fill path
+  // Gradient fill
   const pathD = pts.map((p,i) => `${i===0?'M':'L'}${X(p.w)},${Y(p.v)}`).join(' ');
   const fillPath = pathD + ` L${X(xMax)},${Y(yMin)} L${X(xMin)},${Y(yMin)} Z`;
-  const fp = svgEl('path', {d:fillPath, fill:'#3b82f6', 'fill-opacity':'0.08'});
-  svg.appendChild(fp);
+  svg.appendChild(svgEl('path', {d:fillPath, fill:'#3b82f6', 'fill-opacity':'0.07'}));
+  svg.appendChild(svgEl('path', {d:pathD, fill:'none', stroke:C.blue, 'stroke-width':'2.5', 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
 
-  // Area line
-  const lp = svgEl('path', {d:pathD, fill:'none', stroke:C.blue, 'stroke-width':'2.5', 'stroke-linejoin':'round', 'stroke-linecap':'round'});
-  svg.appendChild(lp);
-
-  // MVP Launch line (week 8)
-  const x8 = X(8);
+  // ── MVP Launch line (week 8) ──
+  const x8 = X(LAUNCH);
+  const yLaunch = Y(pts[LAUNCH].v);
   line(svg, x8, py, x8, py+ph, C.amber, 2);
-  text(svg, x8+4, py+14, 'MVP Launch', C.amber, 10, 'start', '600');
+  text(svg, x8, py+10, 'MVP Launch', C.amber, 10, 'middle', '600');
 
-  // First customer line (week 12)
-  const x12 = X(12);
-  line(svg, x12, py, x12, py+ph, C.green, 2, '6 3');
-  text(svg, x12+4, py+14, '🎉 First Customer', C.green, 10, 'start', '600');
+  // MVP Cost annotation: callout box at trough
+  const calloutX = x8 - 5, calloutY = yLaunch - 46;
+  const box1 = svgEl('rect', {x:calloutX-54, y:calloutY, width:108, height:42, rx:6, fill:'#1c1f26', stroke:C.amber, 'stroke-width':'1', 'stroke-opacity':'0.6'});
+  svg.appendChild(box1);
+  text(svg, calloutX, calloutY+14, 'MVP Cost', C.amber, 10, 'middle', '600');
+  text(svg, calloutX, calloutY+29, '-$5,000', C.amber, 13, 'middle', '700');
+  // Arrow from box to dot
+  svg.appendChild(svgEl('line', {x1:calloutX, y1:calloutY+42, x2:x8, y2:yLaunch-5, stroke:C.amber, 'stroke-width':'1', 'stroke-dasharray':'3 2', 'stroke-opacity':'0.6'}));
+  svg.appendChild(svgEl('circle', {cx:x8, cy:yLaunch, r:5, fill:C.amber, stroke:C.card, 'stroke-width':2}));
 
-  // Dots at key points
-  [[8, pts[8].v, C.amber],[12, pts.find(p=>p.w===12).v, C.green]].forEach(([w,v,c]) => {
-    svg.appendChild(svgEl('circle',{cx:X(w),cy:Y(v),r:5,fill:c,'stroke':C.card,'stroke-width':2}));
-  });
+  // ── First customer line (week 10) ──
+  const x10 = X(FIRST_CUSTOMER);
+  const yFC = Y(pts.find(p=>p.w===FIRST_CUSTOMER).v);
+  line(svg, x10, py, x10, py+ph, C.green, 2, '6 3');
+  text(svg, x10, py+10, '🎉 First Customer', C.green, 10, 'middle', '600');
+
+  // Company value callout at inflection
+  const box2X = x10 + 14, box2Y = yFC - 60;
+  const box2 = svgEl('rect', {x:box2X, y:box2Y, width:130, height:56, rx:6, fill:'#0d1a14', stroke:C.green, 'stroke-width':'1', 'stroke-opacity':'0.7'});
+  svg.appendChild(box2);
+  text(svg, box2X+65, box2Y+14, '1st MRR: $50/mo', C.green, 10, 'middle', '600');
+  text(svg, box2X+65, box2Y+29, 'ARR: $600', C.muted, 9, 'middle');
+  text(svg, box2X+65, box2Y+44, 'Est. Co. Value: ~$6K', '#a855f7', 10, 'middle', '700');
+  svg.appendChild(svgEl('line', {x1:box2X, y1:box2Y+28, x2:x10+3, y2:yFC-5, stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'3 2', 'stroke-opacity':'0.6'}));
+  svg.appendChild(svgEl('circle', {cx:x10, cy:yFC, r:5, fill:C.green, stroke:C.card, 'stroke-width':2}));
+
+  // ── Time bracket: 0 → 10 weeks ──
+  const bracketY = py + ph + 26;
+  const bx0 = X(0), bx10 = X(FIRST_CUSTOMER);
+  line(svg, bx0, bracketY, bx10, bracketY, C.blue, 1.5);
+  line(svg, bx0, bracketY-5, bx0, bracketY+5, C.blue, 1.5);
+  line(svg, bx10, bracketY-5, bx10, bracketY+5, C.blue, 1.5);
+  text(svg, (bx0+bx10)/2, bracketY-4, '← 10 weeks to first revenue →', C.blue, 9, 'middle', '600');
 })();
 
 /* ─────────────── CHART 2: BREAK-EVEN ─────────────── */

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brainshop Business Charts — Demo</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #21262d;
+  }
+  .logo {
+    width: 32px; height: 32px;
+    background: #3b82f6;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white; font-weight: 700;
+  }
+  .header-title { color: #e6edf3; font-size: 18px; font-weight: 600; }
+  .header-sub { color: #8b949e; font-size: 13px; margin-top: 2px; }
+  .meeting-banner {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .meeting-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ef4444;
+    margin-top: 5px; flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .meeting-label { color: #8b949e; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .meeting-text { color: #e6edf3; font-size: 13px; line-height: 1.6; }
+  .charts-grid { display: flex; flex-direction: column; gap: 40px; max-width: 900px; margin: 0 auto; }
+  .chart-section { }
+  .chart-label {
+    color: #8b949e; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .chart-label::before {
+    content: '';
+    display: block; width: 16px; height: 1px; background: #30363d;
+  }
+  #root { }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">B</div>
+  <div>
+    <div class="header-title">Brainshop</div>
+    <div class="header-sub">Business Charts — Live Preview</div>
+  </div>
+</div>
+
+<div class="meeting-banner">
+  <div class="meeting-dot"></div>
+  <div>
+    <div class="meeting-label">Meeting context detected</div>
+    <div class="meeting-text">
+      "...so our total build cost is around $5,000, we're targeting a launch in 8 weeks,
+      and honestly if we get our first paying customer by week 12 at $50/month,
+      that's our proof of viability. We're charging $15 per user, server costs us about $5 per user,
+      and we need to figure out which features actually belong in the MVP..."
+    </div>
+  </div>
+</div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const {
+  LineChart, Line, AreaChart, Area,
+  XAxis, YAxis, CartesianGrid, Tooltip,
+  ReferenceLine, Legend, ResponsiveContainer,
+  ScatterChart, Scatter, Cell,
+} = Recharts;
+
+const THEME = {
+  bg: '#0d1117',
+  card: '#161b22',
+  cardBorder: '#30363d',
+  text: '#e6edf3',
+  textMuted: '#8b949e',
+  accent: '#3b82f6',
+  accentGreen: '#00d26a',
+  accentAmber: '#f59e0b',
+  accentRed: '#ef4444',
+  accentPurple: '#a855f7',
+  grid: '#21262d',
+};
+
+/* ─────────────────────────────────────────────
+   CHART 1: MVP VALIDATION CURVE
+───────────────────────────────────────────── */
+const MVP_CONFIG = {
+  totalBurnCost: 5000,
+  weeksToLaunch: 8,
+  firstCustomerWeek: 12,
+  pricePerCustomer: 50,
+  currency: '$',
+};
+
+function buildJCurveData(cfg) {
+  const { totalBurnCost, weeksToLaunch, firstCustomerWeek, pricePerCustomer } = cfg;
+  const burnPerWeek = totalBurnCost / weeksToLaunch;
+  const data = [];
+
+  for (let w = 0; w <= weeksToLaunch; w++) {
+    data.push({ week: w, value: Math.round(-(burnPerWeek * w)) });
+  }
+  for (let w = weeksToLaunch + 1; w < firstCustomerWeek; w++) {
+    const drift = totalBurnCost * 0.04 * (w - weeksToLaunch);
+    data.push({ week: w, value: Math.round(-(totalBurnCost + drift)) });
+  }
+  const bottom = data[data.length - 1].value;
+  for (let w = firstCustomerWeek; w <= firstCustomerWeek + 7; w++) {
+    const r = pricePerCustomer * Math.pow(w - firstCustomerWeek, 1.6) * 0.5;
+    data.push({ week: w, value: Math.round(bottom + r) });
+  }
+  return data;
+}
+
+const MVPTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  const val = payload[0].value;
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 8, padding: '10px 14px' }}>
+      <p style={{ color: THEME.textMuted, margin: 0, fontSize: 12 }}>Week {label}</p>
+      <p style={{ color: val >= 0 ? THEME.accentGreen : THEME.accentAmber, margin: '4px 0 0', fontWeight: 600, fontSize: 15 }}>
+        {val >= 0 ? '+' : ''}{MVP_CONFIG.currency}{Math.abs(val).toLocaleString()}
+      </p>
+    </div>
+  );
+};
+
+function MVPValidationCurve() {
+  const data = buildJCurveData(MVP_CONFIG);
+  const minVal = Math.min(...data.map(d => d.value));
+  const maxVal = Math.max(...data.map(d => d.value));
+
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 12, padding: 24 }}>
+      <h3 style={{ color: THEME.text, margin: '0 0 4px', fontSize: 18, fontWeight: 600 }}>MVP Validation Curve</h3>
+      <p style={{ color: THEME.textMuted, margin: '0 0 24px', fontSize: 13 }}>Your startup journey from first line of code to first paying customer</p>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 60 }}>
+          <defs>
+            <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={THEME.accent} stopOpacity={0.15} />
+              <stop offset="95%" stopColor={THEME.accent} stopOpacity={0.01} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={THEME.grid} />
+          <XAxis dataKey="week" stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            label={{ value: 'Time (Weeks)', position: 'insideBottom', offset: -10, fill: THEME.textMuted, fontSize: 12 }} />
+          <YAxis stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            tickFormatter={v => `$${Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v}`}
+            domain={[minVal * 1.2, maxVal * 1.8]} />
+          <Tooltip content={<MVPTooltip />} />
+          <ReferenceLine y={0} stroke={THEME.textMuted} strokeDasharray="4 4" strokeWidth={1} />
+          <ReferenceLine x={MVP_CONFIG.weeksToLaunch} stroke={THEME.accentAmber} strokeWidth={2}
+            label={{ value: 'MVP Launch', position: 'insideTopRight', fill: THEME.accentAmber, fontSize: 11 }} />
+          <ReferenceLine x={MVP_CONFIG.firstCustomerWeek} stroke={THEME.accentGreen} strokeWidth={2} strokeDasharray="6 3"
+            label={{ value: '🎉 First Customer', position: 'insideTopLeft', fill: THEME.accentGreen, fontSize: 11 }} />
+          <Area type="monotone" dataKey="value" stroke={THEME.accent} strokeWidth={2.5}
+            fill="url(#curveGradient)" dot={false}
+            activeDot={{ r: 5, fill: THEME.accent, stroke: THEME.card, strokeWidth: 2 }} />
+        </AreaChart>
+      </ResponsiveContainer>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+        {[
+          { label: 'Total Burn', value: '$5,000', color: THEME.accentAmber },
+          { label: 'Weeks to Launch', value: '8w', color: THEME.accent },
+          { label: 'First Revenue', value: '$50', color: THEME.accentGreen },
+        ].map(m => (
+          <div key={m.label} style={{ flex: 1, background: THEME.bg, borderRadius: 8, padding: '12px 16px', border: `1px solid ${THEME.cardBorder}` }}>
+            <p style={{ color: THEME.textMuted, margin: 0, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</p>
+            <p style={{ color: m.color, margin: '4px 0 0', fontSize: 20, fontWeight: 700 }}>{m.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Explanation */}
+      <div style={{ marginTop: 16, background: THEME.bg, border: `1px solid ${THEME.cardBorder}`, borderRadius: 10, padding: '16px 20px' }}>
+        <p style={{ color: THEME.text, fontSize: 13, fontWeight: 600, margin: '0 0 12px' }}>How to read this chart</p>
+        {[
+          { color: THEME.accentAmber, label: 'The Trough (going down)', text: 'Every dollar and hour spent before launch. You\'re running on assumptions — no market signal yet.' },
+          { color: THEME.accentAmber, label: 'MVP Launch (orange line)', text: 'Maximum resources spent without return. The product is live, but viability is still unproven.' },
+          { color: THEME.accentGreen, label: 'First Paying Customer (green line)', text: 'The inflection point. Someone chose your product over every alternative and paid for it. The trajectory has permanently changed — you now have a fact, not a theory.' },
+          { color: THEME.accent, label: 'The upward curve', text: 'Still below zero until break-even, but the direction is everything.' },
+        ].map(item => (
+          <div key={item.label} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+            <div style={{ width: 3, minWidth: 3, borderRadius: 2, alignSelf: 'stretch', background: item.color }} />
+            <div>
+              <span style={{ color: THEME.text, fontSize: 12, fontWeight: 600 }}>{item.label} — </span>
+              <span style={{ color: THEME.textMuted, fontSize: 12, lineHeight: 1.5 }}>{item.text}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   CHART 2: BREAK-EVEN ANALYSIS
+───────────────────────────────────────────── */
+const BE_CONFIG = { fixedCost: 5000, variableCostPerUser: 5, pricePerUser: 15, currency: '$' };
+
+function buildBreakEvenData(cfg) {
+  const { fixedCost, variableCostPerUser, pricePerUser } = cfg;
+  const margin = pricePerUser - variableCostPerUser;
+  const breakEven = Math.ceil(fixedCost / margin);
+  const maxUsers = Math.ceil(breakEven * 2.2);
+  const step = Math.max(1, Math.ceil(maxUsers / 30));
+  const data = [];
+  for (let u = 0; u <= maxUsers; u += step) {
+    data.push({ users: u, totalCost: fixedCost + variableCostPerUser * u, revenue: pricePerUser * u });
+  }
+  data.push({ users: breakEven, totalCost: fixedCost + variableCostPerUser * breakEven, revenue: pricePerUser * breakEven });
+  data.sort((a, b) => a.users - b.users);
+  return { data, breakEven, margin };
+}
+
+const BETooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  const cost = payload.find(p => p.dataKey === 'totalCost')?.value;
+  const rev = payload.find(p => p.dataKey === 'revenue')?.value;
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 8, padding: '10px 14px' }}>
+      <p style={{ color: THEME.textMuted, margin: 0, fontSize: 12 }}>{label} users</p>
+      {cost !== undefined && <p style={{ color: THEME.accentRed, margin: '4px 0 0', fontWeight: 600, fontSize: 13 }}>Cost: ${cost.toLocaleString()}</p>}
+      {rev !== undefined && <p style={{ color: THEME.accentGreen, margin: '2px 0 0', fontWeight: 600, fontSize: 13 }}>Revenue: ${rev.toLocaleString()}</p>}
+      {cost !== undefined && rev !== undefined && (
+        <p style={{ color: rev > cost ? THEME.accentGreen : THEME.accentRed, margin: '6px 0 0', fontSize: 12, borderTop: `1px solid ${THEME.cardBorder}`, paddingTop: 6 }}>
+          {rev > cost ? `+$${(rev - cost).toLocaleString()} profit` : `$${(cost - rev).toLocaleString()} loss`}
+        </p>
+      )}
+    </div>
+  );
+};
+
+function BreakEvenChart() {
+  const { data, breakEven, margin } = buildBreakEvenData(BE_CONFIG);
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 12, padding: 24 }}>
+      <h3 style={{ color: THEME.text, margin: '0 0 4px', fontSize: 18, fontWeight: 600 }}>Break-Even Analysis</h3>
+      <p style={{ color: THEME.textMuted, margin: '0 0 24px', fontSize: 13 }}>
+        You need <strong style={{ color: THEME.accentGreen }}>{breakEven} users</strong> to cover all costs at ${BE_CONFIG.pricePerUser}/user
+      </p>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 60 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={THEME.grid} />
+          <XAxis dataKey="users" stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            label={{ value: 'Number of users', position: 'insideBottom', offset: -10, fill: THEME.textMuted, fontSize: 12 }} />
+          <YAxis stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            tickFormatter={v => `$${v >= 1000 ? (v/1000).toFixed(0)+'k' : v}`} />
+          <Tooltip content={<BETooltip />} />
+          <Legend wrapperStyle={{ color: THEME.textMuted, fontSize: 13, paddingTop: 12 }} />
+          <ReferenceLine x={breakEven} stroke={THEME.accentGreen} strokeWidth={2} strokeDasharray="6 3"
+            label={{ value: `Break-Even: ${breakEven}`, position: 'insideTopRight', fill: THEME.accentGreen, fontSize: 11 }} />
+          <Line type="monotone" dataKey="totalCost" name="Total Cost" stroke={THEME.accentRed} strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+          <Line type="monotone" dataKey="revenue" name="Revenue" stroke={THEME.accentGreen} strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+        {[
+          { label: 'Fixed Cost', value: '$5,000', sub: 'to build & launch', color: THEME.accentRed },
+          { label: 'Margin / User', value: `$${margin}/mo`, sub: 'price − variable cost', color: THEME.accent },
+          { label: 'Break-Even', value: `${breakEven} users`, sub: 'to reach profitability', color: THEME.accentGreen },
+        ].map(m => (
+          <div key={m.label} style={{ flex: 1, background: THEME.bg, borderRadius: 8, padding: '12px 16px', border: `1px solid ${THEME.cardBorder}` }}>
+            <p style={{ color: THEME.textMuted, margin: 0, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</p>
+            <p style={{ color: m.color, margin: '4px 0 2px', fontSize: 18, fontWeight: 700 }}>{m.value}</p>
+            <p style={{ color: THEME.textMuted, margin: 0, fontSize: 11 }}>{m.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Explanation */}
+      <div style={{ marginTop: 16, background: THEME.bg, border: `1px solid ${THEME.cardBorder}`, borderRadius: 10, padding: '16px 20px' }}>
+        <p style={{ color: THEME.text, fontSize: 13, fontWeight: 600, margin: '0 0 12px' }}>How to read this chart</p>
+        {[
+          { color: THEME.accentRed, label: 'Red Line — Total Cost', text: 'Starts at $5,000 (your fixed investment) and rises by $5 for every user you add.' },
+          { color: THEME.accentGreen, label: 'Green Line — Revenue', text: 'Starts at $0. Grows $15 per user. It begins below the cost line because your fixed investment was already paid.' },
+          { color: THEME.accentGreen, label: `The Crossing Point — ${breakEven} Users`, text: 'Where green crosses red. Before this, every user reduces your loss. After this, every user adds pure profit.' },
+          { color: THEME.textMuted, label: 'What this does NOT show', text: 'Churn, growth rate, or time. This is the math snapshot — not a forecast. Estimate monthly acquisition to make it real.' },
+        ].map(item => (
+          <div key={item.label} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+            <div style={{ width: 3, minWidth: 3, borderRadius: 2, alignSelf: 'stretch', background: item.color }} />
+            <div>
+              <span style={{ color: THEME.text, fontSize: 12, fontWeight: 600 }}>{item.label} — </span>
+              <span style={{ color: THEME.textMuted, fontSize: 12, lineHeight: 1.5 }}>{item.text}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   CHART 3: VIABILITY MATRIX
+───────────────────────────────────────────── */
+const FEATURES = [
+  { name: 'Core Auth',       value: 9, cost: 3 },
+  { name: 'AI Summaries',    value: 8, cost: 5 },
+  { name: 'Calendar Sync',   value: 7, cost: 7 },
+  { name: 'Export to PDF',   value: 5, cost: 2 },
+  { name: 'CRM Integration', value: 6, cost: 8 },
+  { name: 'Custom Branding', value: 3, cost: 6 },
+  { name: 'Live Captions',   value: 9, cost: 9 },
+  { name: 'Quick Tags',      value: 4, cost: 2 },
+];
+
+function getQuadrant(cost, value) {
+  if (cost <= 5 && value > 5) return { label: 'Sweet Spot',  color: THEME.accentGreen };
+  if (cost > 5  && value > 5) return { label: 'Build Later', color: THEME.accent };
+  if (cost > 5  && value <= 5) return { label: 'Skip',       color: THEME.accentRed };
+  return                              { label: 'Quick Win',   color: THEME.accentAmber };
+}
+
+const MatrixTooltip = ({ active, payload }) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  const q = getQuadrant(d.cost, d.value);
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 8, padding: '10px 14px', maxWidth: 180 }}>
+      <p style={{ color: THEME.text, margin: 0, fontWeight: 600, fontSize: 14 }}>{d.name}</p>
+      <p style={{ color: THEME.textMuted, margin: '4px 0 0', fontSize: 12 }}>
+        Value: <strong style={{ color: THEME.accentGreen }}>{d.value}/10</strong>
+        {' · '}Cost: <strong style={{ color: THEME.accentRed }}>{d.cost}/10</strong>
+      </p>
+      <p style={{ color: q.color, margin: '6px 0 0', fontSize: 12, fontWeight: 600 }}>→ {q.label}</p>
+    </div>
+  );
+};
+
+function ViabilityMatrix() {
+  return (
+    <div style={{ background: THEME.card, border: `1px solid ${THEME.cardBorder}`, borderRadius: 12, padding: 24 }}>
+      <h3 style={{ color: THEME.text, margin: '0 0 4px', fontSize: 18, fontWeight: 600 }}>Feature Viability Matrix</h3>
+      <p style={{ color: THEME.textMuted, margin: '0 0 24px', fontSize: 13 }}>
+        Features from the conversation — plotted by customer value vs. cost to build
+      </p>
+
+      <ResponsiveContainer width="100%" height={360}>
+        <ScatterChart margin={{ top: 20, right: 30, bottom: 30, left: 30 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={THEME.grid} />
+          <XAxis dataKey="cost" type="number" domain={[0, 10]} name="Cost to Build"
+            stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            label={{ value: 'Cost / Effort to Build →', position: 'insideBottom', offset: -15, fill: THEME.textMuted, fontSize: 12 }} />
+          <YAxis dataKey="value" type="number" domain={[0, 10]} name="Customer Value"
+            stroke={THEME.textMuted} tick={{ fill: THEME.textMuted, fontSize: 12 }}
+            label={{ value: '↑ Customer Value', angle: -90, position: 'insideLeft', offset: 15, fill: THEME.textMuted, fontSize: 12 }} />
+          <Tooltip content={<MatrixTooltip />} cursor={{ strokeDasharray: '3 3', stroke: THEME.textMuted }} />
+          <ReferenceLine x={5} stroke={THEME.cardBorder} strokeWidth={1.5} />
+          <ReferenceLine y={5} stroke={THEME.cardBorder} strokeWidth={1.5} />
+
+          {/* Quadrant labels — rendered as reference lines with labels */}
+          <ReferenceLine x={2.5} stroke="transparent" label={{ value: 'SWEET SPOT', position: 'insideTop', fill: THEME.accentGreen, fontSize: 9, fontWeight: 700, opacity: 0.5 }} />
+
+          <Scatter data={FEATURES} name="Features">
+            {FEATURES.map((f, i) => (
+              <Cell key={i} fill={getQuadrant(f.cost, f.value).color} fillOpacity={0.9} r={10} />
+            ))}
+          </Scatter>
+        </ScatterChart>
+      </ResponsiveContainer>
+
+      {/* Feature legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
+        {FEATURES.map(f => {
+          const q = getQuadrant(f.cost, f.value);
+          return (
+            <div key={f.name} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: THEME.bg, borderRadius: 6, padding: '6px 10px',
+              border: `1px solid ${THEME.cardBorder}`,
+            }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: q.color }} />
+              <span style={{ color: THEME.text, fontSize: 12 }}>{f.name}</span>
+              <span style={{ color: THEME.textMuted, fontSize: 11 }}>({q.label})</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quadrant key */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
+        {[
+          { label: 'Sweet Spot', desc: 'High value, low cost — build these first', color: THEME.accentGreen },
+          { label: 'Build Later', desc: 'High value, high cost — plan for v2', color: THEME.accent },
+          { label: 'Quick Win', desc: 'Low value, easy — fast validation tool', color: THEME.accentAmber },
+          { label: 'Skip', desc: 'Low value, high effort — cut from MVP', color: THEME.accentRed },
+        ].map(q => (
+          <div key={q.label} style={{ display: 'flex', gap: 10, alignItems: 'center', background: THEME.bg, borderRadius: 8, padding: '10px 14px', border: `1px solid ${THEME.cardBorder}` }}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: q.color, flexShrink: 0 }} />
+            <div>
+              <p style={{ color: THEME.text, margin: 0, fontSize: 13, fontWeight: 600 }}>{q.label}</p>
+              <p style={{ color: THEME.textMuted, margin: 0, fontSize: 11 }}>{q.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Explanation */}
+      <div style={{ marginTop: 16, background: THEME.bg, border: `1px solid ${THEME.cardBorder}`, borderRadius: 10, padding: '16px 20px' }}>
+        <p style={{ color: THEME.text, fontSize: 13, fontWeight: 600, margin: '0 0 12px' }}>How to read this chart</p>
+        {[
+          { color: THEME.textMuted, label: 'X-Axis (left = easy, right = hard)', text: 'Your team\'s estimate of engineering effort. Low = days. High = weeks or months.' },
+          { color: THEME.textMuted, label: 'Y-Axis (bottom = meh, top = must-have)', text: 'How strongly your target customer wants this — based on interviews, not opinion.' },
+          { color: THEME.accentGreen, label: 'Green (top-left) = Your MVP', text: 'Maximum customer impact for minimum build effort. Only these belong in the MVP.' },
+          { color: THEME.accentRed, label: 'Red (bottom-right) = Delete', text: 'High effort, low value. These are why MVPs get bloated and delayed. Cut without guilt.' },
+        ].map(item => (
+          <div key={item.label} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+            <div style={{ width: 3, minWidth: 3, borderRadius: 2, alignSelf: 'stretch', background: item.color }} />
+            <div>
+              <span style={{ color: THEME.text, fontSize: 12, fontWeight: 600 }}>{item.label} — </span>
+              <span style={{ color: THEME.textMuted, fontSize: 12, lineHeight: 1.5 }}>{item.text}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   APP
+───────────────────────────────────────────── */
+function App() {
+  const sections = [
+    { label: 'Chart 1 of 3 — MVP Timeline', component: <MVPValidationCurve /> },
+    { label: 'Chart 2 of 3 — Unit Economics', component: <BreakEvenChart /> },
+    { label: 'Chart 3 of 3 — Feature Prioritization', component: <ViabilityMatrix /> },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 40, maxWidth: 900, margin: '0 auto' }}>
+      {sections.map(s => (
+        <div key={s.label}>
+          <div style={{
+            color: '#8b949e', fontSize: 11, textTransform: 'uppercase',
+            letterSpacing: '0.08em', marginBottom: 10,
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}>
+            <div style={{ width: 16, height: 1, background: '#30363d' }} />
+            {s.label}
+          </div>
+          {s.component}
+        </div>
+      ))}
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

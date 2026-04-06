@@ -163,73 +163,214 @@ const PULSE_GAP     = 0.09;   // t-space between the 3 co-traveling pulses
 
 // ── Avatar SVGs ─────────────────────────────────────────
 const AVATARS = [
-  // 1 – Glasses + beard
+
+  // 1 – Round glasses + full beard
   `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="33" cy="66" r="22" fill="#2b2b2b"/>
-    <rect x="27" y="52" width="12" height="10" rx="5" fill="#555"/>
-    <circle cx="33" cy="31" r="19" fill="#555"/>
-    <path d="M14 31 Q33 50 52 31 Q49 48 33 51 Q17 48 14 31Z" fill="#444"/>
-    <rect x="16" y="26" width="13" height="9" rx="3.5" fill="none" stroke="#888" stroke-width="1.8"/>
-    <rect x="37" y="26" width="13" height="9" rx="3.5" fill="none" stroke="#888" stroke-width="1.8"/>
-    <line x1="29" y1="30.5" x2="37" y2="30.5" stroke="#888" stroke-width="1.8"/>
-    <circle cx="22.5" cy="30.5" r="2" fill="#222"/>
-    <circle cx="43.5" cy="30.5" r="2" fill="#222"/>
+    <defs>
+      <radialGradient id="f1" cx="42%" cy="30%" r="62%">
+        <stop offset="0%"   stop-color="#d4d4d4"/>
+        <stop offset="52%"  stop-color="#ababab"/>
+        <stop offset="100%" stop-color="#6e6e6e"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 52 33 51 Q56 52 64 66Z" fill="#383838"/>
+    <!-- Neck -->
+    <ellipse cx="33" cy="53" rx="7" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="28" rx="21" ry="23" fill="url(#f1)"/>
+    <!-- Hair -->
+    <path d="M12 20 Q12 3 33 3 Q54 3 54 20 L53 13 Q50 4 33 4 Q16 4 13 13Z" fill="#1e1e1e"/>
+    <path d="M12 20 Q11 10 13 8" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <path d="M54 20 Q55 10 53 8" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <!-- Beard -->
+    <path d="M12 34 Q11 58 33 59 Q55 58 54 34 Q49 47 33 47 Q17 47 12 34Z" fill="#252525"/>
+    <!-- Moustache -->
+    <path d="M22 37 Q27.5 41 33 40 Q38.5 41 44 37 Q38 34 33 35 Q28 34 22 37Z" fill="#1e1e1e"/>
+    <!-- Round glasses left -->
+    <circle cx="21" cy="29" r="8" fill="none" stroke="#5e5e5e" stroke-width="2.2"/>
+    <!-- Round glasses right -->
+    <circle cx="45" cy="29" r="8" fill="none" stroke="#5e5e5e" stroke-width="2.2"/>
+    <!-- Bridge -->
+    <line x1="29" y1="29" x2="37" y2="29" stroke="#5e5e5e" stroke-width="2"/>
+    <!-- Nose pads -->
+    <line x1="13" y1="28" x2="10" y2="31" stroke="#5e5e5e" stroke-width="1.4"/>
+    <line x1="53" y1="28" x2="56" y2="31" stroke="#5e5e5e" stroke-width="1.4"/>
+    <!-- Eyes -->
+    <circle cx="21" cy="29" r="3.2" fill="#1a1a1a"/>
+    <circle cx="45" cy="29" r="3.2" fill="#1a1a1a"/>
+    <circle cx="22.2" cy="27.8" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="46.2" cy="27.8" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Nose shadow -->
+    <path d="M30 34 Q33 38 36 34" fill="none" stroke="#909090" stroke-width="1" opacity="0.6"/>
   </svg>`,
 
-  // 2 – Wide brim hat
+  // 2 – Wide-brim hat + beard
   `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="33" cy="66" r="22" fill="#2b2b2b"/>
-    <rect x="27" y="52" width="12" height="10" rx="5" fill="#666"/>
-    <circle cx="33" cy="35" r="18" fill="#666"/>
-    <ellipse cx="33" cy="21" rx="26" ry="5.5" fill="#3a3a3a"/>
-    <rect x="20" y="9" width="26" height="14" rx="5" fill="#3a3a3a"/>
-    <circle cx="27" cy="35" r="2.5" fill="#222"/>
-    <circle cx="39" cy="35" r="2.5" fill="#222"/>
-    <path d="M27 42 Q33 47 39 42" stroke="#444" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <defs>
+      <radialGradient id="f2" cx="44%" cy="50%" r="58%">
+        <stop offset="0%"   stop-color="#d0d0d0"/>
+        <stop offset="50%"  stop-color="#acacac"/>
+        <stop offset="100%" stop-color="#6a6a6a"/>
+      </radialGradient>
+      <radialGradient id="hat2" cx="40%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#7a7a7a"/>
+        <stop offset="100%" stop-color="#3c3c3c"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 53 33 52 Q56 53 64 66Z" fill="#383838"/>
+    <!-- Neck -->
+    <ellipse cx="33" cy="54" rx="7" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="38" rx="19" ry="18" fill="url(#f2)"/>
+    <!-- Beard / stubble -->
+    <path d="M14 42 Q14 58 33 59 Q52 58 52 42 Q47 52 33 52 Q19 52 14 42Z" fill="#363636"/>
+    <!-- Short beard texture lines -->
+    <path d="M19 45 Q24 48 29 46" fill="none" stroke="#2a2a2a" stroke-width="0.8" opacity="0.7"/>
+    <path d="M37 46 Q42 48 47 45" fill="none" stroke="#2a2a2a" stroke-width="0.8" opacity="0.7"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="37" rx="3" ry="2.5" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="37" rx="3" ry="2.5" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="36" r="1" fill="white" opacity="0.65"/>
+    <circle cx="42.2" cy="36" r="1" fill="white" opacity="0.65"/>
+    <!-- Eyebrows -->
+    <path d="M21 33 Q25 31 29 33" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 33 Q41 31 45 33" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30 41 Q33 44 36 41" fill="none" stroke="#888" stroke-width="1.1" opacity="0.6"/>
+    <!-- Hat brim (wide) -->
+    <ellipse cx="33" cy="24" rx="29" ry="6" fill="url(#hat2)"/>
+    <!-- Hat crown -->
+    <path d="M14 24 Q14 8 33 7 Q52 8 52 24Z" fill="url(#hat2)"/>
+    <!-- Hat band -->
+    <path d="M14 22 Q14 26 33 27 Q52 26 52 22" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <!-- Hat highlight -->
+    <path d="M18 15 Q28 11 38 13" fill="none" stroke="#909090" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
   </svg>`,
 
   // 3 – Astronaut helmet
   `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="33" cy="63" rx="22" ry="8" fill="#3a3a3a"/>
-    <circle cx="33" cy="34" r="22" fill="#4a4a4a"/>
-    <ellipse cx="33" cy="34" rx="16" ry="14" fill="#2a2a2a"/>
-    <ellipse cx="33" cy="32" rx="13" ry="10" fill="#333"/>
-    <circle cx="27" cy="32" r="2.2" fill="#aaa" opacity="0.7"/>
-    <circle cx="39" cy="32" r="2.2" fill="#aaa" opacity="0.7"/>
-    <ellipse cx="27" cy="32" rx="2.8" ry="2.2" fill="none" stroke="#555" stroke-width="1"/>
-    <ellipse cx="39" cy="32" rx="2.8" ry="2.2" fill="none" stroke="#555" stroke-width="1"/>
-    <circle cx="16" cy="25" r="3.5" fill="#383838" stroke="#555" stroke-width="1"/>
-    <circle cx="50" cy="25" r="3.5" fill="#383838" stroke="#555" stroke-width="1"/>
-    <rect x="29" y="54" width="8" height="5" rx="2" fill="#3a3a3a"/>
+    <defs>
+      <radialGradient id="helm" cx="38%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#e0e0e0"/>
+        <stop offset="60%"  stop-color="#c0c0c0"/>
+        <stop offset="100%" stop-color="#8a8a8a"/>
+      </radialGradient>
+      <radialGradient id="visor" cx="35%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="#555"/>
+        <stop offset="100%" stop-color="#1a1a1a"/>
+      </radialGradient>
+    </defs>
+    <!-- Suit collar -->
+    <path d="M6 66 Q12 50 33 49 Q54 50 60 66Z" fill="#555"/>
+    <ellipse cx="33" cy="52" rx="14" ry="6" fill="#666"/>
+    <!-- Neck ring connector -->
+    <ellipse cx="33" cy="50" rx="11" ry="4" fill="#4a4a4a" stroke="#888" stroke-width="1"/>
+    <!-- Helmet sphere -->
+    <circle cx="33" cy="28" r="24" fill="url(#helm)"/>
+    <!-- Visor (dark, slightly recessed) -->
+    <ellipse cx="33" cy="27" rx="16" ry="12" fill="url(#visor)" rx="16" ry="12"/>
+    <!-- Visor reflection streak -->
+    <path d="M20 20 Q25 17 30 19" fill="none" stroke="white" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+    <!-- Visor frame -->
+    <ellipse cx="33" cy="27" rx="16" ry="12" fill="none" stroke="#999" stroke-width="1.5"/>
+    <!-- Eyes visible through visor -->
+    <circle cx="27" cy="27" r="2.5" fill="#4a4a4a"/>
+    <circle cx="39" cy="27" r="2.5" fill="#4a4a4a"/>
+    <circle cx="27.8" cy="26.1" r="0.9" fill="white" opacity="0.5"/>
+    <circle cx="39.8" cy="26.1" r="0.9" fill="white" opacity="0.5"/>
+    <!-- Helmet side bolts -->
+    <circle cx="10" cy="28" r="3.5" fill="#a0a0a0" stroke="#888" stroke-width="1"/>
+    <circle cx="56" cy="28" r="3.5" fill="#a0a0a0" stroke="#888" stroke-width="1"/>
+    <!-- Helmet top highlight -->
+    <path d="M22 10 Q33 5 44 10" fill="none" stroke="white" stroke-width="2.5" opacity="0.25" stroke-linecap="round"/>
+    <!-- Chin strap -->
+    <path d="M10 38 Q12 46 33 47 Q54 46 56 38" fill="none" stroke="#aaa" stroke-width="1.2" opacity="0.5"/>
   </svg>`,
 
-  // 4 – Curly / afro
+  // 4 – Woman, curly hair
   `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="33" cy="66" r="22" fill="#2b2b2b"/>
-    <rect x="27" y="52" width="12" height="10" rx="5" fill="#666"/>
-    <circle cx="33" cy="37" r="17" fill="#666"/>
-    <circle cx="33" cy="20" r="15" fill="#3a3a3a"/>
-    <circle cx="19" cy="27" r="9"  fill="#3a3a3a"/>
-    <circle cx="47" cy="27" r="9"  fill="#3a3a3a"/>
-    <circle cx="33" cy="12" r="7"  fill="#3a3a3a"/>
-    <circle cx="27" cy="37" r="2.5" fill="#222"/>
-    <circle cx="39" cy="37" r="2.5" fill="#222"/>
-    <path d="M27 44 Q33 49 39 44" stroke="#444" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <defs>
+      <radialGradient id="f4" cx="42%" cy="32%" r="60%">
+        <stop offset="0%"   stop-color="#d6d6d6"/>
+        <stop offset="52%"  stop-color="#aeaeae"/>
+        <stop offset="100%" stop-color="#707070"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q8 53 33 52 Q58 53 64 66Z" fill="#3a3a3a"/>
+    <ellipse cx="33" cy="54" rx="8" ry="5" fill="#a0a0a0"/>
+    <!-- Curly hair volume (back layer) -->
+    <circle cx="33" cy="20" r="18" fill="#2a2a2a"/>
+    <circle cx="16" cy="26" r="10" fill="#2a2a2a"/>
+    <circle cx="50" cy="26" r="10" fill="#2a2a2a"/>
+    <circle cx="22" cy="14" r="9" fill="#2a2a2a"/>
+    <circle cx="44" cy="14" r="9" fill="#2a2a2a"/>
+    <circle cx="33" cy="10" r="9" fill="#2a2a2a"/>
+    <!-- Face -->
+    <ellipse cx="33" cy="34" rx="18" ry="20" fill="url(#f4)"/>
+    <!-- Curly hair front wisps -->
+    <circle cx="15" cy="30" r="6" fill="#2e2e2e"/>
+    <circle cx="51" cy="30" r="6" fill="#2e2e2e"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="42.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Eyebrows (arched) -->
+    <path d="M21 26.5 Q25 24.5 29 26" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 26 Q41 24.5 45 26.5" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30.5 35 Q33 38 35.5 35" fill="none" stroke="#909090" stroke-width="1" opacity="0.7"/>
+    <!-- Smile -->
+    <path d="M26 42 Q33 47 40 42" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Cheek blush hints -->
+    <ellipse cx="20" cy="38" rx="5" ry="3" fill="#aaa" opacity="0.2"/>
+    <ellipse cx="46" cy="38" rx="5" ry="3" fill="#aaa" opacity="0.2"/>
   </svg>`,
 
-  // 5 – Side-part hair / feminine
+  // 5 – Side-part clean hair
   `<svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="33" cy="66" r="22" fill="#2b2b2b"/>
-    <rect x="27" y="52" width="12" height="10" rx="5" fill="#777"/>
-    <circle cx="33" cy="34" r="18" fill="#777"/>
-    <path d="M15 28 Q14 10 33 10 Q52 10 51 28 Q51 14 45 12 Q33 8 20 14 Z" fill="#3a3a3a"/>
-    <path d="M15 28 Q13 22 16 16" stroke="#3a3a3a" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <circle cx="27" cy="33" r="2.5" fill="#222"/>
-    <circle cx="39" cy="33" r="2.5" fill="#222"/>
-    <path d="M27 41 Q33 46 39 41" stroke="#555" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <circle cx="16" cy="35" r="2" fill="#666"/>
+    <defs>
+      <radialGradient id="f5" cx="44%" cy="32%" r="60%">
+        <stop offset="0%"   stop-color="#d3d3d3"/>
+        <stop offset="52%"  stop-color="#ababab"/>
+        <stop offset="100%" stop-color="#6c6c6c"/>
+      </radialGradient>
+      <radialGradient id="hair5" cx="30%" cy="20%" r="70%">
+        <stop offset="0%"   stop-color="#6a6a6a"/>
+        <stop offset="100%" stop-color="#222"/>
+      </radialGradient>
+    </defs>
+    <!-- Shoulders -->
+    <path d="M2 66 Q10 53 33 52 Q56 53 64 66Z" fill="#383838"/>
+    <ellipse cx="33" cy="54" rx="8" ry="5" fill="#9a9a9a"/>
+    <!-- Head -->
+    <ellipse cx="33" cy="32" rx="20" ry="22" fill="url(#f5)"/>
+    <!-- Hair (side-part swept style) -->
+    <path d="M13 24 Q13 4 33 4 Q50 4 53 18 L50 12 Q46 5 33 5 Q20 5 15 12Z" fill="url(#hair5)"/>
+    <!-- Side part sweep -->
+    <path d="M13 24 Q18 18 28 20 Q36 21 42 17" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-linecap="round"/>
+    <!-- Ear hints -->
+    <ellipse cx="13" cy="34" rx="3.5" ry="4.5" fill="#a8a8a8"/>
+    <ellipse cx="53" cy="34" rx="3.5" ry="4.5" fill="#a8a8a8"/>
+    <!-- Eyes -->
+    <ellipse cx="25" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <ellipse cx="41" cy="31" rx="3.2" ry="2.8" fill="#1a1a1a"/>
+    <circle cx="26.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <circle cx="42.2" cy="30" r="1.1" fill="white" opacity="0.7"/>
+    <!-- Eyebrows (straight) -->
+    <path d="M21 26 Q25 24.5 29 25.5" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M37 25.5 Q41 24.5 45 26" fill="none" stroke="#2e2e2e" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Nose -->
+    <path d="M30 36 Q33 40 36 36" fill="none" stroke="#909090" stroke-width="1.1" opacity="0.6"/>
+    <!-- Slight smile -->
+    <path d="M27 43 Q33 47 39 43" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-linecap="round"/>
   </svg>`
+
 ];
+
 
 // ── DOM setup ──────────────────────────────────────────
 const scene      = document.getElementById('scene');
@@ -251,116 +392,147 @@ const avatarEls = AVATARS.map((svg, i) => {
   const { x, y } = avatarPositions[i];
   const wrap = document.createElement('div');
   wrap.className = 'avatar-wrapper';
-  wrap.style.transform = `translate(${x - 33}px, ${y - 33}px)`;
+  wrap.style.transform = `translate(${x-33}px, ${y-33}px)`;
   wrap.innerHTML = `<div class="avatar-circle" id="av${i}">${svg}</div>`;
   scene.appendChild(wrap);
   return wrap.querySelector('.avatar-circle');
 });
 
-// ── Vein paths: tapered bezier + Y-junction branches ───
-const CURVE_OFFSETS = [-42, 34, -24, 38, -30];
+// ── Bezier helpers ──────────────────────────────────────
+function bezierPt(path, t) {
+  const { s, cp, e } = path;
+  const mt = 1-t;
+  return { x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
+           y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y };
+}
+function bezierPerp(path, t) {
+  const { s, cp, e } = path;
+  const mt = 1-t;
+  const tx = 2*(mt*(cp.x-s.x) + t*(e.x-cp.x));
+  const ty = 2*(mt*(cp.y-s.y) + t*(e.y-cp.y));
+  const l  = Math.hypot(tx, ty);
+  return { x: -ty/l, y: tx/l };   // unit perpendicular
+}
 
-const veinPaths = avatarPositions.map((pos, i) => {
-  const dx = CX - pos.x, dy = CY - pos.y;
+// ── Nerve paths: bezier + pre-baked strand & branch data ─
+const CURVE_OFFSETS = [-38, 30, -20, 34, -28];
+const STRAND_SEP    = 2.8;   // px between parallel fibers
+const WAVE_AMP      = 2.2;   // sinusoidal undulation amplitude
+const WAVE_FREQ     = 7;     // oscillation cycles along full path
+const NODE_TS       = [0.18, 0.36, 0.55, 0.73, 0.90]; // Nodes of Ranvier
+
+const nervePaths = avatarPositions.map((pos, i) => {
+  const dx = CX-pos.x, dy = CY-pos.y;
   const len = Math.hypot(dx, dy);
   const px = -dy/len, py = dx/len;
   const cp = {
     x: pos.x + dx*0.5 + px*CURVE_OFFSETS[i],
     y: pos.y + dy*0.5 + py*CURVE_OFFSETS[i]
   };
+  const path = { s: pos, cp, e: { x: CX, y: CY } };
 
-  // Two Y-junction side veins along the main trunk
-  const branches = [0.3, 0.64].map((t, j) => {
-    const mt  = 1-t;
-    const bx  = mt*mt*pos.x + 2*mt*t*cp.x + t*t*CX;
-    const by  = mt*mt*pos.y + 2*mt*t*cp.y + t*t*CY;
-    const tx2 = 2*(mt*(cp.x-pos.x) + t*(CX-cp.x));
-    const ty2 = 2*(mt*(cp.y-pos.y) + t*(CY-cp.y));
-    const tl  = Math.hypot(tx2, ty2);
-    const ux  = tx2/tl, uy = ty2/tl;   // unit tangent
-    const nx  = -uy,    ny = ux;        // perpendicular
-    const side   = (j + i) % 2 === 0 ? 1 : -1;
-    const brLen  = 15 + j*12;
-    const bdx    = (ux*0.55 + nx*side*0.85) * brLen;
-    const bdy    = (uy*0.55 + ny*side*0.85) * brLen;
-    // Tiny tertiary capillary at branch tip
-    const capLen = 7;
-    return {
-      t,
-      at:     { x: bx,           y: by },
-      end:    { x: bx+bdx,       y: by+bdy },
-      cap:    { x: bx+bdx + (ux*0.35 + nx*side*0.94)*capLen,
-                y: by+bdy + (uy*0.35 + ny*side*0.94)*capLen }
-    };
-  });
+  // Branch nerve: splits off at t≈0.45, grows ≈22px at an angle
+  const bt   = 0.44;
+  const mt   = 1-bt;
+  const bx   = mt*mt*pos.x + 2*mt*bt*cp.x + bt*bt*CX;
+  const by   = mt*mt*pos.y + 2*mt*bt*cp.y + bt*bt*CY;
+  const perp = bezierPerp(path, bt);
+  const tang = (() => { // unit tangent at bt
+    const tx = 2*(mt*(cp.x-pos.x)+bt*(CX-cp.x));
+    const ty = 2*(mt*(cp.y-pos.y)+bt*(CY-cp.y));
+    const l  = Math.hypot(tx,ty);
+    return { x: tx/l, y: ty/l };
+  })();
+  const side   = i % 2 === 0 ? 1 : -1;
+  const brLen  = 22;
+  const br2Len = 12;
+  const brEnd  = { x: bx+(tang.x*0.5+perp.x*side*0.87)*brLen,
+                   y: by+(tang.y*0.5+perp.y*side*0.87)*brLen };
+  const br2End = { x: brEnd.x+(tang.x*0.4+perp.x*side*0.92)*br2Len,
+                   y: brEnd.y+(tang.y*0.4+perp.y*side*0.92)*br2Len };
 
-  return { start: pos, cp, end: { x: CX, y: CY }, branches };
+  return { ...path, branch: { at:{x:bx,y:by}, end:brEnd, tip:br2End, side } };
 });
 
-function bezierPt(path, t) {
-  const { start: s, cp, end: e } = path;
-  const mt = 1-t;
-  return { x: mt*mt*s.x + 2*mt*t*cp.x + t*t*e.x,
-           y: mt*mt*s.y + 2*mt*t*cp.y + t*t*e.y };
+// ── Draw one nerve fiber strand (wavy line) ─────────────
+function drawStrand(path, offsetPx, phaseDeg, alpha, lineW) {
+  const N = 80;
+  ctx.beginPath();
+  for (let s = 0; s <= N; s++) {
+    const t    = s/N;
+    const pt   = bezierPt(path, t);
+    const perp = bezierPerp(path, t);
+    const wave = Math.sin(t * Math.PI * WAVE_FREQ + phaseDeg) * WAVE_AMP;
+    const off  = offsetPx + wave;
+    s === 0
+      ? ctx.moveTo(pt.x + perp.x*off, pt.y + perp.y*off)
+      : ctx.lineTo(pt.x + perp.x*off, pt.y + perp.y*off);
+  }
+  ctx.strokeStyle = `rgba(190,190,190,${alpha})`;
+  ctx.lineWidth   = lineW;
+  ctx.lineCap     = 'round';
+  ctx.setLineDash([]);
+  ctx.stroke();
 }
 
-// ── Draw one vein (tapered trunk + branch veins) ───────
-function drawVein(path, act) {
-  const base = 0.07 + act * 0.22;
+// ── Draw full nerve (3 strands + nodes + branch) ────────
+function drawNerve(path, act) {
+  const base = 0.06 + act * 0.22;
 
-  // Trunk: drawn segment-by-segment so width can taper
-  const N = 40;
-  for (let s = 0; s < N; s++) {
-    const t0 = s/N, t1 = (s+1)/N;
-    const p0 = bezierPt(path, t0), p1 = bezierPt(path, t1);
-    const taper = Math.pow((t0+t1)*0.5, 0.5); // 0 at avatar → 1 at hub
-    const mW    = 1.0 + taper * 6.5;           // 1px → 7.5px
-
-    // Soft outer glow halo
-    ctx.strokeStyle = `rgba(150,150,150,${base * 0.18})`;
-    ctx.lineWidth   = mW + 6; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
-
-    // Main vein wall
-    ctx.strokeStyle = `rgba(125,125,125,${base * 0.8})`;
-    ctx.lineWidth   = mW;
-    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
-
-    // Specular highlight (top edge of tube)
-    ctx.strokeStyle = `rgba(220,220,220,${base * 0.32})`;
-    ctx.lineWidth   = Math.max(0.4, mW * 0.26);
-    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+  // Myelin sheath glow (wide soft layer behind strands)
+  if (act > 0.03) {
+    ctx.beginPath();
+    ctx.moveTo(path.s.x, path.s.y);
+    ctx.quadraticCurveTo(path.cp.x, path.cp.y, path.e.x, path.e.y);
+    ctx.strokeStyle = `rgba(200,200,200,${act * 0.10})`;
+    ctx.lineWidth   = 14;
+    ctx.stroke();
   }
 
-  // Branch veins at Y-junctions
-  path.branches.forEach(br => {
-    const taper = Math.pow(br.t, 0.5);
-    const bW    = Math.max(0.5, 0.7 + taper * 2.8);
-
-    // Branch trunk
-    ctx.strokeStyle = `rgba(115,115,115,${base * 0.7})`;
-    ctx.lineWidth   = bW; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(br.at.x, br.at.y); ctx.lineTo(br.end.x, br.end.y); ctx.stroke();
-    ctx.strokeStyle = `rgba(200,200,200,${base * 0.28})`;
-    ctx.lineWidth   = Math.max(0.3, bW*0.28);
-    ctx.beginPath(); ctx.moveTo(br.at.x, br.at.y); ctx.lineTo(br.end.x, br.end.y); ctx.stroke();
-
-    // Capillary tip
-    ctx.strokeStyle = `rgba(105,105,105,${base * 0.5})`;
-    ctx.lineWidth   = Math.max(0.3, bW * 0.5);
-    ctx.beginPath(); ctx.moveTo(br.end.x, br.end.y); ctx.lineTo(br.cap.x, br.cap.y); ctx.stroke();
+  // 3 parallel nerve fibers with staggered wave phase
+  const strands = [
+    { off: -STRAND_SEP, phase: 0 },
+    { off:  0,          phase: Math.PI * 0.66 },
+    { off:  STRAND_SEP, phase: Math.PI * 1.33 },
+  ];
+  strands.forEach(({ off, phase }) => {
+    drawStrand(path, off, phase, base * 0.75, 0.75);
   });
 
-  // Junction node at avatar end
-  const h = bezierPt(path, 0);
-  ctx.fillStyle = `rgba(160,160,160,${base})`;
-  ctx.beginPath(); ctx.arc(h.x, h.y, 2.2, 0, Math.PI*2); ctx.fill();
+  // Nodes of Ranvier — small rings where myelin is absent
+  NODE_TS.forEach(t => {
+    const pt = bezierPt(path, t);
+    // Ring
+    ctx.strokeStyle = `rgba(210,210,210,${base * 1.4})`;
+    ctx.lineWidth   = 1.2;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.8, 0, Math.PI*2); ctx.stroke();
+    // Centre dot
+    ctx.fillStyle = `rgba(240,240,240,${base * 0.9})`;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 1.1, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Branch nerve (1 thinner fiber)
+  const br = path.branch;
+  drawStrand({ s: br.at, cp: {
+    x: (br.at.x+br.end.x)*0.5,
+    y: (br.at.y+br.end.y)*0.5
+  }, e: br.end }, 0, Math.PI*0.5, base*0.55, 0.55);
+  // Tiny secondary branch tip
+  drawStrand({ s: br.end, cp: {
+    x: (br.end.x+br.tip.x)*0.5,
+    y: (br.end.y+br.tip.y)*0.5
+  }, e: br.tip }, 0, Math.PI*1.1, base*0.38, 0.4);
+
+  // Terminal node at avatar end
+  const head = bezierPt(path, 0);
+  ctx.fillStyle   = `rgba(200,200,200,${base * 1.1})`;
+  ctx.beginPath(); ctx.arc(head.x, head.y, 2.5, 0, Math.PI*2); ctx.fill();
 }
 
-// ── Vein Pulse: 3 cells flowing together ───────────────
-class VeinPulse {
+// ── Action Potential pulse ──────────────────────────────
+class NervePulse {
   constructor(pathIdx, tOffset) {
-    this.path   = veinPaths[pathIdx];
+    this.path   = nervePaths[pathIdx];
     this.t      = -tOffset;
     this.isLead = tOffset === 0;
     this.done   = false;
@@ -371,35 +543,49 @@ class VeinPulse {
   }
   draw() {
     if (this.t <= 0) return;
-    const tc  = Math.min(1, this.t);
-    const pos = bezierPt(this.path, tc);
+    const tc = Math.min(1, this.t);
 
-    // Lit trail following the curved vein wall
-    const steps = 22, dt = 0.036;
+    // Depolarisation front — covers all 3 strands width
+    const steps = 26, dt = 0.033;
     for (let s = 1; s < steps; s++) {
       const tA = Math.max(0, tc - s*dt);
       const tB = Math.max(0, tc - (s-1)*dt);
       if (tA === tB) break;
       const pA = bezierPt(this.path, tA);
       const pB = bezierPt(this.path, tB);
-      const a  = (1 - s/steps) * 0.6 * (1 - tc*0.2);
-      const w  = 1.2 + tA * 5.5; // matches vein taper
-      ctx.strokeStyle = `rgba(215,215,215,${a})`;
-      ctx.lineWidth   = w; ctx.lineCap = 'round';
+      const a  = (1 - s/steps) * 0.65 * (1 - tc*0.15);
+      ctx.strokeStyle = `rgba(230,230,230,${a})`;
+      ctx.lineWidth   = 8 + (1-tA)*2; // slightly wider near avatar
+      ctx.lineCap     = 'round';
       ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pA.x, pA.y); ctx.stroke();
     }
 
-    // Blood-cell glow at head
-    const alpha = 0.9 - tc*0.15;
-    const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 11);
-    g.addColorStop(0,    `rgba(255,255,255,${alpha*0.8})`);
-    g.addColorStop(0.4,  `rgba(255,255,255,${alpha*0.35})`);
-    g.addColorStop(1,    `rgba(255,255,255,0)`);
+    // Flash at each Node of Ranvier as pulse passes
+    NODE_TS.forEach(nt => {
+      const dist = Math.abs(tc - nt);
+      if (dist < 0.06) {
+        const flash = (1 - dist/0.06) * 0.8;
+        const np = bezierPt(this.path, nt);
+        const fg = ctx.createRadialGradient(np.x, np.y, 0, np.x, np.y, 8);
+        fg.addColorStop(0, `rgba(255,255,255,${flash})`);
+        fg.addColorStop(1, `rgba(255,255,255,0)`);
+        ctx.fillStyle = fg;
+        ctx.beginPath(); ctx.arc(np.x, np.y, 8, 0, Math.PI*2); ctx.fill();
+      }
+    });
+
+    // Leading edge glow
+    const head  = bezierPt(this.path, tc);
+    const alpha = 0.92 - tc*0.12;
+    const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 13);
+    g.addColorStop(0,   `rgba(255,255,255,${alpha*0.85})`);
+    g.addColorStop(0.35,`rgba(255,255,255,${alpha*0.35})`);
+    g.addColorStop(1,   `rgba(255,255,255,0)`);
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(pos.x, pos.y, 11, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(head.x, head.y, 13, 0, Math.PI*2); ctx.fill();
 
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.beginPath(); ctx.arc(pos.x, pos.y, 3.0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(head.x, head.y, 2.8, 0, Math.PI*2); ctx.fill();
   }
 }
 
@@ -422,7 +608,7 @@ function pulseRings() {
 function sendThought(idx) {
   avatarEls[idx].classList.add('sent');
   pathActivity[idx] = 1.0;
-  [0, PULSE_GAP, PULSE_GAP*2].forEach(off => pulses.push(new VeinPulse(idx, off)));
+  [0, PULSE_GAP, PULSE_GAP*2].forEach(off => pulses.push(new NervePulse(idx, off)));
   pulseRings();
 }
 
@@ -449,7 +635,6 @@ function resetCycle() {
 
 function startCycle() {
   cyclePhase = 'running';
-  // All 5 fire at random times — organic, overlapping flow
   [0,1,2,3,4].forEach(idx => {
     const delay = Math.random() * 3500;
     thoughtTimers.push(setTimeout(() => sendThought(idx), delay));
@@ -460,13 +645,11 @@ function startCycle() {
 function animate() {
   ctx.clearRect(0, 0, W, H);
 
-  // Draw all vein paths (with activity glow)
-  veinPaths.forEach((path, i) => {
-    drawVein(path, pathActivity[i]);
+  nervePaths.forEach((path, i) => {
+    drawNerve(path, pathActivity[i]);
     if (pathActivity[i] > 0.01) pathActivity[i] *= 0.97;
   });
 
-  // Advance & draw pulses
   pulses = pulses.filter(p => {
     p.update(); p.draw();
     if (p.done) {

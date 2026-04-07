@@ -384,9 +384,24 @@
     .data-item:last-child { margin-bottom: 0; }
 
     .data-icon {
-      font-size: 13px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
-      margin-top: 1px;
+    }
+    .data-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke: #fbbf24;
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .data-label {
@@ -597,7 +612,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">💰</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <div>
           <div class="data-label">Signed contract value (ARR)</div>
           <div class="data-desc">The single biggest input — moves the valuation range by ±50%.</div>
@@ -606,7 +621,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">📈</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
         <div>
           <div class="data-label">Expansion signals from Yango</div>
           <div class="data-desc">NPS, seat growth, additional use cases requested.</div>
@@ -615,7 +630,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">🏢</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
         <div>
           <div class="data-label">2nd customer pipeline</div>
           <div class="data-desc">Named prospect at similar ACV instantly shifts scenario toward optimistic.</div>
@@ -624,7 +639,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">📊</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
         <div>
           <div class="data-label">Comparable funding rounds</div>
           <div class="data-desc">Recent pre-seed rounds in logistics / fleet SaaS in your region.</div>
@@ -633,7 +648,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">🔥</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <div>
           <div class="data-label">Burn rate & runway</div>
           <div class="data-desc">Affects how urgently you need to raise and your negotiating position.</div>
@@ -642,7 +657,7 @@
       </div>
 
       <div class="data-item">
-        <div class="data-icon">⚙️</div>
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div>
         <div>
           <div class="data-label">Gross margin %</div>
           <div class="data-desc">Higher margins (>70%) justify a higher revenue multiple.</div>

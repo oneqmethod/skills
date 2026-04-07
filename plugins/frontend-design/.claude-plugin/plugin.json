@@ -1,0 +1,8 @@
+{
+  "name": "frontend-design",
+  "description": "Frontend design system assistant for UI components, layouts, color palettes, typography, and accessibility best practices",
+  "author": {
+    "name": "Anthropic",
+    "email": "support@anthropic.com"
+  }
+}

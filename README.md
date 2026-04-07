@@ -58,3 +58,18 @@ Browser automation for web testing, form filling, and data extraction.
 
 [Full Documentation](plugins/agent-browser/README.md)
 
+---
+
+### frontend-design
+
+Frontend design assistant for UI components, layouts, and design systems.
+
+- Generate UI components with all interactive states (hover, focus, disabled)
+- Create color palettes and CSS design token systems
+- Build responsive layouts with flexbox and CSS grid
+- WCAG AA accessibility: contrast ratios, ARIA, keyboard navigation
+- Support for HTML/CSS, React + Tailwind, and CSS custom properties
+- Motion and micro-interactions with `prefers-reduced-motion` support
+
+[Full Documentation](plugins/frontend-design/README.md)
+

@@ -68,25 +68,23 @@ svg text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui
     </div>
   </div>
 
-  <!-- CHART 4: COMPANY VALUATION RANGE -->
+  <!-- CHART 4: COMPANY VALUATION — BEFORE vs AFTER -->
   <div>
-    <div class="section-label">Chart 4 — Company Valuation Range (Yango as 1st Strategic Customer)</div>
+    <div class="section-label">Chart 4 — Company Valuation: Pre-Development vs Post First Customer</div>
     <div class="card">
-      <h3>Company Valuation — With One Paying Customer</h3>
-      <p class="sub">
-        Three scenarios based on Yango as a strategic anchor.
-        <strong style="color:#a855f7">Recommended fundraising anchor: ₪5–7M.</strong>
-        One more customer pushes it to <strong style="color:#00d26a">₪10–15M</strong>.
-      </p>
-      <svg id="valuation" width="100%" height="260" viewBox="0 0 800 260"></svg>
+      <h3>What Is the Company Worth?</h3>
+      <p class="sub">The moment Yango pays — everything changes. Here is the before and after.</p>
+      <svg id="valuation" width="100%" height="280" viewBox="0 0 800 270"></svg>
       <div id="value-drivers" style="margin-top:16px"></div>
       <div class="explain" style="margin-top:16px">
         <h4>How to read this chart</h4>
-        <div class="explain-item"><div class="explain-bar" style="background:#f59e0b"></div><div><strong>Conservative (₪2–4M) — </strong><span>Priced as a risky early-stage startup with a single unproven customer. Use this only in a distressed or rushed deal.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>Reasonable (₪4–8M) — </strong><span>Market rate for a validated MVP with a paying strategic customer in a large market. The honest negotiation range.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>Optimistic (₪8–15M) — </strong><span>Justified if Yango is visibly happy, the platform is clearly repeatable, and a 2nd customer is in pipeline.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#a855f7"></div><div><strong>Purple band — Recommended anchor (₪5–7M) — </strong><span>Strong enough to be taken seriously. Conservative enough to close. The right number to walk into a room with.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>The green jump (₪10–15M) — </strong><span>What a second paying customer does to your story. It proves the model isn't dependent on one relationship — and valuation re-rates accordingly.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#ef4444"></div><div><strong>Before (left panel) — ₪0 market value — </strong><span>An idea with no paying customer has no verifiable market value. The only number that matters is what it costs to build: ₪18,500 ($5,000).</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>The arrow — 10 weeks, ₪5K invested — </strong><span>This is the entire journey. Build the MVP, land Yango, get paid. The ×1,000+ badge shows the value multiplier that crossing happens in those 10 weeks.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#f59e0b"></div><div><strong>Conservative (₪2–4M) — </strong><span>If negotiations are rushed or the buyer underweights strategic value. Use as your floor, not your ask.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>Reasonable (₪4–8M) — </strong><span>The honest market range for an MVP with one paying strategic customer in a large B2B market.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>Optimistic (₪8–15M) — </strong><span>Justified when Yango is visibly satisfied, the platform is repeatable, and a 2nd customer is in sight.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#a855f7"></div><div><strong>Recommended anchor — ₪5–7M — </strong><span>Strong enough to be taken seriously. Conservative enough to close. Walk into every room with this number.</span></div></div>
+        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>2nd customer jump — ₪10–15M — </strong><span>One more paying customer eliminates concentration risk and proves the model. The valuation re-rates immediately.</span></div></div>
       </div>
     </div>
   </div>
@@ -386,74 +384,138 @@ function gridLines(svg, px, py, pw, ph, xTicks, yTicks, xMin, xMax, yMin, yMax) 
   });
 })();
 
-/* ─────────────── CHART 4: VALUATION RANGE ─────────────── */
+/* ─────────────── CHART 4: VALUATION BEFORE vs AFTER ─────────────── */
 (function() {
   const svg = document.getElementById('valuation');
-  const W=800, H=260, px=120, py=50, pw=630, ph=160;
+  const W=800, H=270;
+
+  // ── Layout constants ──────────────────────────────────────────────
+  const PRE_X=10, PRE_Y=15, PRE_W=155, PRE_H=238;
+  const ARR_X=PRE_X+PRE_W+8, ARR_W=72;
+  const POST_X=ARR_X+ARR_W+8, POST_Y=PRE_Y, POST_W=W-POST_X-10, POST_H=PRE_H;
+  // bar plot area inside POST panel
+  const BX=POST_X+98, BY=POST_Y+32, BW=POST_W-105, BH=POST_H-55;
   const MAX=16;
-  const X = v => px + (v/MAX)*pw;
+  const PX = v => BX + (v/MAX)*BW;
 
-  // X-axis grid + labels
-  [0,2,4,5,6,7,8,10,12,14,15,16].forEach(v => {
-    const xx = X(v);
-    line(svg, xx, py, xx, py+ph, [5,6,7].includes(v) ? '#a855f7' : C.grid, [5,7].includes(v) ? 1 : 0.8, [5,7].includes(v) ? '' : '3 3');
-  });
-  [0,2,4,6,8,10,12,14,16].forEach(v => {
-    text(svg, X(v), py+ph+16, `₪${v}M`, C.muted, 9);
-  });
+  // ── PRE panel ─────────────────────────────────────────────────────
+  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y, width:PRE_W, height:PRE_H, rx:10, fill:'#180d0d', stroke:'#3a1a1a', 'stroke-width':'1.5'}));
 
-  // Recommended band ₪5–7M
-  svg.appendChild(svgEl('rect', {
-    x:X(5), y:py-8, width:X(7)-X(5), height:ph+8,
-    fill:'#a855f7', 'fill-opacity':'0.07',
-    stroke:'#a855f7', 'stroke-width':'1', 'stroke-dasharray':'4 3'
+  // Header stripe
+  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y, width:PRE_W, height:28, rx:10, fill:'#2a1010'}));
+  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y+18, width:PRE_W, height:10, fill:'#2a1010'})); // square off bottom
+  text(svg, PRE_X+PRE_W/2, PRE_Y+18, 'PRE-DEVELOPMENT', '#ef4444', 10, 'middle', '700');
+
+  // Big ₪0
+  text(svg, PRE_X+PRE_W/2, PRE_Y+75, '₪', '#ef4444', 18, 'middle', '700');
+  text(svg, PRE_X+PRE_W/2, PRE_Y+112, '0', '#ef4444', 58, 'middle', '800');
+  text(svg, PRE_X+PRE_W/2, PRE_Y+130, 'market value', C.muted, 10, 'middle');
+
+  // Divider
+  line(svg, PRE_X+16, PRE_Y+142, PRE_X+PRE_W-16, PRE_Y+142, '#3a1a1a', 1);
+
+  // Risk dots
+  text(svg, PRE_X+PRE_W/2, PRE_Y+160, 'RISK LEVEL', C.muted, 9, 'middle', '600');
+  for (let i=0; i<5; i++) {
+    svg.appendChild(svgEl('circle', {cx:PRE_X+30+i*20, cy:PRE_Y+178, r:7,
+      fill:'#ef4444', 'fill-opacity': i < 4 ? '0.85' : '0.2',
+      stroke:'#ef4444', 'stroke-width':'1', 'stroke-opacity': i < 4 ? '1' : '0.3'
+    }));
+  }
+  text(svg, PRE_X+PRE_W/2, PRE_Y+198, 'VERY HIGH', C.red, 9, 'middle', '700');
+
+  // Cost to build
+  line(svg, PRE_X+16, PRE_Y+208, PRE_X+PRE_W-16, PRE_Y+208, '#3a1a1a', 1);
+  text(svg, PRE_X+PRE_W/2, PRE_Y+222, 'Cost to build', C.muted, 9, 'middle');
+  text(svg, PRE_X+PRE_W/2, PRE_Y+236, '₪18,500  /  $5,000', C.amber, 10, 'middle', '600');
+
+  // ── Arrow / transition ────────────────────────────────────────────
+  const MX = ARR_X + ARR_W/2, MY = PRE_Y + PRE_H/2;
+
+  // ×1000+ badge
+  svg.appendChild(svgEl('rect', {x:MX-30, y:MY-54, width:60, height:26, rx:6, fill:'#0d1a2a', stroke:C.blue, 'stroke-width':'1.2'}));
+  text(svg, MX, MY-37, '×1,000+', C.blue, 11, 'middle', '700');
+
+  // Arrow shaft + head
+  svg.appendChild(svgEl('line', {x1:ARR_X+4, y1:MY, x2:ARR_X+ARR_W-14, y2:MY, stroke:C.blue, 'stroke-width':'2.5'}));
+  svg.appendChild(svgEl('path', {
+    d:`M${ARR_X+ARR_W-14},${MY-7} L${ARR_X+ARR_W-2},${MY} L${ARR_X+ARR_W-14},${MY+7}`,
+    fill:C.blue, stroke:'none'
   }));
-  text(svg, (X(5)+X(7))/2, py-18, 'Recommended starting point', '#a855f7', 9, 'middle', '600');
-  text(svg, (X(5)+X(7))/2, py-8, '₪5–7M', '#a855f7', 10, 'middle', '700');
 
-  // Scenario bars
+  // Labels below arrow
+  text(svg, MX, MY+18, '10 weeks', C.blue, 10, 'middle', '600');
+  text(svg, MX, MY+31, '₪5K invested', C.amber, 9, 'middle');
+
+  // ── POST panel ────────────────────────────────────────────────────
+  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y, width:POST_W, height:POST_H, rx:10, fill:'#0f1419', stroke:'#21262d', 'stroke-width':'1.5'}));
+
+  // Header stripe
+  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y, width:POST_W, height:28, rx:10, fill:'#0d1f12'}));
+  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y+18, width:POST_W, height:10, fill:'#0d1f12'}));
+  text(svg, POST_X+POST_W/2, POST_Y+18, 'POST-MVP  +  1ST PAYING CUSTOMER (YANGO)', '#00d26a', 10, 'middle', '700');
+
+  // X-axis ticks + labels
+  [0,2,4,5,7,8,10,12,14,15,16].forEach(v => {
+    line(svg, PX(v), BY, PX(v), BY+BH, C.grid, 0.6, '2 3');
+  });
+  [0,4,8,12,16].forEach(v => {
+    text(svg, PX(v), BY+BH+14, `₪${v}M`, C.muted, 8, 'middle');
+  });
+
+  // Recommended band ₪5–7M (behind bars)
+  svg.appendChild(svgEl('rect', {
+    x:PX(5), y:BY-4, width:PX(7)-PX(5), height:BH+4,
+    fill:'#a855f7', 'fill-opacity':'0.09', stroke:'#a855f7', 'stroke-width':'1', 'stroke-dasharray':'5 3'
+  }));
+
+  // ── Scenario bars ─────────────────────────────────────────────────
+  const barH = 30, gap = 14;
   const scenarios = [
-    { label:'Conservative  שמרני', min:2,  max:4,  dMin:'$500K', dMax:'$1M',  color:C.amber, y:py+14  },
-    { label:'Reasonable  סביר',    min:4,  max:8,  dMin:'$1M',   dMax:'$2M',  color:C.blue,  y:py+62  },
-    { label:'Optimistic  אופטימי', min:8,  max:15, dMin:'$2M',   dMax:'$4M',  color:C.green, y:py+110 },
+    {label:'Conservative  שמרני', min:2,  max:4,  sub:'$500K – $1M',  color:C.amber, y:BY+6},
+    {label:'Reasonable  סביר',    min:4,  max:8,  sub:'$1M – $2M',    color:C.blue,  y:BY+6+barH+gap},
+    {label:'Optimistic  אופטימי', min:8,  max:15, sub:'$2M – $4M',    color:C.green, y:BY+6+(barH+gap)*2},
   ];
 
   scenarios.forEach(s => {
-    const barH = 28;
-    // Row label (left)
-    text(svg, px-8, s.y+barH/2+4, s.label, C.text, 11, 'end', '500');
-    // Bar
+    // Row label
+    text(svg, BX-6, s.y+barH/2+4, s.label, C.text, 10, 'end', '400');
+    // Bar fill
     svg.appendChild(svgEl('rect', {
-      x:X(s.min), y:s.y, width:X(s.max)-X(s.min), height:barH, rx:5,
-      fill:s.color, 'fill-opacity':'0.18', stroke:s.color, 'stroke-width':'1.5'
+      x:PX(s.min), y:s.y, width:PX(s.max)-PX(s.min), height:barH, rx:4,
+      fill:s.color, 'fill-opacity':'0.2', stroke:s.color, 'stroke-width':'1.5'
     }));
-    // USD label inside bar
-    text(svg, (X(s.min)+X(s.max))/2, s.y+barH/2+4, `${s.dMin} – ${s.dMax}`, C.muted, 9, 'middle');
-    // ₪ min/max caps
-    text(svg, X(s.min), s.y+barH+14, `₪${s.min}M`, s.color, 9, 'middle', '600');
-    text(svg, X(s.max), s.y+barH+14, `₪${s.max}M`, s.color, 9, 'middle', '600');
-    // End-cap ticks
-    line(svg, X(s.min), s.y+2, X(s.min), s.y+barH-2, s.color, 2);
-    line(svg, X(s.max), s.y+2, X(s.max), s.y+barH-2, s.color, 2);
+    // USD sub-label inside bar
+    if (PX(s.max)-PX(s.min) > 60) {
+      text(svg, (PX(s.min)+PX(s.max))/2, s.y+barH/2+4, s.sub, C.muted, 8, 'middle');
+    }
+    // End caps
+    line(svg, PX(s.min), s.y+3, PX(s.min), s.y+barH-3, s.color, 2.5);
+    line(svg, PX(s.max), s.y+3, PX(s.max), s.y+barH-3, s.color, 2.5);
+    // Min/max labels above bar
+    text(svg, PX(s.min), s.y-3, `₪${s.min}M`, s.color, 8, 'middle', '600');
+    text(svg, PX(s.max), s.y-3, `₪${s.max}M`, s.color, 8, 'middle', '600');
   });
 
-  // "2nd customer" jump arrow + bar
-  const jumpY = py + 155;
-  // Arrow from ₪7M to ₪10M
-  const arrowX1 = X(7)+6, arrowX2 = X(10)-6, arrowMidY = jumpY + 8;
+  // Recommended label on purple band
+  const recMidX = (PX(5)+PX(7))/2;
+  text(svg, recMidX, BY-14, '★ Recommended', '#a855f7', 9, 'middle', '700');
+  text(svg, recMidX, BY-5, '₪5–7M', '#a855f7', 8, 'middle');
+
+  // ── 2nd customer jump ─────────────────────────────────────────────
+  const jY = BY + 6 + (barH+gap)*3 + 2;
+  const ax1=PX(7)+4, ax2=PX(10)-6;
   svg.appendChild(svgEl('path', {
-    d:`M${arrowX1},${arrowMidY} L${arrowX2-8},${arrowMidY} L${arrowX2-8},${arrowMidY-5} L${arrowX2},${arrowMidY} L${arrowX2-8},${arrowMidY+5} L${arrowX2-8},${arrowMidY}`,
-    fill:C.green, stroke:'none'
+    d:`M${ax1},${jY+10} L${ax2-9},${jY+10} L${ax2-9},${jY+4} L${ax2},${jY+10} L${ax2-9},${jY+16} L${ax2-9},${jY+10}`,
+    fill:C.green
   }));
-  // Jump label
-  text(svg, (arrowX1+arrowX2)/2, arrowMidY-10, '+ 2nd customer', C.green, 9, 'middle', '600');
-  // Jump range bar
+  text(svg, (ax1+ax2)/2, jY+1, '+ 2nd customer', C.green, 8, 'middle', '600');
   svg.appendChild(svgEl('rect', {
-    x:X(10), y:jumpY-2, width:X(15)-X(10), height:20, rx:4,
-    fill:C.green, 'fill-opacity':'0.25', stroke:C.green, 'stroke-width':'1.5', 'stroke-dasharray':'5 3'
+    x:PX(10), y:jY+2, width:PX(15)-PX(10), height:20, rx:3,
+    fill:C.green, 'fill-opacity':'0.22', stroke:C.green, 'stroke-width':'1.5', 'stroke-dasharray':'4 2'
   }));
-  text(svg, (X(10)+X(15))/2, jumpY+12, '₪10–15M', C.green, 10, 'middle', '700');
-  text(svg, X(15)+4, jumpY+12, '↑ jumps here', C.green, 9, 'start', '600');
+  text(svg, (PX(10)+PX(15))/2, jY+15, '₪10–15M', C.green, 9, 'middle', '700');
+  text(svg, PX(15)+5, jY+15, '⬆ jumps here', C.green, 8, 'start', '600');
 })();
 </script>
 

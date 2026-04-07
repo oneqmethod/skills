@@ -210,6 +210,7 @@
       display: flex;
       justify-content: space-around;
       padding: 0 20px;
+      height: 52px;
     }
 
     .x-label {
@@ -220,18 +221,49 @@
       align-items: center;
       justify-content: flex-end;
       padding-bottom: 4px;
+      gap: 4px;
     }
 
-    .x-label-main {
-      font-size: 13px;
-      font-weight: 600;
-      color: #c9d1d9;
+    .x-label-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .x-label-chip.conservative {
+      background: rgba(180, 83, 9, 0.15);
+      border: 1px solid rgba(217, 119, 6, 0.4);
+      color: #fbbf24;
+    }
+
+    .x-label-chip.reasonable {
+      background: rgba(29, 78, 216, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+    }
+
+    .x-label-chip.optimistic {
+      background: rgba(22, 101, 52, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #4ade80;
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     .x-label-sub {
       font-size: 10px;
       color: #484f58;
-      margin-top: 2px;
+      margin-top: 0;
     }
 
     /* Target raise band */
@@ -402,15 +434,24 @@
       <!-- X labels -->
       <div class="x-labels">
         <div class="x-label">
-          <div class="x-label-main">Conservative</div>
+          <div class="x-label-chip conservative">
+            <span class="chip-dot" style="background:#d97706;"></span>
+            Conservative
+          </div>
           <div class="x-label-sub">Low-end</div>
         </div>
         <div class="x-label">
-          <div class="x-label-main">Reasonable</div>
+          <div class="x-label-chip reasonable">
+            <span class="chip-dot" style="background:#3b82f6;"></span>
+            Reasonable
+          </div>
           <div class="x-label-sub">Most likely</div>
         </div>
         <div class="x-label">
-          <div class="x-label-main">Optimistic</div>
+          <div class="x-label-chip optimistic">
+            <span class="chip-dot" style="background:#22c55e;"></span>
+            Optimistic
+          </div>
           <div class="x-label-sub">Strong traction</div>
         </div>
       </div>

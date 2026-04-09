@@ -423,7 +423,7 @@
 
   <!-- CTA -->
   <div class="cta-wrap" id="cta">
-    <button class="cta-btn" onclick="window.location.href='next-step.html'">
+    <button class="cta-btn" onclick="navigateTo('next-step.html')">
       See the full plan
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
@@ -439,6 +439,11 @@
 </div>
 
 <script>
+  function navigateTo(file) {
+    const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    window.location.href = base + file;
+  }
+
   let selected = null;
 
   function selectOpt(el, key) {

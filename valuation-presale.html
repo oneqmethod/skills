@@ -597,7 +597,7 @@
       </div>
 
       <div style="margin-top:18px;">
-        <button class="cta-btn" onclick="window.location.href='offer.html'">
+        <button class="cta-btn" onclick="navigateTo('offer.html')">
           Build the offer <span class="cta-arrow">→</span>
         </button>
       </div>
@@ -757,6 +757,11 @@
     document.querySelectorAll('.brain-tooltip.visible').forEach(t => t.classList.remove('visible'));
     document.querySelectorAll('.q-btn.active').forEach(b => b.classList.remove('active'));
   });
+
+  function navigateTo(file) {
+    const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    window.location.href = base + file;
+  }
 
   function showOffer() {
     const panel = document.getElementById('offerPanel');

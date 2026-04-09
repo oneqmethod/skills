@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MVP Calculator — Brainshop</title>
+<title>MVP Value Calculator — Brainshop</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -16,72 +16,69 @@ body {
   justify-content: center;
   padding: 40px 20px;
 }
-.wrap { width: 100%; max-width: 680px; }
+.wrap { width: 100%; max-width: 620px; }
 
-/* Header */
-.header { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 .logo { width: 30px; height: 30px; background: #3b82f6; border-radius: 7px; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
 .header h1 { font-size: 17px; font-weight: 600; }
 .header p  { font-size: 12px; color: #8b949e; margin-top: 1px; }
 
-/* Card */
-.card {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 16px;
-}
-.card-title { font-size: 13px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 20px; }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin-bottom: 14px; }
 
-/* Input grid */
+/* Inputs */
 .inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.field label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 6px; }
-.field label strong { color: #e6edf3; }
+.field label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 6px; font-weight: 500; }
 .input-wrap { position: relative; }
-.prefix, .suffix {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  font-size: 13px; color: #8b949e; pointer-events: none;
-}
+.prefix, .suffix { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; color: #8b949e; pointer-events: none; }
 .prefix { left: 12px; }
 .suffix { right: 12px; }
 input[type=number] {
   width: 100%; background: #0d1117; border: 1px solid #30363d;
-  border-radius: 8px; color: #e6edf3; font-size: 15px; font-weight: 600;
-  padding: 10px 36px 10px 28px; outline: none;
-  -moz-appearance: textfield;
+  border-radius: 8px; color: #e6edf3; font-size: 18px; font-weight: 700;
+  padding: 10px 40px 10px 30px; outline: none; -moz-appearance: textfield;
   transition: border-color .15s;
 }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 input[type=number]:focus { border-color: #3b82f6; }
 
-/* Results */
-.results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.result {
+/* ARR strip */
+.arr-strip {
+  margin-top: 16px; background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.arr-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .06em; }
+.arr-value { font-size: 20px; font-weight: 700; color: #e6edf3; }
+.arr-sub   { font-size: 11px; color: #8b949e; }
+
+/* Valuation scenarios */
+.scenarios { display: flex; flex-direction: column; gap: 10px; }
+.scenario {
   background: #0d1117; border: 1px solid #30363d;
   border-radius: 8px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
 }
-.result-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
-.result-value { font-size: 22px; font-weight: 700; line-height: 1.2; }
-.result-sub   { font-size: 11px; color: #8b949e; margin-top: 3px; }
+.scenario.highlight { border-width: 1.5px; }
+.s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.s-name  { font-size: 12px; color: #8b949e; font-weight: 500; width: 110px; flex-shrink: 0; }
+.s-range { font-size: 18px; font-weight: 700; flex: 1; }
+.s-note  { font-size: 11px; color: #8b949e; text-align: right; flex-shrink: 0; }
 
-/* Break-even bar */
-.be-section { margin-top: 20px; }
-.be-label { display: flex; justify-content: space-between; font-size: 12px; color: #8b949e; margin-bottom: 8px; }
-.be-label span { font-weight: 600; color: #e6edf3; }
-.be-track { background: #0d1117; border-radius: 6px; height: 10px; overflow: hidden; border: 1px solid #30363d; }
-.be-fill  { height: 100%; border-radius: 6px; transition: width .4s ease; }
+/* Bar */
+.bar-wrap { margin-top: 4px; height: 5px; background: #21262d; border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; }
 
-/* Viability badge */
-.badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-  margin-top: 16px; border: 1px solid;
+/* Recommended badge */
+.rec {
+  margin-top: 14px; padding: 10px 14px;
+  background: #140d1f; border: 1px solid #6b21a8;
+  border-radius: 8px; display: flex; align-items: center; gap: 10px;
 }
-
-/* Warning */
-.warn { color: #f59e0b; font-size: 12px; margin-top: 12px; padding: 8px 12px; background: #1a1400; border: 1px solid #4a3000; border-radius: 6px; display: none; }
+.rec-star { font-size: 16px; }
+.rec-text { font-size: 13px; }
+.rec-text strong { color: #c084fc; }
+.rec-text span { color: #8b949e; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -90,95 +87,91 @@ input[type=number]:focus { border-color: #3b82f6; }
   <div class="header">
     <div class="logo">B</div>
     <div>
-      <h1>MVP Calculator</h1>
-      <p>Enter your numbers — results update instantly</p>
+      <h1>MVP Value Calculator</h1>
+      <p>What is your MVP worth when it works?</p>
     </div>
   </div>
 
   <!-- Inputs -->
   <div class="card">
-    <div class="card-title">Your Numbers</div>
     <div class="inputs">
       <div class="field">
-        <label><strong>MVP Build Cost</strong></label>
+        <label>Price per customer / month</label>
         <div class="input-wrap">
           <span class="prefix">$</span>
-          <input type="number" id="buildCost" value="5000" min="0" step="500" />
-        </div>
-      </div>
-      <div class="field">
-        <label><strong>Weeks to Launch</strong></label>
-        <div class="input-wrap">
-          <input type="number" id="weeks" value="8" min="1" max="104" step="1" style="padding-left:12px" />
-          <span class="suffix">wk</span>
-        </div>
-      </div>
-      <div class="field">
-        <label><strong>Price per User</strong></label>
-        <div class="input-wrap">
-          <span class="prefix">$</span>
-          <input type="number" id="price" value="15" min="0" step="1" />
+          <input type="number" id="price" value="50" min="1" step="1" />
           <span class="suffix">/mo</span>
         </div>
       </div>
       <div class="field">
-        <label><strong>Variable Cost / User</strong></label>
+        <label>Number of paying customers</label>
         <div class="input-wrap">
-          <span class="prefix">$</span>
-          <input type="number" id="varCost" value="5" min="0" step="1" />
-          <span class="suffix">/mo</span>
+          <input type="number" id="customers" value="1" min="1" step="1" style="padding-left:14px" />
         </div>
       </div>
     </div>
-    <div class="warn" id="warn">⚠ Price must be higher than variable cost to ever break even.</div>
+
+    <div class="arr-strip">
+      <div>
+        <div class="arr-label">Annual Recurring Revenue (ARR)</div>
+        <div class="arr-value" id="arr-val">$600</div>
+      </div>
+      <div style="text-align:right">
+        <div class="arr-label">Monthly (MRR)</div>
+        <div class="arr-sub" id="mrr-val" style="font-size:15px;font-weight:600;color:#e6edf3">$50/mo</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Results -->
+  <!-- Valuation scenarios -->
   <div class="card">
-    <div class="card-title">Results</div>
-    <div class="results">
-      <div class="result">
-        <div class="result-label">Total MVP Cost</div>
-        <div class="result-value" id="r-cost" style="color:#f59e0b">$5,000</div>
-        <div class="result-sub" id="r-burn">$625 / week</div>
+    <div style="font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px">Company Valuation Range</div>
+
+    <div class="scenarios">
+      <div class="scenario" id="s-cons">
+        <div class="s-dot" style="background:#f59e0b"></div>
+        <div class="s-name">Conservative</div>
+        <div>
+          <div class="s-range" id="v-cons" style="color:#f59e0b">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-cons" style="background:#f59e0b;width:25%"></div></div>
+        </div>
+        <div class="s-note">3–4× ARR</div>
       </div>
-      <div class="result">
-        <div class="result-label">Break-Even Point</div>
-        <div class="result-value" id="r-be" style="color:#3b82f6">500 users</div>
-        <div class="result-sub" id="r-margin">$10 margin/user</div>
+
+      <div class="scenario" id="s-reas">
+        <div class="s-dot" style="background:#3b82f6"></div>
+        <div class="s-name">Reasonable</div>
+        <div>
+          <div class="s-range" id="v-reas" style="color:#3b82f6">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-reas" style="background:#3b82f6;width:50%"></div></div>
+        </div>
+        <div class="s-note">4–6× ARR</div>
       </div>
-      <div class="result">
-        <div class="result-label">Est. Company Value</div>
-        <div class="result-value" id="r-val" style="color:#a855f7">~$6K</div>
-        <div class="result-sub">at first paying customer (10× ARR)</div>
-      </div>
-      <div class="result">
-        <div class="result-label">Monthly at Break-Even</div>
-        <div class="result-value" id="r-mrr" style="color:#00d26a">$5,000</div>
-        <div class="result-sub" id="r-arr">ARR $60,000</div>
+
+      <div class="scenario" id="s-opti">
+        <div class="s-dot" style="background:#00d26a"></div>
+        <div class="s-name">Optimistic</div>
+        <div>
+          <div class="s-range" id="v-opti" style="color:#00d26a">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-opti" style="background:#00d26a;width:90%"></div></div>
+        </div>
+        <div class="s-note">8–10× ARR</div>
       </div>
     </div>
 
-    <!-- Break-even progress bar -->
-    <div class="be-section">
-      <div class="be-label">
-        <span>1st customer</span>
-        <span id="be-pct-label">Break-even: 500 users away</span>
-        <span>Break-even</span>
-      </div>
-      <div class="be-track">
-        <div class="be-fill" id="be-fill" style="width:0.2%;background:#3b82f6"></div>
+    <div class="rec">
+      <div class="rec-star">★</div>
+      <div class="rec-text">
+        Recommended anchor: <strong id="rec-val">—</strong><br>
+        <span>Walk into every room with this number. Strong enough to close, honest enough to defend.</span>
       </div>
     </div>
-
-    <div id="viability-badge" class="badge"></div>
   </div>
 
 </div>
 
 <script>
-const ids = ['buildCost','weeks','price','varCost'];
-ids.forEach(id => document.getElementById(id).addEventListener('input', update));
+['price','customers'].forEach(id => document.getElementById(id).addEventListener('input', update));
 
 function fmt(n) {
   if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
@@ -186,69 +179,35 @@ function fmt(n) {
   return '$' + Math.round(n).toLocaleString();
 }
 
+function fmtRange(lo, hi) {
+  return fmt(lo) + ' – ' + fmt(hi);
+}
+
 function update() {
-  const cost    = Math.max(0, +document.getElementById('buildCost').value || 0);
-  const weeks   = Math.max(1, +document.getElementById('weeks').value    || 1);
-  const price   = Math.max(0, +document.getElementById('price').value    || 0);
-  const varCost = Math.max(0, +document.getElementById('varCost').value  || 0);
+  const price     = Math.max(1, +document.getElementById('price').value     || 1);
+  const customers = Math.max(1, +document.getElementById('customers').value || 1);
 
-  const margin  = price - varCost;
-  const warn    = document.getElementById('warn');
-  warn.style.display = margin <= 0 ? 'block' : 'none';
-  if (margin <= 0) {
-    document.getElementById('r-be').textContent   = '∞ users';
-    document.getElementById('r-margin').textContent = `$${margin}/user — not viable`;
-    document.getElementById('be-fill').style.width = '0%';
-    document.getElementById('be-pct-label').textContent = 'Not viable at current prices';
-    document.getElementById('viability-badge').style.display = 'none';
-    return;
-  }
+  const mrr = price * customers;
+  const arr = mrr * 12;
 
-  const breakEven = Math.ceil(cost / margin);
-  const burnPerWk = cost / weeks;
-  const mrrAtBE   = price * breakEven;
-  const arrAtBE   = mrrAtBE * 12;
-  const firstARR  = price * 12;
-  const coValue   = firstARR * 10; // 10× ARR
+  document.getElementById('arr-val').textContent = fmt(arr);
+  document.getElementById('mrr-val').textContent = fmt(mrr) + '/mo';
 
-  // Update result cards
-  document.getElementById('r-cost').textContent   = fmt(cost);
-  document.getElementById('r-burn').textContent   = `${fmt(burnPerWk)} / week`;
-  document.getElementById('r-be').textContent     = breakEven.toLocaleString() + ' users';
-  document.getElementById('r-margin').textContent = `$${margin} margin/user`;
-  document.getElementById('r-val').textContent    = fmt(coValue);
-  document.getElementById('r-mrr').textContent    = fmt(mrrAtBE) + '/mo';
-  document.getElementById('r-arr').textContent    = 'ARR ' + fmt(arrAtBE);
+  const cons = [arr * 3, arr * 4];
+  const reas = [arr * 4, arr * 6];
+  const opti = [arr * 8, arr * 10];
+  const rec  = [arr * 4, arr * 6]; // midpoint of reasonable
 
-  // Break-even bar — 1 user = 0.2% of bar width, capped visually at 200% of break-even
-  const pct = Math.min(99, (1 / breakEven) * 100);
-  document.getElementById('be-fill').style.width = Math.max(0.5, pct) + '%';
-  document.getElementById('be-pct-label').textContent = `Break-even: ${breakEven.toLocaleString()} users away`;
+  document.getElementById('v-cons').textContent = fmtRange(cons[0], cons[1]);
+  document.getElementById('v-reas').textContent = fmtRange(reas[0], reas[1]);
+  document.getElementById('v-opti').textContent = fmtRange(opti[0], opti[1]);
+  document.getElementById('rec-val').textContent = fmtRange(rec[0], rec[1]);
 
-  // Viability badge
-  const badge = document.getElementById('viability-badge');
-  badge.style.display = 'inline-flex';
-  if (breakEven < 100) {
-    badge.style.color         = '#00d26a';
-    badge.style.background    = '#0d1a14';
-    badge.style.borderColor   = '#1a3a25';
-    badge.textContent         = '✓ Highly viable — break-even within reach';
-  } else if (breakEven < 500) {
-    badge.style.color         = '#3b82f6';
-    badge.style.background    = '#0d1525';
-    badge.style.borderColor   = '#1a3050';
-    badge.textContent         = '● Viable — solid unit economics';
-  } else if (breakEven < 2000) {
-    badge.style.color         = '#f59e0b';
-    badge.style.background    = '#1a1400';
-    badge.style.borderColor   = '#4a3000';
-    badge.textContent         = '◐ Challenging — raise price or cut costs';
-  } else {
-    badge.style.color         = '#ef4444';
-    badge.style.background    = '#1a0d0d';
-    badge.style.borderColor   = '#3a1a1a';
-    badge.textContent         = '✗ Difficult — revisit pricing model';
-  }
+  // Bar widths relative to optimistic max
+  const max = opti[1];
+  document.getElementById('b-cons').style.width = ((cons[1]/max)*100).toFixed(1) + '%';
+  document.getElementById('b-reas').style.width = ((reas[1]/max)*100).toFixed(1) + '%';
+  document.getElementById('b-opti').style.width = '92%';
 }
 
 update();

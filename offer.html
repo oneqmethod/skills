@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Asaf × Yango — Build the Offer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
+
+    body {
+      background: #080808;
+      color: #FFFFFF;
+      font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 52px 24px 80px;
+    }
+
+    /* ── Ambient glow ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse at center top, rgba(245,166,35,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      position: relative;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ctx {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ctx-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ctx-gold { color: #F5A623; }
+    .ctx-dim  { color: #555; }
+    .ctx-sep  { color: #282828; font-size: 12px; }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-pip {
+      width: 20px; height: 3px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.08);
+    }
+    .step-pip.done  { background: rgba(245,166,35,0.5); }
+    .step-pip.active { background: #F5A623; }
+
+    /* ── Header ── */
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #F5A623;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 18px; height: 1px;
+      background: #F5A623;
+    }
+
+    .heading {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #4A4A4A;
+      line-height: 1.65;
+    }
+
+    /* ── Option cards ── */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .opt {
+      background: #101010;
+      border: 1.5px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 20px 20px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      overflow: hidden;
+    }
+    .opt:hover { border-color: rgba(245,166,35,0.2); background: #121212; }
+    .opt.sel {
+      border-color: rgba(245,166,35,0.45);
+      background: rgba(245,166,35,0.04);
+    }
+
+    .opt-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .radio {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.14);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.18s;
+    }
+    .opt.sel .radio { border-color: #F5A623; }
+    .radio-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #F5A623;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .opt.sel .radio-dot { opacity: 1; transform: scale(1); }
+
+    .opt-copy { flex: 1; }
+    .opt-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #D0D0D0;
+      margin-bottom: 4px;
+      transition: color 0.15s;
+    }
+    .opt.sel .opt-title { color: #FFFFFF; }
+    .opt-desc { font-size: 12px; color: #444; line-height: 1.5; }
+
+    /* ── Expanded detail ── */
+    .opt-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s;
+      opacity: 0;
+    }
+    .opt.sel .opt-detail {
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .opt-detail-inner {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(245,166,35,0.1);
+    }
+
+    .terms {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-bottom: 13px;
+    }
+
+    .term {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 10px 11px;
+    }
+    .term-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .term-val {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: #F5A623;
+    }
+
+    .term-note {
+      font-size: 11px;
+      color: #3D3D3D;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ── CTA ── */
+    .cta-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .cta-wrap.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .cta-btn {
+      width: 100%;
+      padding: 15px 20px;
+      background: #F5A623;
+      border: none;
+      border-radius: 13px;
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      transition: opacity 0.15s, transform 0.12s, box-shadow 0.15s;
+    }
+    .cta-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(245,166,35,0.28);
+    }
+    .cta-btn:active { transform: translateY(0); opacity: 0.8; box-shadow: none; }
+
+    .cta-hint {
+      text-align: center;
+      font-size: 11px;
+      color: #2E2E2E;
+    }
+
+    /* ── Back link ── */
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #2E2E2E;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .back:hover { color: #666; }
+
+    @media (max-width: 540px) {
+      body { padding: 36px 16px 60px; }
+      .heading { font-size: 24px; }
+      .terms { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="ctx">
+      <span class="ctx-tag ctx-gold">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Asaf
+      </span>
+      <span class="ctx-sep">×</span>
+      <span class="ctx-tag ctx-dim">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Yango
+      </span>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step-pip done"></div>
+      <div class="step-pip active"></div>
+      <div class="step-pip"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div>
+    <div class="eyebrow">What Asaf is looking for</div>
+    <h1 class="heading">Pick your<br>engagement model</h1>
+    <p class="sub">Each structure changes the economics differently. Choose the one that fits where you are today.</p>
+  </div>
+
+  <!-- Options -->
+  <div class="options">
+
+    <!-- Money only -->
+    <div class="opt" onclick="selectOpt(this, 'money')">
+      <div class="opt-head">
+        <div class="radio"><div class="radio-dot"></div></div>
+        <div class="opt-copy">
+          <div class="opt-title">Money only</div>
+          <div class="opt-desc">Fixed fee engagement. No equity. OneQ gets paid for delivery.</div>
+        </div>
+      </div>
+      <div class="opt-detail">
+        <div class="opt-detail-inner">
+          <div class="terms">
+            <div class="term">
+              <div class="term-lbl">Fee</div>
+              <div class="term-val">Full</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Equity</div>
+              <div class="term-val">0%</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Rev share</div>
+              <div class="term-val">0%</div>
+            </div>
+          </div>
+          <div class="term-note">Cleanest structure. You keep full ownership. OneQ is incentivized by delivery, not upside. Best when you have budget and want clear, simple scope.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Money + Equity -->
+    <div class="opt" onclick="selectOpt(this, 'equity')">
+      <div class="opt-head">
+        <div class="radio"><div class="radio-dot"></div></div>
+        <div class="opt-copy">
+          <div class="opt-title">Money + Equity</div>
+          <div class="opt-desc">Reduced fee + a stake in Asaf's company. Aligned on long-term upside.</div>
+        </div>
+      </div>
+      <div class="opt-detail">
+        <div class="opt-detail-inner">
+          <div class="terms">
+            <div class="term">
+              <div class="term-lbl">Fee cut</div>
+              <div class="term-val">–30%</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Equity</div>
+              <div class="term-val">3–5%</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Rev share</div>
+              <div class="term-val">0%</div>
+            </div>
+          </div>
+          <div class="term-note">OneQ becomes a co-owner. We're incentivised to build something that grows in value. Best when budget is tight and you want a long-term partner at the table.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Money + Revenue share -->
+    <div class="opt" onclick="selectOpt(this, 'revshare')">
+      <div class="opt-head">
+        <div class="radio"><div class="radio-dot"></div></div>
+        <div class="opt-copy">
+          <div class="opt-title">Money + Revenue share</div>
+          <div class="opt-desc">Reduced fee + % of revenue from Yango and future customers.</div>
+        </div>
+      </div>
+      <div class="opt-detail">
+        <div class="opt-detail-inner">
+          <div class="terms">
+            <div class="term">
+              <div class="term-lbl">Fee cut</div>
+              <div class="term-val">–20%</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Equity</div>
+              <div class="term-val">0%</div>
+            </div>
+            <div class="term">
+              <div class="term-lbl">Rev share</div>
+              <div class="term-val">8–12%</div>
+            </div>
+          </div>
+          <div class="term-note">OneQ participates in revenue, not ownership. No dilution. We win when you win. Best when revenue ramps fast and you want to keep your cap table clean.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <div class="cta-wrap" id="cta">
+    <button class="cta-btn" onclick="window.location.href='next-step.html'">
+      See the full plan
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <div class="cta-hint">We'll build the exact numbers into the proposal</div>
+  </div>
+
+  <!-- Back -->
+  <a class="back" onclick="history.back()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to valuation overview
+  </a>
+
+</div>
+
+<script>
+  let selected = null;
+
+  function selectOpt(el, key) {
+    document.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+    el.classList.add('sel');
+    selected = key;
+    document.getElementById('cta').classList.add('show');
+  }
+</script>
+</body>
+</html>

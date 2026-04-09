@@ -343,6 +343,100 @@
       flex-shrink: 0;
     }
 
+    /* ── Confidence panel ── */
+    .conf-now {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .conf-pct {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #f87171;
+      line-height: 1;
+    }
+    .conf-pct.high { color: #4ade80; }
+    .conf-pct.mid  { color: #fbbf24; }
+
+    .conf-desc {
+      font-size: 11px;
+      color: #7d8590;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* Segmented bar */
+    .conf-bar-wrap {
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .conf-bar-track {
+      height: 8px;
+      background: #21262d;
+      border-radius: 99px;
+      overflow: hidden;
+      position: relative;
+    }
+    .conf-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #f87171 0%, #fbbf24 60%, #4ade80 100%);
+      transition: width 0.4s ease;
+    }
+    .conf-bar-potential {
+      position: absolute;
+      top: 0; height: 100%;
+      border-radius: 99px;
+      background: rgba(74,222,128,0.15);
+      border-right: 2px dashed rgba(74,222,128,0.5);
+    }
+    .conf-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 10px;
+      color: #484f58;
+    }
+    .conf-bar-labels .potential { color: rgba(74,222,128,0.7); }
+
+    /* Input rows */
+    .conf-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid #21262d;
+    }
+    .conf-input:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .conf-input-icon {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.18);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .conf-input-icon svg {
+      width: 12px; height: 12px;
+      stroke: #fbbf24; fill: none;
+      stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .conf-input-text {
+      flex: 1;
+      font-size: 11px;
+      font-weight: 600;
+      color: #c9d1d9;
+    }
+    .conf-input-delta {
+      font-size: 11px;
+      font-weight: 800;
+      color: #4ade80;
+      white-space: nowrap;
+    }
+
     /* How we got here */
     .method-item {
       display: flex;
@@ -563,6 +657,64 @@
 
   <!-- ── Side card ── -->
   <div class="side-card">
+
+    <!-- Confidence panel -->
+    <div class="side-panel">
+      <div class="side-panel-title">
+        <span class="icon" style="background:rgba(248,113,113,0.12); color:#f87171;">◈</span>
+        Valuation confidence
+      </div>
+
+      <div class="conf-now">
+        <div class="conf-pct">25%</div>
+        <div style="font-size:11px; color:#7d8590; line-height:1.4;">based on<br>benchmarks only</div>
+      </div>
+      <div class="conf-desc">No real company data yet. Ranges are estimates from comparable pre-seed SaaS deals.</div>
+
+      <div class="conf-bar-wrap">
+        <div class="conf-bar-track">
+          <div class="conf-bar-potential" style="left:0; width:85%;"></div>
+          <div class="conf-bar-fill" style="width:25%;"></div>
+        </div>
+        <div class="conf-bar-labels">
+          <span>Now: 25%</span>
+          <span class="potential">Potential: 85%</span>
+        </div>
+      </div>
+
+      <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#484f58; margin: 14px 0 8px;">Share these to unlock</div>
+
+      <div class="conf-input">
+        <div class="conf-input-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="conf-input-text">Signed contract ARR</div>
+        <div class="conf-input-delta">+25%</div>
+      </div>
+
+      <div class="conf-input">
+        <div class="conf-input-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+        <div class="conf-input-text">Yango expansion signals</div>
+        <div class="conf-input-delta">+15%</div>
+      </div>
+
+      <div class="conf-input">
+        <div class="conf-input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <div class="conf-input-text">2nd customer pipeline</div>
+        <div class="conf-input-delta">+10%</div>
+      </div>
+
+      <div class="conf-input">
+        <div class="conf-input-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="conf-input-text">Burn rate & runway</div>
+        <div class="conf-input-delta">+10%</div>
+      </div>
+
+      <div class="conf-input">
+        <div class="conf-input-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="conf-input-text">Comparable rounds</div>
+        <div class="conf-input-delta">+5%</div>
+      </div>
+
+    </div>
 
     <!-- How we got these numbers -->
     <div class="side-panel">

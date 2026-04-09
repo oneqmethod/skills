@@ -3,515 +3,255 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Brainshop Business Charts</title>
+<title>MVP Calculator — Brainshop</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: #0d1117;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   color: #e6edf3;
-  padding: 32px 24px;
   min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
 }
-.page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
-.header { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid #21262d; }
-.logo { width: 32px; height: 32px; background: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
-.banner { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; margin-top: 5px; flex-shrink: 0; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.banner-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
-.banner-text { font-size: 13px; color: #e6edf3; line-height: 1.6; }
-.section-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.section-label::before { content:''; width: 16px; height: 1px; background: #30363d; display: block; }
-.card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; }
-.card h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-.card .sub { font-size: 13px; color: #8b949e; margin-bottom: 24px; }
-.metrics { display: flex; gap: 12px; margin-top: 20px; }
-.metric { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; }
-.metric-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .05em; }
-.metric-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
-.explain { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
-.explain h4 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
-.explain-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
-.explain-bar { width: 3px; min-width: 3px; border-radius: 2px; align-self: stretch; }
-.explain-item strong { font-size: 12px; font-weight: 600; }
-.explain-item span { font-size: 12px; color: #8b949e; line-height: 1.5; }
-.quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
-.quadrant-item { display: flex; gap: 10px; align-items: center; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 10px 14px; }
-.q-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.q-title { font-size: 13px; font-weight: 600; }
-.q-sub { font-size: 11px; color: #8b949e; }
-.feature-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.tag { display: flex; align-items: center; gap: 6px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 5px 10px; font-size: 12px; }
-.tag-dot { width: 7px; height: 7px; border-radius: 50%; }
-svg text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+.wrap { width: 100%; max-width: 680px; }
+
+/* Header */
+.header { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.logo { width: 30px; height: 30px; background: #3b82f6; border-radius: 7px; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+.header h1 { font-size: 17px; font-weight: 600; }
+.header p  { font-size: 12px; color: #8b949e; margin-top: 1px; }
+
+/* Card */
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 13px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 20px; }
+
+/* Input grid */
+.inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 6px; }
+.field label strong { color: #e6edf3; }
+.input-wrap { position: relative; }
+.prefix, .suffix {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 13px; color: #8b949e; pointer-events: none;
+}
+.prefix { left: 12px; }
+.suffix { right: 12px; }
+input[type=number] {
+  width: 100%; background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; color: #e6edf3; font-size: 15px; font-weight: 600;
+  padding: 10px 36px 10px 28px; outline: none;
+  -moz-appearance: textfield;
+  transition: border-color .15s;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number]:focus { border-color: #3b82f6; }
+
+/* Results */
+.results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result {
+  background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; padding: 14px 16px;
+}
+.result-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+.result-value { font-size: 22px; font-weight: 700; line-height: 1.2; }
+.result-sub   { font-size: 11px; color: #8b949e; margin-top: 3px; }
+
+/* Break-even bar */
+.be-section { margin-top: 20px; }
+.be-label { display: flex; justify-content: space-between; font-size: 12px; color: #8b949e; margin-bottom: 8px; }
+.be-label span { font-weight: 600; color: #e6edf3; }
+.be-track { background: #0d1117; border-radius: 6px; height: 10px; overflow: hidden; border: 1px solid #30363d; }
+.be-fill  { height: 100%; border-radius: 6px; transition: width .4s ease; }
+
+/* Viability badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  margin-top: 16px; border: 1px solid;
+}
+
+/* Warning */
+.warn { color: #f59e0b; font-size: 12px; margin-top: 12px; padding: 8px 12px; background: #1a1400; border: 1px solid #4a3000; border-radius: 6px; display: none; }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrap">
 
-  <!-- Header -->
   <div class="header">
     <div class="logo">B</div>
     <div>
-      <div style="font-size:18px;font-weight:600">Brainshop</div>
-      <div style="font-size:13px;color:#8b949e">Business Charts — Live Preview</div>
+      <h1>MVP Calculator</h1>
+      <p>Enter your numbers — results update instantly</p>
     </div>
   </div>
 
-  <!-- Meeting banner -->
-  <div class="banner">
-    <div class="dot"></div>
-    <div>
-      <div class="banner-label">Meeting context detected</div>
-      <div class="banner-text">"...our total build cost is around $5,000, targeting launch in 8 weeks, and if we get our first paying customer by week 12 at $50/month — that's our proof of viability. We're charging $15 per user, server costs about $5 per user, and we need to figure out which features belong in the MVP..."</div>
-    </div>
-  </div>
-
-  <!-- CHART 4: COMPANY VALUATION — POST MVP + 1ST CUSTOMER -->
-  <div>
-    <div class="section-label">Chart 4 — Post-MVP + 1st Paying Customer (Yango)</div>
-    <div class="card">
-      <h3>Post-MVP + 1st Paying Customer (Yango)</h3>
-      <p class="sub">Projected valuation ranges across three scenarios</p>
-      <div style="display:flex;gap:20px;align-items:flex-start">
-        <div style="flex:1.3;min-width:0">
-          <svg id="valuation" width="100%" viewBox="0 0 520 360" style="display:block"></svg>
+  <!-- Inputs -->
+  <div class="card">
+    <div class="card-title">Your Numbers</div>
+    <div class="inputs">
+      <div class="field">
+        <label><strong>MVP Build Cost</strong></label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="buildCost" value="5000" min="0" step="500" />
         </div>
-        <div id="val-panel" style="flex:1;min-width:220px"></div>
+      </div>
+      <div class="field">
+        <label><strong>Weeks to Launch</strong></label>
+        <div class="input-wrap">
+          <input type="number" id="weeks" value="8" min="1" max="104" step="1" style="padding-left:12px" />
+          <span class="suffix">wk</span>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Price per User</strong></label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="price" value="15" min="0" step="1" />
+          <span class="suffix">/mo</span>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Variable Cost / User</strong></label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="varCost" value="5" min="0" step="1" />
+          <span class="suffix">/mo</span>
+        </div>
       </div>
     </div>
+    <div class="warn" id="warn">⚠ Price must be higher than variable cost to ever break even.</div>
   </div>
 
-  <!-- CHART 1: MVP Validation Curve -->
-  <div>
-    <div class="section-label">Chart 1 of 3 — MVP Timeline</div>
-    <div class="card">
-      <h3>MVP Validation Curve</h3>
-      <p class="sub">From first line of code to first paying customer — <strong style="color:#3b82f6">10 weeks</strong>, <strong style="color:#f59e0b">$5,000</strong> invested, est. company value <strong style="color:#a855f7">~$6K</strong></p>
-      <svg id="jcurve" width="100%" height="320" viewBox="0 0 800 300"></svg>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">MVP Cost</div><div class="metric-value" style="color:#f59e0b">$5,000</div><div style="font-size:11px;color:#8b949e;margin-top:2px">total investment</div></div>
-        <div class="metric"><div class="metric-label">Time to 1st Customer</div><div class="metric-value" style="color:#3b82f6">10 weeks</div><div style="font-size:11px;color:#8b949e;margin-top:2px">from start to revenue</div></div>
-        <div class="metric"><div class="metric-label">1st Customer MRR</div><div class="metric-value" style="color:#00d26a">$50/mo</div><div style="font-size:11px;color:#8b949e;margin-top:2px">ARR: $600</div></div>
-        <div class="metric"><div class="metric-label">Est. Co. Value</div><div class="metric-value" style="color:#a855f7">~$6K</div><div style="font-size:11px;color:#8b949e;margin-top:2px">10× ARR at validation</div></div>
+  <!-- Results -->
+  <div class="card">
+    <div class="card-title">Results</div>
+    <div class="results">
+      <div class="result">
+        <div class="result-label">Total MVP Cost</div>
+        <div class="result-value" id="r-cost" style="color:#f59e0b">$5,000</div>
+        <div class="result-sub" id="r-burn">$625 / week</div>
       </div>
-      <div class="explain">
-        <h4>How to read this chart</h4>
-        <div class="explain-item"><div class="explain-bar" style="background:#f59e0b"></div><div><strong>The Trough (going down) — </strong><span>Every dollar and hour spent before launch. You're running entirely on assumptions — no market signal yet.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#f59e0b"></div><div><strong>MVP Launch (amber line) — </strong><span>Maximum resources spent without return. The product is live, but proof of viability is still zero.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>First Paying Customer (green line) — </strong><span>The inflection point. Someone looked at all alternatives and paid you. The trajectory has permanently changed — you now have a fact, not a theory.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>The upward curve — </strong><span>Still below zero until break-even, but the direction is everything.</span></div></div>
+      <div class="result">
+        <div class="result-label">Break-Even Point</div>
+        <div class="result-value" id="r-be" style="color:#3b82f6">500 users</div>
+        <div class="result-sub" id="r-margin">$10 margin/user</div>
+      </div>
+      <div class="result">
+        <div class="result-label">Est. Company Value</div>
+        <div class="result-value" id="r-val" style="color:#a855f7">~$6K</div>
+        <div class="result-sub">at first paying customer (10× ARR)</div>
+      </div>
+      <div class="result">
+        <div class="result-label">Monthly at Break-Even</div>
+        <div class="result-value" id="r-mrr" style="color:#00d26a">$5,000</div>
+        <div class="result-sub" id="r-arr">ARR $60,000</div>
       </div>
     </div>
-  </div>
 
-  <!-- CHART 2: Break-Even -->
-  <div>
-    <div class="section-label">Chart 2 of 3 — Unit Economics</div>
-    <div class="card">
-      <h3>Break-Even Analysis</h3>
-      <p class="sub">You need <strong style="color:#00d26a">500 users</strong> to cover all costs at $15/user</p>
-      <svg id="breakeven" width="100%" height="300" viewBox="0 0 800 280"></svg>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Fixed Cost</div><div class="metric-value" style="color:#ef4444">$5,000</div><div style="font-size:11px;color:#8b949e;margin-top:2px">to build &amp; launch</div></div>
-        <div class="metric"><div class="metric-label">Margin / User</div><div class="metric-value" style="color:#3b82f6">$10/mo</div><div style="font-size:11px;color:#8b949e;margin-top:2px">price − variable cost</div></div>
-        <div class="metric"><div class="metric-label">Break-Even</div><div class="metric-value" style="color:#00d26a">500 users</div><div style="font-size:11px;color:#8b949e;margin-top:2px">to reach profitability</div></div>
+    <!-- Break-even progress bar -->
+    <div class="be-section">
+      <div class="be-label">
+        <span>1st customer</span>
+        <span id="be-pct-label">Break-even: 500 users away</span>
+        <span>Break-even</span>
       </div>
-      <div class="explain">
-        <h4>How to read this chart</h4>
-        <div class="explain-item"><div class="explain-bar" style="background:#ef4444"></div><div><strong>Red Line — Total Cost — </strong><span>Starts at $5,000 (fixed investment) and rises $5 per user added.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>Green Line — Revenue — </strong><span>Starts at $0. Grows $15 per user. Below cost at first because the fixed investment was already paid.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>The Crossing Point — 500 Users — </strong><span>Where green crosses red. Before this, every user reduces your loss. After this, every user is pure profit.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#8b949e"></div><div><strong>What this does NOT show — </strong><span>Churn, growth rate, or time. This is the math snapshot. Estimate monthly acquisition to make it real.</span></div></div>
+      <div class="be-track">
+        <div class="be-fill" id="be-fill" style="width:0.2%;background:#3b82f6"></div>
       </div>
     </div>
-  </div>
 
-  <!-- CHART 3: Viability Matrix -->
-  <div>
-    <div class="section-label">Chart 3 of 3 — Feature Prioritization</div>
-    <div class="card">
-      <h3>Feature Viability Matrix</h3>
-      <p class="sub">Features from the conversation — plotted by customer value vs. cost to build</p>
-      <svg id="matrix" width="100%" height="360" viewBox="0 0 800 340"></svg>
-      <div class="feature-tags" id="feature-tags"></div>
-      <div class="quadrant-grid">
-        <div class="quadrant-item"><div class="q-dot" style="background:#00d26a"></div><div><div class="q-title">Sweet Spot</div><div class="q-sub">High value, low cost — build first</div></div></div>
-        <div class="quadrant-item"><div class="q-dot" style="background:#3b82f6"></div><div><div class="q-title">Build Later</div><div class="q-sub">High value, high cost — plan for v2</div></div></div>
-        <div class="quadrant-item"><div class="q-dot" style="background:#f59e0b"></div><div><div class="q-title">Quick Win</div><div class="q-sub">Low value, easy — fast validation</div></div></div>
-        <div class="quadrant-item"><div class="q-dot" style="background:#ef4444"></div><div><div class="q-title">Skip</div><div class="q-sub">Low value, high effort — cut from MVP</div></div></div>
-      </div>
-      <div class="explain">
-        <h4>How to read this chart</h4>
-        <div class="explain-item"><div class="explain-bar" style="background:#8b949e"></div><div><strong>X-Axis (left = easy, right = hard) — </strong><span>Your team's estimate of engineering effort. Low = days. High = weeks or months.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#8b949e"></div><div><strong>Y-Axis (bottom = meh, top = must-have) — </strong><span>How strongly your target customer wants this — based on interviews, not opinion.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>Green zone (top-left) = Your MVP — </strong><span>Maximum customer impact for minimum build effort. Only these belong in your MVP.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#ef4444"></div><div><strong>Red zone (bottom-right) = Delete — </strong><span>High effort, low value. These are why MVPs get bloated and delayed. Cut without guilt.</span></div></div>
-      </div>
-    </div>
+    <div id="viability-badge" class="badge"></div>
   </div>
 
 </div>
 
 <script>
-const C = { bg:'#0d1117', card:'#161b22', border:'#30363d', text:'#e6edf3', muted:'#8b949e', blue:'#3b82f6', green:'#00d26a', amber:'#f59e0b', red:'#ef4444', grid:'#21262d' };
+const ids = ['buildCost','weeks','price','varCost'];
+ids.forEach(id => document.getElementById(id).addEventListener('input', update));
 
-/* ── helpers ── */
-function svgEl(tag, attrs) {
-  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
-  return el;
-}
-function line(svg, x1,y1,x2,y2, stroke, sw=1, dash='') {
-  svg.appendChild(svgEl('line',{x1,y1,x2,y2,stroke,'stroke-width':sw,'stroke-dasharray':dash}));
-}
-function text(svg, x, y, txt, color, size=11, anchor='middle', weight='normal') {
-  const t = svgEl('text', {x, y, fill:color, 'font-size':size, 'text-anchor':anchor, 'font-weight':weight});
-  t.textContent = txt;
-  svg.appendChild(t);
-}
-function gridLines(svg, px, py, pw, ph, xTicks, yTicks, xMin, xMax, yMin, yMax) {
-  for (const v of yTicks) {
-    const yy = py + ph - ((v-yMin)/(yMax-yMin))*ph;
-    line(svg, px, yy, px+pw, yy, C.grid);
-    const label = Math.abs(v)>=1000 ? (v/1000).toFixed(1)+'k' : v;
-    text(svg, px-8, yy+4, label, C.muted, 10, 'end');
-  }
-  for (const v of xTicks) {
-    const xx = px + ((v-xMin)/(xMax-xMin))*pw;
-    line(svg, xx, py, xx, py+ph, C.grid);
-    text(svg, xx, py+ph+16, v, C.muted, 10);
-  }
+function fmt(n) {
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
+  return '$' + Math.round(n).toLocaleString();
 }
 
-/* ─────────────── CHART 1: J-CURVE ─────────────── */
-(function() {
-  const svg = document.getElementById('jcurve');
-  const W=800, H=300, px=70, py=30, pw=680, ph=210;
+function update() {
+  const cost    = Math.max(0, +document.getElementById('buildCost').value || 0);
+  const weeks   = Math.max(1, +document.getElementById('weeks').value    || 1);
+  const price   = Math.max(0, +document.getElementById('price').value    || 0);
+  const varCost = Math.max(0, +document.getElementById('varCost').value  || 0);
 
-  // Config: launch at week 8, first customer at week 10
-  const LAUNCH=8, FIRST_CUSTOMER=10, TOTAL_BURN=5000, PRICE=50;
-  const burnPerWk = TOTAL_BURN / LAUNCH;
-
-  const pts = [];
-  for (let w=0; w<=LAUNCH; w++) pts.push({w, v: -burnPerWk*w});
-  for (let w=LAUNCH+1; w<FIRST_CUSTOMER; w++) pts.push({w, v: -(TOTAL_BURN + TOTAL_BURN*0.04*(w-LAUNCH))});
-  const bottom = pts[pts.length-1].v;
-  for (let w=FIRST_CUSTOMER; w<=18; w++) pts.push({w, v: bottom + PRICE*Math.pow(w-FIRST_CUSTOMER,1.6)*0.5});
-
-  const xMin=0, xMax=18, yMin=-6200, yMax=2000;
-  const X = w => px + ((w-xMin)/(xMax-xMin))*pw;
-  const Y = v => py + ph - ((v-yMin)/(yMax-yMin))*ph;
-
-  gridLines(svg, px, py, pw, ph, [0,2,4,6,8,10,12,14,16,18], [-6000,-4000,-2000,0,1000], xMin, xMax, yMin, yMax);
-  text(svg, px+pw/2, H-2, 'Time (Weeks)', C.muted, 11);
-
-  // Zero line
-  line(svg, px, Y(0), px+pw, Y(0), C.muted, 1, '4 4');
-  text(svg, px-4, Y(0)+4, '$0', C.muted, 9, 'end', '600');
-
-  // Gradient fill
-  const pathD = pts.map((p,i) => `${i===0?'M':'L'}${X(p.w)},${Y(p.v)}`).join(' ');
-  const fillPath = pathD + ` L${X(xMax)},${Y(yMin)} L${X(xMin)},${Y(yMin)} Z`;
-  svg.appendChild(svgEl('path', {d:fillPath, fill:'#3b82f6', 'fill-opacity':'0.07'}));
-  svg.appendChild(svgEl('path', {d:pathD, fill:'none', stroke:C.blue, 'stroke-width':'2.5', 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
-
-  // ── MVP Launch line (week 8) ──
-  const x8 = X(LAUNCH);
-  const yLaunch = Y(pts[LAUNCH].v);
-  line(svg, x8, py, x8, py+ph, C.amber, 2);
-  text(svg, x8, py+10, 'MVP Launch', C.amber, 10, 'middle', '600');
-
-  // MVP Cost annotation: callout box at trough
-  const calloutX = x8 - 5, calloutY = yLaunch - 46;
-  const box1 = svgEl('rect', {x:calloutX-54, y:calloutY, width:108, height:42, rx:6, fill:'#1c1f26', stroke:C.amber, 'stroke-width':'1', 'stroke-opacity':'0.6'});
-  svg.appendChild(box1);
-  text(svg, calloutX, calloutY+14, 'MVP Cost', C.amber, 10, 'middle', '600');
-  text(svg, calloutX, calloutY+29, '-$5,000', C.amber, 13, 'middle', '700');
-  // Arrow from box to dot
-  svg.appendChild(svgEl('line', {x1:calloutX, y1:calloutY+42, x2:x8, y2:yLaunch-5, stroke:C.amber, 'stroke-width':'1', 'stroke-dasharray':'3 2', 'stroke-opacity':'0.6'}));
-  svg.appendChild(svgEl('circle', {cx:x8, cy:yLaunch, r:5, fill:C.amber, stroke:C.card, 'stroke-width':2}));
-
-  // ── First customer line (week 10) ──
-  const x10 = X(FIRST_CUSTOMER);
-  const yFC = Y(pts.find(p=>p.w===FIRST_CUSTOMER).v);
-  line(svg, x10, py, x10, py+ph, C.green, 2, '6 3');
-  text(svg, x10, py+10, '🎉 First Customer', C.green, 10, 'middle', '600');
-
-  // Company value callout at inflection
-  const box2X = x10 + 14, box2Y = yFC - 60;
-  const box2 = svgEl('rect', {x:box2X, y:box2Y, width:130, height:56, rx:6, fill:'#0d1a14', stroke:C.green, 'stroke-width':'1', 'stroke-opacity':'0.7'});
-  svg.appendChild(box2);
-  text(svg, box2X+65, box2Y+14, '1st MRR: $50/mo', C.green, 10, 'middle', '600');
-  text(svg, box2X+65, box2Y+29, 'ARR: $600', C.muted, 9, 'middle');
-  text(svg, box2X+65, box2Y+44, 'Est. Co. Value: ~$6K', '#a855f7', 10, 'middle', '700');
-  svg.appendChild(svgEl('line', {x1:box2X, y1:box2Y+28, x2:x10+3, y2:yFC-5, stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'3 2', 'stroke-opacity':'0.6'}));
-  svg.appendChild(svgEl('circle', {cx:x10, cy:yFC, r:5, fill:C.green, stroke:C.card, 'stroke-width':2}));
-
-  // ── Time bracket: 0 → 10 weeks ──
-  const bracketY = py + ph + 26;
-  const bx0 = X(0), bx10 = X(FIRST_CUSTOMER);
-  line(svg, bx0, bracketY, bx10, bracketY, C.blue, 1.5);
-  line(svg, bx0, bracketY-5, bx0, bracketY+5, C.blue, 1.5);
-  line(svg, bx10, bracketY-5, bx10, bracketY+5, C.blue, 1.5);
-  text(svg, (bx0+bx10)/2, bracketY-4, '← 10 weeks to first revenue →', C.blue, 9, 'middle', '600');
-})();
-
-/* ─────────────── CHART 2: BREAK-EVEN ─────────────── */
-(function() {
-  const svg = document.getElementById('breakeven');
-  const W=800, H=280, px=70, py=20, pw=700, ph=220;
-
-  const fixed=5000, varCost=5, price=15, maxU=1100;
-  const X = u => px + (u/maxU)*pw;
-  const yMax=16500, yMin=0;
-  const Y = v => py + ph - ((v-yMin)/(yMax-yMin))*ph;
-
-  gridLines(svg, px, py, pw, ph, [0,200,400,500,600,800,1000], [0,4000,8000,12000,16000], 0, maxU, yMin, yMax);
-  text(svg, px+pw/2, H-2, 'Number of Users', C.muted, 11);
-
-  // Cost line
-  const costPts = [0,200,400,500,600,800,1000,maxU].map(u=>({u,c:fixed+varCost*u}));
-  const costD = costPts.map((p,i)=>`${i===0?'M':'L'}${X(p.u)},${Y(p.c)}`).join(' ');
-  svg.appendChild(svgEl('path',{d:costD,fill:'none',stroke:C.red,'stroke-width':'2.5','stroke-linejoin':'round'}));
-
-  // Revenue line
-  const revPts = [0,200,400,500,600,800,1000,maxU].map(u=>({u,r:price*u}));
-  const revD = revPts.map((p,i)=>`${i===0?'M':'L'}${X(p.u)},${Y(p.r)}`).join(' ');
-  svg.appendChild(svgEl('path',{d:revD,fill:'none',stroke:C.green,'stroke-width':'2.5','stroke-linejoin':'round'}));
-
-  // Break-even marker (500 users)
-  const xBE = X(500);
-  line(svg, xBE, py, xBE, py+ph, C.green, 2, '6 3');
-  text(svg, xBE+4, py+14, 'Break-Even: 500', C.green, 10, 'start', '600');
-  svg.appendChild(svgEl('circle',{cx:xBE,cy:Y(fixed+varCost*500),r:6,fill:C.green,stroke:C.card,'stroke-width':2}));
-
-  // Legend
-  [[C.red,'Total Cost',480,py+14],[C.green,'Revenue',480,py+28]].forEach(([c,l,x,y])=>{
-    line(svg, x, y-4, x+20, y-4, c, 2.5);
-    text(svg, x+26, y, l, C.muted, 11, 'start');
-  });
-})();
-
-/* ─────────────── CHART 3: VIABILITY MATRIX ─────────────── */
-(function() {
-  const svg = document.getElementById('matrix');
-  const features = [
-    {name:'Core Auth',      value:9, cost:3},
-    {name:'AI Summaries',   value:8, cost:5},
-    {name:'Calendar Sync',  value:7, cost:7},
-    {name:'Export PDF',     value:5, cost:2},
-    {name:'CRM Integration',value:6, cost:8},
-    {name:'Custom Branding',value:3, cost:6},
-    {name:'Live Captions',  value:9, cost:9},
-    {name:'Quick Tags',     value:4, cost:2},
-  ];
-  function qColor(cost, value) {
-    if (cost<=5 && value>5) return C.green;
-    if (cost>5  && value>5) return C.blue;
-    if (cost>5  && value<=5) return C.red;
-    return C.amber;
-  }
-  function qLabel(cost, value) {
-    if (cost<=5 && value>5) return 'Sweet Spot';
-    if (cost>5  && value>5) return 'Build Later';
-    if (cost>5  && value<=5) return 'Skip';
-    return 'Quick Win';
+  const margin  = price - varCost;
+  const warn    = document.getElementById('warn');
+  warn.style.display = margin <= 0 ? 'block' : 'none';
+  if (margin <= 0) {
+    document.getElementById('r-be').textContent   = '∞ users';
+    document.getElementById('r-margin').textContent = `$${margin}/user — not viable`;
+    document.getElementById('be-fill').style.width = '0%';
+    document.getElementById('be-pct-label').textContent = 'Not viable at current prices';
+    document.getElementById('viability-badge').style.display = 'none';
+    return;
   }
 
-  const W=800, H=340, px=70, py=20, pw=680, ph=270;
-  const X = v => px + ((v-0)/10)*pw;
-  const Y = v => py + ph - ((v-0)/10)*ph;
+  const breakEven = Math.ceil(cost / margin);
+  const burnPerWk = cost / weeks;
+  const mrrAtBE   = price * breakEven;
+  const arrAtBE   = mrrAtBE * 12;
+  const firstARR  = price * 12;
+  const coValue   = firstARR * 10; // 10× ARR
 
-  // Grid
-  for (let i=0; i<=10; i+=2) {
-    const xx = X(i); line(svg, xx, py, xx, py+ph, C.grid);
-    text(svg, xx, py+ph+16, i, C.muted, 10);
-    const yy = Y(i); line(svg, px, yy, px+pw, yy, C.grid);
-    text(svg, px-8, yy+4, i, C.muted, 10, 'end');
+  // Update result cards
+  document.getElementById('r-cost').textContent   = fmt(cost);
+  document.getElementById('r-burn').textContent   = `${fmt(burnPerWk)} / week`;
+  document.getElementById('r-be').textContent     = breakEven.toLocaleString() + ' users';
+  document.getElementById('r-margin').textContent = `$${margin} margin/user`;
+  document.getElementById('r-val').textContent    = fmt(coValue);
+  document.getElementById('r-mrr').textContent    = fmt(mrrAtBE) + '/mo';
+  document.getElementById('r-arr').textContent    = 'ARR ' + fmt(arrAtBE);
+
+  // Break-even bar — 1 user = 0.2% of bar width, capped visually at 200% of break-even
+  const pct = Math.min(99, (1 / breakEven) * 100);
+  document.getElementById('be-fill').style.width = Math.max(0.5, pct) + '%';
+  document.getElementById('be-pct-label').textContent = `Break-even: ${breakEven.toLocaleString()} users away`;
+
+  // Viability badge
+  const badge = document.getElementById('viability-badge');
+  badge.style.display = 'inline-flex';
+  if (breakEven < 100) {
+    badge.style.color         = '#00d26a';
+    badge.style.background    = '#0d1a14';
+    badge.style.borderColor   = '#1a3a25';
+    badge.textContent         = '✓ Highly viable — break-even within reach';
+  } else if (breakEven < 500) {
+    badge.style.color         = '#3b82f6';
+    badge.style.background    = '#0d1525';
+    badge.style.borderColor   = '#1a3050';
+    badge.textContent         = '● Viable — solid unit economics';
+  } else if (breakEven < 2000) {
+    badge.style.color         = '#f59e0b';
+    badge.style.background    = '#1a1400';
+    badge.style.borderColor   = '#4a3000';
+    badge.textContent         = '◐ Challenging — raise price or cut costs';
+  } else {
+    badge.style.color         = '#ef4444';
+    badge.style.background    = '#1a0d0d';
+    badge.style.borderColor   = '#3a1a1a';
+    badge.textContent         = '✗ Difficult — revisit pricing model';
   }
+}
 
-  // Axis labels
-  text(svg, px+pw/2, H-2, 'Cost / Effort to Build →', C.muted, 11);
-  // Quadrant dividers
-  line(svg, X(5), py, X(5), py+ph, C.border, 1.5);
-  line(svg, px, Y(5), px+pw, Y(5), C.border, 1.5);
-
-  // Quadrant labels (faint)
-  text(svg, X(2.5), py+28, 'SWEET SPOT', C.green, 9, 'middle', '700');
-  text(svg, X(7.5), py+28, 'BUILD LATER', C.blue, 9, 'middle', '700');
-  text(svg, X(2.5), py+ph-10, 'QUICK WIN', C.amber, 9, 'middle', '700');
-  text(svg, X(7.5), py+ph-10, 'SKIP', C.red, 9, 'middle', '700');
-
-  // Dots with tooltips
-  const tooltip = document.createElement('div');
-  Object.assign(tooltip.style, {
-    position:'fixed', background:C.card, border:`1px solid ${C.border}`,
-    borderRadius:'8px', padding:'10px 14px', fontSize:'12px', color:C.text,
-    pointerEvents:'none', display:'none', zIndex:999, maxWidth:'160px',
-  });
-  document.body.appendChild(tooltip);
-
-  features.forEach(f => {
-    const cx = X(f.cost), cy = Y(f.value), col = qColor(f.cost, f.value);
-    const c = svgEl('circle', {cx, cy, r:10, fill:col, 'fill-opacity':'0.9', stroke:C.card, 'stroke-width':'2', style:'cursor:pointer'});
-    c.addEventListener('mouseenter', e => {
-      tooltip.innerHTML = `<strong>${f.name}</strong><br><span style="color:#8b949e">Value: <b style="color:${C.green}">${f.value}/10</b> · Cost: <b style="color:${C.red}">${f.cost}/10</b></span><br><span style="color:${col};font-weight:600">→ ${qLabel(f.cost,f.value)}</span>`;
-      tooltip.style.display = 'block';
-    });
-    c.addEventListener('mousemove', e => {
-      tooltip.style.left = (e.clientX+14)+'px';
-      tooltip.style.top = (e.clientY-10)+'px';
-    });
-    c.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
-    svg.appendChild(c);
-  });
-
-  // Feature tags
-  const tagContainer = document.getElementById('feature-tags');
-  features.forEach(f => {
-    const tag = document.createElement('div');
-    tag.className = 'tag';
-    tag.innerHTML = `<div class="tag-dot" style="background:${qColor(f.cost,f.value)}"></div><span>${f.name}</span><span style="color:#8b949e">(${qLabel(f.cost,f.value)})</span>`;
-    tagContainer.appendChild(tag);
-  });
-})();
-
-/* ─────────────── CHART 4: VALUATION — VERTICAL BARS ─────────────── */
-(function() {
-  const svg = document.getElementById('valuation');
-  const W=520, H=360;
-
-  // ── Axes ─────────────────────────────────────────────────────────
-  const px=52, py=52, pw=448, ph=248, MAX=4.5;
-  const Y = v => py + ph*(1 - v/MAX);
-
-  // Horizontal grid + Y-axis labels
-  [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].forEach(v => {
-    const yy = Y(v);
-    line(svg, px, yy, px+pw, yy, C.grid, v%1===0 ? 0.8 : 0.4);
-    text(svg, px-6, yy+4, `$${v}M`, C.muted, 9, 'end');
-  });
-
-  // ── Target raise zone $1.3M–$1.9M ────────────────────────────────
-  const tzTop=Y(1.9), tzBot=Y(1.3);
-  svg.appendChild(svgEl('rect', {
-    x:px, y:tzTop, width:pw, height:tzBot-tzTop,
-    fill:C.green, 'fill-opacity':'0.07',
-    stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'5 3', 'stroke-opacity':'0.5'
-  }));
-  // Right label
-  text(svg, px+pw+4, tzTop+8,  'Target raise', C.green, 8, 'start', '600');
-  text(svg, px+pw+4, tzTop+18, '$1.3M–$1.9M', C.green, 8, 'start');
-
-  // ── Columns ───────────────────────────────────────────────────────
-  const CW=90, CG=35;
-  const cols = [
-    {label:'Conservative', sub:'Low-end',         min:0.5, max:1.0, color:C.amber, x:px+20},
-    {label:'Reasonable',   sub:'Most likely',      min:1.0, max:2.0, color:C.blue,  x:px+20+CW+CG},
-    {label:'Optimistic',   sub:'Strong traction',  min:2.0, max:4.0, color:C.green, x:px+20+(CW+CG)*2},
-  ];
-
-  cols.forEach(c => {
-    const cx = c.x + CW/2;
-    // Dim full bar (0 → max) — shows proportional height
-    svg.appendChild(svgEl('rect', {
-      x:c.x, y:Y(c.max), width:CW, height:Y(0)-Y(c.max), rx:5,
-      fill:c.color, 'fill-opacity':'0.08'
-    }));
-    // Bright range section (min → max)
-    const rTop=Y(c.max), rBot=Y(c.min), rH=rBot-rTop;
-    svg.appendChild(svgEl('rect', {
-      x:c.x, y:rTop, width:CW, height:rH, rx:5,
-      fill:c.color, 'fill-opacity':'0.35', stroke:c.color, 'stroke-width':'1.5'
-    }));
-    // Value labels inside range section
-    if (rH >= 28) {
-      text(svg, cx, rTop+rH/2-4, `$${c.min}M`, c.color, 11, 'middle', '700');
-      text(svg, cx, rTop+rH/2+9, `$${c.max}M`, c.color, 11, 'middle', '700');
-    } else {
-      text(svg, cx, rTop-5, `$${c.min}M–$${c.max}M`, c.color, 9, 'middle', '700');
-    }
-    // X-axis label
-    text(svg, cx, Y(0)+16, c.label, C.text, 10, 'middle', '600');
-    text(svg, cx, Y(0)+28, c.sub,   C.muted, 9,  'middle');
-  });
-
-  // ── 2nd customer annotation (above Optimistic) ────────────────────
-  const optCol = cols[2];
-  const annY = Y(4.0) - 28;
-  svg.appendChild(svgEl('rect', {
-    x:optCol.x-4, y:annY, width:CW+8, height:24, rx:4,
-    fill:C.green, 'fill-opacity':'0.12', stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'3 2'
-  }));
-  text(svg, optCol.x+CW/2, annY+9,  '2nd customer', C.green, 8, 'middle', '600');
-  text(svg, optCol.x+CW/2, annY+19, '$2.7M–$4M',    C.green, 8, 'middle');
-
-  // ── "You are here" pill (on Reasonable column at ~$1.5M) ──────────
-  const youCol = cols[1];
-  const youY = Y(1.5);
-  svg.appendChild(svgEl('rect', {
-    x:youCol.x+4, y:youY-11, width:CW-8, height:20, rx:10,
-    fill:'#0d1a14', stroke:C.green, 'stroke-width':'1.2'
-  }));
-  text(svg, youCol.x+CW/2, youY+3, '● You are here', C.green, 8, 'middle', '600');
-
-  // ── Legend ────────────────────────────────────────────────────────
-  const legendItems = [
-    [C.amber, 'Conservative'],
-    [C.blue,  'Reasonable'],
-    [C.green, 'Optimistic'],
-    [C.green, 'Target raise zone'],
-  ];
-  legendItems.forEach(([c,l], i) => {
-    const lx = px + i*110;
-    if (i === 3) {
-      // dashed box for target raise
-      svg.appendChild(svgEl('rect', {x:lx, y:py-22, width:12, height:10, rx:2, fill:c, 'fill-opacity':'0.15', stroke:c, 'stroke-width':'1', 'stroke-dasharray':'3 2'}));
-    } else {
-      svg.appendChild(svgEl('circle', {cx:lx+5, cy:py-16, r:4, fill:c}));
-    }
-    text(svg, lx+14, py-12, l, C.muted, 9, 'start');
-  });
-})();
-
-// ── Right info panel ─────────────────────────────────────────────────
-(function(){
-  const panel = document.getElementById('val-panel');
-  if (!panel) return;
-  const numbers = [
-    {color:'#f59e0b', label:'Conservative — $0.5M–$1M',
-     text:'3–4× revenue multiple on a $300K contract. Assumes low multiplier, long sales cycle, no additional signal.'},
-    {color:'#3b82f6', label:'Reasonable — $1M–$2M',
-     text:'4–6× on $500K ARR. Contract signed, product live, 1–2 use cases validated with 1st customer.'},
-    {color:'#00d26a', label:'Optimistic — $2M–$4M',
-     text:'8–10× on $500K ARR. Strong NPS, expansion signals, pipeline of 2nd customer in sight.'},
-    {color:'#00d26a', label:'Target raise zone — $1.3M–$1.9M',
-     text:'Pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.'},
-  ];
-  const sharpen = [
-    'Signed contract value (ARR)',
-    'Expansion signals from Yango',
-  ];
-  panel.innerHTML = `
-    <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px;font-family:system-ui,sans-serif">
-      <div style="color:#8b949e;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">How We Got These Numbers</div>
-      ${numbers.map((n,i) => `
-        <div style="display:flex;gap:8px;margin-bottom:10px;${i<numbers.length-1?'padding-bottom:10px;border-bottom:1px solid #21262d':''}">
-          <div style="width:8px;height:8px;border-radius:50%;background:${n.color};flex-shrink:0;margin-top:3px"></div>
-          <div>
-            <div style="color:#e6edf3;font-size:11px;font-weight:600;margin-bottom:2px">${n.label}</div>
-            <div style="color:#8b949e;font-size:11px;line-height:1.5">${n.text}</div>
-          </div>
-        </div>`).join('')}
-      <div style="color:#8b949e;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px">What Would Sharpen This</div>
-      ${sharpen.map(s => `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 10px;margin-bottom:7px">
-          <span style="color:#e6edf3;font-size:11px">${s}</span>
-          <span style="background:#431407;color:#fb923c;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;letter-spacing:.04em">HIGH IMPACT</span>
-        </div>`).join('')}
-    </div>`;
-})();
+update();
+</script>
 </body>
 </html>

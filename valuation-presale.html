@@ -214,6 +214,11 @@
       border: 1.5px solid #3b82f6;
       color: #bfdbfe;
     }
+    .bar-pre3 {
+      background: linear-gradient(180deg, #166534 0%, #14532d 100%);
+      border: 1.5px solid #22c55e;
+      color: #bbf7d0;
+    }
 
     /* X labels */
     .x-labels {
@@ -254,6 +259,11 @@
       background: rgba(29,78,216,0.15);
       border: 1px solid rgba(59,130,246,0.4);
       color: #93c5fd;
+    }
+    .x-label-chip.pre3 {
+      background: rgba(22,101,52,0.2);
+      border: 1px solid rgba(34,197,94,0.4);
+      color: #4ade80;
     }
     .x-label-sub { font-size: 9px; color: #484f58; text-align: center; }
 
@@ -626,10 +636,13 @@
 
     <div class="legend">
       <div class="legend-item">
-        <div class="legend-dot" style="background:#d97706;"></div> Pre 1st paying customer (now)
+        <div class="legend-dot" style="background:#d97706;"></div> Pre Yango pays (now)
       </div>
       <div class="legend-item">
-        <div class="legend-dot" style="background:#3b82f6;"></div> Pre 2nd paying customer (after OneQ)
+        <div class="legend-dot" style="background:#3b82f6;"></div> Yango happy & paying
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#22c55e;"></div> Pre 2nd customer
       </div>
     </div>
 
@@ -677,12 +690,23 @@
 
           <div class="col-arrow">→</div>
 
-          <!-- Bar 2: Pre 2nd paying customer · $1M–$2M -->
+          <!-- Bar 2: Yango happy & paying · $1M–$2M -->
           <div class="col">
             <div class="range-bar bar-pre2" style="bottom:116px; height:64px;">
               <span class="range-bar-label">$1M–$2M</span>
               <div class="bar-marker top">$2M</div>
               <div class="bar-marker bottom">$1M</div>
+            </div>
+          </div>
+
+          <div class="col-arrow">→</div>
+
+          <!-- Bar 3: Pre 2nd paying customer · $2M–$4M -->
+          <div class="col">
+            <div class="range-bar bar-pre3" style="bottom:180px; height:128px;">
+              <span class="range-bar-label">$2M–$4M</span>
+              <div class="bar-marker top">$4M</div>
+              <div class="bar-marker bottom">$2M</div>
             </div>
           </div>
 
@@ -696,8 +720,13 @@
           </div>
           <div class="x-label-arrow"></div>
           <div class="x-label">
-            <div class="x-label-chip pre2">Pre 2nd customer</div>
-            <div class="x-label-sub">After OneQ engagement</div>
+            <div class="x-label-chip pre2">Yango happy ✓</div>
+            <div class="x-label-sub">OneQ delivers this</div>
+          </div>
+          <div class="x-label-arrow"></div>
+          <div class="x-label">
+            <div class="x-label-chip pre3">Pre 2nd customer</div>
+            <div class="x-label-sub">What comes next</div>
           </div>
         </div>
 

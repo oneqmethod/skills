@@ -307,7 +307,56 @@
       margin-bottom: 7px;
       cursor: pointer;
       transition: border-color 0.15s;
+      position: relative;
     }
+
+    .brain-help {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1px solid #30363d;
+      background: #21262d;
+      color: #7d8590;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: border-color 0.15s, color 0.15s;
+      line-height: 1;
+    }
+    .brain-help:hover { border-color: #8b949e; color: #e6edf3; }
+    .brain-help.active { border-color: #3b82f6; color: #93c5fd; background: rgba(59,130,246,0.1); }
+
+    .brain-tooltip {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      width: 220px;
+      background: #1c2128;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #c9d1d9;
+      line-height: 1.55;
+      z-index: 10;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .brain-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -5px; right: 8px;
+      width: 8px; height: 8px;
+      background: #1c2128;
+      border-left: 1px solid #3b82f6;
+      border-top: 1px solid #3b82f6;
+      transform: rotate(45deg);
+    }
+    .brain-tooltip.visible { display: block; }
     .brain-item:last-child { margin-bottom: 0; }
     .brain-item:hover { border-color: #3b82f6; }
     .brain-item.answered { border-color: rgba(74,222,128,0.4); background: rgba(34,197,94,0.04); }
@@ -574,6 +623,9 @@
           <div class="brain-label">Signed contract value with Yango</div>
           <div class="brain-delta">+25% confidence</div>
         </div>
+        <button class="brain-help" onclick="toggleHelp(event, this)">?
+          <div class="brain-tooltip">What's the total annual value of Yango's contract? This is the single biggest input — it sets the revenue base for every valuation calculation.</div>
+        </button>
       </div>
 
       <div class="brain-item" data-boost="15" onclick="toggleBrain(this)">
@@ -582,6 +634,9 @@
           <div class="brain-label">Yango's expansion signals</div>
           <div class="brain-delta">+15% confidence</div>
         </div>
+        <button class="brain-help" onclick="toggleHelp(event, this)">?
+          <div class="brain-tooltip">Is Yango asking for more features, more seats, or more use cases? Early expansion signals are the strongest predictor of long-term retention.</div>
+        </button>
       </div>
 
       <div class="brain-item" data-boost="10" onclick="toggleBrain(this)">
@@ -590,6 +645,9 @@
           <div class="brain-label">2nd customer pipeline</div>
           <div class="brain-delta">+10% confidence</div>
         </div>
+        <button class="brain-help" onclick="toggleHelp(event, this)">?
+          <div class="brain-tooltip">Any conversations with a 2nd potential customer? Even informal interest changes the story from "one customer" to "a repeatable market."</div>
+        </button>
       </div>
 
       <div class="brain-item" data-boost="5" onclick="toggleBrain(this)">
@@ -598,6 +656,9 @@
           <div class="brain-label">Burn rate & runway</div>
           <div class="brain-delta">+5% confidence</div>
         </div>
+        <button class="brain-help" onclick="toggleHelp(event, this)">?
+          <div class="brain-tooltip">How much does the company spend per month? This tells us how urgently you need to close the raise and affects your negotiating position.</div>
+        </button>
       </div>
 
       <div class="brain-item" data-boost="5" onclick="toggleBrain(this)">
@@ -606,6 +667,9 @@
           <div class="brain-label">Gross margin %</div>
           <div class="brain-delta">+5% confidence</div>
         </div>
+        <button class="brain-help" onclick="toggleHelp(event, this)">?
+          <div class="brain-tooltip">What % of revenue stays after direct costs? Margins above 70% justify a higher revenue multiple from investors — it shows scalability.</div>
+        </button>
       </div>
 
       <div style="margin-top: 18px;">
@@ -672,6 +736,25 @@
     const pct = document.getElementById('confPct');
     pct.style.color = baseConfidence >= 70 ? '#4ade80' : baseConfidence >= 45 ? '#fbbf24' : '#f87171';
   }
+
+  function toggleHelp(e, btn) {
+    e.stopPropagation();
+    const tooltip = btn.querySelector('.brain-tooltip');
+    const isVisible = tooltip.classList.contains('visible');
+    // close all others
+    document.querySelectorAll('.brain-tooltip.visible').forEach(t => t.classList.remove('visible'));
+    document.querySelectorAll('.brain-help.active').forEach(b => b.classList.remove('active'));
+    if (!isVisible) {
+      tooltip.classList.add('visible');
+      btn.classList.add('active');
+    }
+  }
+
+  // close tooltips on outside click
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.brain-tooltip.visible').forEach(t => t.classList.remove('visible'));
+    document.querySelectorAll('.brain-help.active').forEach(b => b.classList.remove('active'));
+  });
 
   function showOffer() {
     const panel = document.getElementById('offerPanel');

@@ -68,23 +68,17 @@ svg text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui
     </div>
   </div>
 
-  <!-- CHART 4: COMPANY VALUATION — BEFORE vs AFTER -->
+  <!-- CHART 4: COMPANY VALUATION — POST MVP + 1ST CUSTOMER -->
   <div>
-    <div class="section-label">Chart 4 — Company Valuation: Pre-Development vs Post First Customer</div>
+    <div class="section-label">Chart 4 — Post-MVP + 1st Paying Customer (Yango)</div>
     <div class="card">
-      <h3>What Is the Company Worth?</h3>
-      <p class="sub">The moment Yango pays — everything changes. Here is the before and after.</p>
-      <svg id="valuation" width="100%" height="280" viewBox="0 0 800 270"></svg>
-      <div id="value-drivers" style="margin-top:16px"></div>
-      <div class="explain" style="margin-top:16px">
-        <h4>How to read this chart</h4>
-        <div class="explain-item"><div class="explain-bar" style="background:#ef4444"></div><div><strong>Before (left panel) — ₪0 market value — </strong><span>An idea with no paying customer has no verifiable market value. The only number that matters is what it costs to build: ₪18,500 ($5,000).</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>The arrow — 10 weeks, ₪5K invested — </strong><span>This is the entire journey. Build the MVP, land Yango, get paid. The ×1,000+ badge shows the value multiplier that crossing happens in those 10 weeks.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#f59e0b"></div><div><strong>Conservative (₪2–4M) — </strong><span>If negotiations are rushed or the buyer underweights strategic value. Use as your floor, not your ask.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#3b82f6"></div><div><strong>Reasonable (₪4–8M) — </strong><span>The honest market range for an MVP with one paying strategic customer in a large B2B market.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>Optimistic (₪8–15M) — </strong><span>Justified when Yango is visibly satisfied, the platform is repeatable, and a 2nd customer is in sight.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#a855f7"></div><div><strong>Recommended anchor — ₪5–7M — </strong><span>Strong enough to be taken seriously. Conservative enough to close. Walk into every room with this number.</span></div></div>
-        <div class="explain-item"><div class="explain-bar" style="background:#00d26a"></div><div><strong>2nd customer jump — ₪10–15M — </strong><span>One more paying customer eliminates concentration risk and proves the model. The valuation re-rates immediately.</span></div></div>
+      <h3>Post-MVP + 1st Paying Customer (Yango)</h3>
+      <p class="sub">Projected valuation ranges across three scenarios</p>
+      <div style="display:flex;gap:20px;align-items:flex-start">
+        <div style="flex:1.3;min-width:0">
+          <svg id="valuation" width="100%" viewBox="0 0 520 360" style="display:block"></svg>
+        </div>
+        <div id="val-panel" style="flex:1;min-width:220px"></div>
       </div>
     </div>
   </div>
@@ -384,169 +378,140 @@ function gridLines(svg, px, py, pw, ph, xTicks, yTicks, xMin, xMax, yMin, yMax) 
   });
 })();
 
-/* ─────────────── CHART 4: VALUATION BEFORE vs AFTER ─────────────── */
+/* ─────────────── CHART 4: VALUATION — VERTICAL BARS ─────────────── */
 (function() {
   const svg = document.getElementById('valuation');
-  const W=800, H=270;
+  const W=520, H=360;
 
-  // ── Layout constants ──────────────────────────────────────────────
-  const PRE_X=10, PRE_Y=15, PRE_W=155, PRE_H=238;
-  const ARR_X=PRE_X+PRE_W+8, ARR_W=72;
-  const POST_X=ARR_X+ARR_W+8, POST_Y=PRE_Y, POST_W=W-POST_X-10, POST_H=PRE_H;
-  // bar plot area inside POST panel
-  const BX=POST_X+98, BY=POST_Y+32, BW=POST_W-105, BH=POST_H-55;
-  const MAX=16;
-  const PX = v => BX + (v/MAX)*BW;
+  // ── Axes ─────────────────────────────────────────────────────────
+  const px=52, py=52, pw=448, ph=248, MAX=4.5;
+  const Y = v => py + ph*(1 - v/MAX);
 
-  // ── PRE panel ─────────────────────────────────────────────────────
-  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y, width:PRE_W, height:PRE_H, rx:10, fill:'#180d0d', stroke:'#3a1a1a', 'stroke-width':'1.5'}));
-
-  // Header stripe
-  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y, width:PRE_W, height:28, rx:10, fill:'#2a1010'}));
-  svg.appendChild(svgEl('rect', {x:PRE_X, y:PRE_Y+18, width:PRE_W, height:10, fill:'#2a1010'})); // square off bottom
-  text(svg, PRE_X+PRE_W/2, PRE_Y+18, 'PRE-DEVELOPMENT', '#ef4444', 10, 'middle', '700');
-
-  // Big ₪0
-  text(svg, PRE_X+PRE_W/2, PRE_Y+75, '₪', '#ef4444', 18, 'middle', '700');
-  text(svg, PRE_X+PRE_W/2, PRE_Y+112, '0', '#ef4444', 58, 'middle', '800');
-  text(svg, PRE_X+PRE_W/2, PRE_Y+130, 'market value', C.muted, 10, 'middle');
-
-  // Divider
-  line(svg, PRE_X+16, PRE_Y+142, PRE_X+PRE_W-16, PRE_Y+142, '#3a1a1a', 1);
-
-  // Risk dots
-  text(svg, PRE_X+PRE_W/2, PRE_Y+160, 'RISK LEVEL', C.muted, 9, 'middle', '600');
-  for (let i=0; i<5; i++) {
-    svg.appendChild(svgEl('circle', {cx:PRE_X+30+i*20, cy:PRE_Y+178, r:7,
-      fill:'#ef4444', 'fill-opacity': i < 4 ? '0.85' : '0.2',
-      stroke:'#ef4444', 'stroke-width':'1', 'stroke-opacity': i < 4 ? '1' : '0.3'
-    }));
-  }
-  text(svg, PRE_X+PRE_W/2, PRE_Y+198, 'VERY HIGH', C.red, 9, 'middle', '700');
-
-  // Cost to build
-  line(svg, PRE_X+16, PRE_Y+208, PRE_X+PRE_W-16, PRE_Y+208, '#3a1a1a', 1);
-  text(svg, PRE_X+PRE_W/2, PRE_Y+222, 'Cost to build', C.muted, 9, 'middle');
-  text(svg, PRE_X+PRE_W/2, PRE_Y+236, '₪18,500  /  $5,000', C.amber, 10, 'middle', '600');
-
-  // ── Arrow / transition ────────────────────────────────────────────
-  const MX = ARR_X + ARR_W/2, MY = PRE_Y + PRE_H/2;
-
-  // ×1000+ badge
-  svg.appendChild(svgEl('rect', {x:MX-30, y:MY-54, width:60, height:26, rx:6, fill:'#0d1a2a', stroke:C.blue, 'stroke-width':'1.2'}));
-  text(svg, MX, MY-37, '×1,000+', C.blue, 11, 'middle', '700');
-
-  // Arrow shaft + head
-  svg.appendChild(svgEl('line', {x1:ARR_X+4, y1:MY, x2:ARR_X+ARR_W-14, y2:MY, stroke:C.blue, 'stroke-width':'2.5'}));
-  svg.appendChild(svgEl('path', {
-    d:`M${ARR_X+ARR_W-14},${MY-7} L${ARR_X+ARR_W-2},${MY} L${ARR_X+ARR_W-14},${MY+7}`,
-    fill:C.blue, stroke:'none'
-  }));
-
-  // Labels below arrow
-  text(svg, MX, MY+18, '10 weeks', C.blue, 10, 'middle', '600');
-  text(svg, MX, MY+31, '₪5K invested', C.amber, 9, 'middle');
-
-  // ── POST panel ────────────────────────────────────────────────────
-  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y, width:POST_W, height:POST_H, rx:10, fill:'#0f1419', stroke:'#21262d', 'stroke-width':'1.5'}));
-
-  // Header stripe
-  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y, width:POST_W, height:28, rx:10, fill:'#0d1f12'}));
-  svg.appendChild(svgEl('rect', {x:POST_X, y:POST_Y+18, width:POST_W, height:10, fill:'#0d1f12'}));
-  text(svg, POST_X+POST_W/2, POST_Y+18, 'POST-MVP  +  1ST PAYING CUSTOMER (YANGO)', '#00d26a', 10, 'middle', '700');
-
-  // X-axis ticks + labels
-  [0,2,4,5,7,8,10,12,14,15,16].forEach(v => {
-    line(svg, PX(v), BY, PX(v), BY+BH, C.grid, 0.6, '2 3');
-  });
-  [0,4,8,12,16].forEach(v => {
-    text(svg, PX(v), BY+BH+14, `₪${v}M`, C.muted, 8, 'middle');
+  // Horizontal grid + Y-axis labels
+  [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].forEach(v => {
+    const yy = Y(v);
+    line(svg, px, yy, px+pw, yy, C.grid, v%1===0 ? 0.8 : 0.4);
+    text(svg, px-6, yy+4, `$${v}M`, C.muted, 9, 'end');
   });
 
-  // Recommended band ₪5–7M (behind bars)
+  // ── Target raise zone $1.3M–$1.9M ────────────────────────────────
+  const tzTop=Y(1.9), tzBot=Y(1.3);
   svg.appendChild(svgEl('rect', {
-    x:PX(5), y:BY-4, width:PX(7)-PX(5), height:BH+4,
-    fill:'#a855f7', 'fill-opacity':'0.09', stroke:'#a855f7', 'stroke-width':'1', 'stroke-dasharray':'5 3'
+    x:px, y:tzTop, width:pw, height:tzBot-tzTop,
+    fill:C.green, 'fill-opacity':'0.07',
+    stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'5 3', 'stroke-opacity':'0.5'
   }));
+  // Right label
+  text(svg, px+pw+4, tzTop+8,  'Target raise', C.green, 8, 'start', '600');
+  text(svg, px+pw+4, tzTop+18, '$1.3M–$1.9M', C.green, 8, 'start');
 
-  // ── Scenario bars ─────────────────────────────────────────────────
-  const barH = 30, gap = 14;
-  const scenarios = [
-    {label:'Conservative  שמרני', min:2,  max:4,  sub:'$500K – $1M',  color:C.amber, y:BY+6},
-    {label:'Reasonable  סביר',    min:4,  max:8,  sub:'$1M – $2M',    color:C.blue,  y:BY+6+barH+gap},
-    {label:'Optimistic  אופטימי', min:8,  max:15, sub:'$2M – $4M',    color:C.green, y:BY+6+(barH+gap)*2},
+  // ── Columns ───────────────────────────────────────────────────────
+  const CW=90, CG=35;
+  const cols = [
+    {label:'Conservative', sub:'Low-end',         min:0.5, max:1.0, color:C.amber, x:px+20},
+    {label:'Reasonable',   sub:'Most likely',      min:1.0, max:2.0, color:C.blue,  x:px+20+CW+CG},
+    {label:'Optimistic',   sub:'Strong traction',  min:2.0, max:4.0, color:C.green, x:px+20+(CW+CG)*2},
   ];
 
-  scenarios.forEach(s => {
-    // Row label
-    text(svg, BX-6, s.y+barH/2+4, s.label, C.text, 10, 'end', '400');
-    // Bar fill
+  cols.forEach(c => {
+    const cx = c.x + CW/2;
+    // Dim full bar (0 → max) — shows proportional height
     svg.appendChild(svgEl('rect', {
-      x:PX(s.min), y:s.y, width:PX(s.max)-PX(s.min), height:barH, rx:4,
-      fill:s.color, 'fill-opacity':'0.2', stroke:s.color, 'stroke-width':'1.5'
+      x:c.x, y:Y(c.max), width:CW, height:Y(0)-Y(c.max), rx:5,
+      fill:c.color, 'fill-opacity':'0.08'
     }));
-    // USD sub-label inside bar
-    if (PX(s.max)-PX(s.min) > 60) {
-      text(svg, (PX(s.min)+PX(s.max))/2, s.y+barH/2+4, s.sub, C.muted, 8, 'middle');
+    // Bright range section (min → max)
+    const rTop=Y(c.max), rBot=Y(c.min), rH=rBot-rTop;
+    svg.appendChild(svgEl('rect', {
+      x:c.x, y:rTop, width:CW, height:rH, rx:5,
+      fill:c.color, 'fill-opacity':'0.35', stroke:c.color, 'stroke-width':'1.5'
+    }));
+    // Value labels inside range section
+    if (rH >= 28) {
+      text(svg, cx, rTop+rH/2-4, `$${c.min}M`, c.color, 11, 'middle', '700');
+      text(svg, cx, rTop+rH/2+9, `$${c.max}M`, c.color, 11, 'middle', '700');
+    } else {
+      text(svg, cx, rTop-5, `$${c.min}M–$${c.max}M`, c.color, 9, 'middle', '700');
     }
-    // End caps
-    line(svg, PX(s.min), s.y+3, PX(s.min), s.y+barH-3, s.color, 2.5);
-    line(svg, PX(s.max), s.y+3, PX(s.max), s.y+barH-3, s.color, 2.5);
-    // Min/max labels above bar
-    text(svg, PX(s.min), s.y-3, `₪${s.min}M`, s.color, 8, 'middle', '600');
-    text(svg, PX(s.max), s.y-3, `₪${s.max}M`, s.color, 8, 'middle', '600');
+    // X-axis label
+    text(svg, cx, Y(0)+16, c.label, C.text, 10, 'middle', '600');
+    text(svg, cx, Y(0)+28, c.sub,   C.muted, 9,  'middle');
   });
 
-  // Recommended label on purple band
-  const recMidX = (PX(5)+PX(7))/2;
-  text(svg, recMidX, BY-14, '★ Recommended', '#a855f7', 9, 'middle', '700');
-  text(svg, recMidX, BY-5, '₪5–7M', '#a855f7', 8, 'middle');
-
-  // ── 2nd customer jump ─────────────────────────────────────────────
-  const jY = BY + 6 + (barH+gap)*3 + 2;
-  const ax1=PX(7)+4, ax2=PX(10)-6;
-  svg.appendChild(svgEl('path', {
-    d:`M${ax1},${jY+10} L${ax2-9},${jY+10} L${ax2-9},${jY+4} L${ax2},${jY+10} L${ax2-9},${jY+16} L${ax2-9},${jY+10}`,
-    fill:C.green
-  }));
-  text(svg, (ax1+ax2)/2, jY+1, '+ 2nd customer', C.green, 8, 'middle', '600');
+  // ── 2nd customer annotation (above Optimistic) ────────────────────
+  const optCol = cols[2];
+  const annY = Y(4.0) - 28;
   svg.appendChild(svgEl('rect', {
-    x:PX(10), y:jY+2, width:PX(15)-PX(10), height:20, rx:3,
-    fill:C.green, 'fill-opacity':'0.22', stroke:C.green, 'stroke-width':'1.5', 'stroke-dasharray':'4 2'
+    x:optCol.x-4, y:annY, width:CW+8, height:24, rx:4,
+    fill:C.green, 'fill-opacity':'0.12', stroke:C.green, 'stroke-width':'1', 'stroke-dasharray':'3 2'
   }));
-  text(svg, (PX(10)+PX(15))/2, jY+15, '₪10–15M', C.green, 9, 'middle', '700');
-  text(svg, PX(15)+5, jY+15, '⬆ jumps here', C.green, 8, 'start', '600');
-})();
-</script>
+  text(svg, optCol.x+CW/2, annY+9,  '2nd customer', C.green, 8, 'middle', '600');
+  text(svg, optCol.x+CW/2, annY+19, '$2.7M–$4M',    C.green, 8, 'middle');
 
-<script>
-// Value drivers panel — injected after SVG renders
+  // ── "You are here" pill (on Reasonable column at ~$1.5M) ──────────
+  const youCol = cols[1];
+  const youY = Y(1.5);
+  svg.appendChild(svgEl('rect', {
+    x:youCol.x+4, y:youY-11, width:CW-8, height:20, rx:10,
+    fill:'#0d1a14', stroke:C.green, 'stroke-width':'1.2'
+  }));
+  text(svg, youCol.x+CW/2, youY+3, '● You are here', C.green, 8, 'middle', '600');
+
+  // ── Legend ────────────────────────────────────────────────────────
+  const legendItems = [
+    [C.amber, 'Conservative'],
+    [C.blue,  'Reasonable'],
+    [C.green, 'Optimistic'],
+    [C.green, 'Target raise zone'],
+  ];
+  legendItems.forEach(([c,l], i) => {
+    const lx = px + i*110;
+    if (i === 3) {
+      // dashed box for target raise
+      svg.appendChild(svgEl('rect', {x:lx, y:py-22, width:12, height:10, rx:2, fill:c, 'fill-opacity':'0.15', stroke:c, 'stroke-width':'1', 'stroke-dasharray':'3 2'}));
+    } else {
+      svg.appendChild(svgEl('circle', {cx:lx+5, cy:py-16, r:4, fill:c}));
+    }
+    text(svg, lx+14, py-12, l, C.muted, 9, 'start');
+  });
+})();
+
+// ── Right info panel ─────────────────────────────────────────────────
 (function(){
-  const up = [
-    'Yango = strategic + paying + satisfied customer',
-    'Large market — mobility / B2B',
-    'Platform, not a one-off project',
-    'Replicable to additional customers',
+  const panel = document.getElementById('val-panel');
+  if (!panel) return;
+  const numbers = [
+    {color:'#f59e0b', label:'Conservative — $0.5M–$1M',
+     text:'3–4× revenue multiple on a $300K contract. Assumes low multiplier, long sales cycle, no additional signal.'},
+    {color:'#3b82f6', label:'Reasonable — $1M–$2M',
+     text:'4–6× on $500K ARR. Contract signed, product live, 1–2 use cases validated with 1st customer.'},
+    {color:'#00d26a', label:'Optimistic — $2M–$4M',
+     text:'8–10× on $500K ARR. Strong NPS, expansion signals, pipeline of 2nd customer in sight.'},
+    {color:'#00d26a', label:'Target raise zone — $1.3M–$1.9M',
+     text:'Pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.'},
   ];
-  const down = [
-    'Only one customer so far',
-    'Concentration risk (single customer)',
-    'Early stage — MVP still in development',
-    'IP ownership not yet clearly defined',
+  const sharpen = [
+    'Signed contract value (ARR)',
+    'Expansion signals from Yango',
   ];
-  const panel = document.getElementById('value-drivers');
   panel.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div style="background:#0d1a14;border:1px solid #1a3a25;border-radius:8px;padding:14px">
-        <div style="color:#00d26a;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Drives Value UP ✓</div>
-        ${up.map(t=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px"><span style="color:#00d26a;font-size:13px;margin-top:1px">✓</span><span style="color:#e6edf3;font-size:12px;line-height:1.5">${t}</span></div>`).join('')}
-      </div>
-      <div style="background:#1a0d0d;border:1px solid #3a1a1a;border-radius:8px;padding:14px">
-        <div style="color:#ef4444;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Drives Value DOWN ✗</div>
-        ${down.map(t=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px"><span style="color:#ef4444;font-size:13px;margin-top:1px">✗</span><span style="color:#e6edf3;font-size:12px;line-height:1.5">${t}</span></div>`).join('')}
-      </div>
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px;font-family:system-ui,sans-serif">
+      <div style="color:#8b949e;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">How We Got These Numbers</div>
+      ${numbers.map((n,i) => `
+        <div style="display:flex;gap:8px;margin-bottom:10px;${i<numbers.length-1?'padding-bottom:10px;border-bottom:1px solid #21262d':''}">
+          <div style="width:8px;height:8px;border-radius:50%;background:${n.color};flex-shrink:0;margin-top:3px"></div>
+          <div>
+            <div style="color:#e6edf3;font-size:11px;font-weight:600;margin-bottom:2px">${n.label}</div>
+            <div style="color:#8b949e;font-size:11px;line-height:1.5">${n.text}</div>
+          </div>
+        </div>`).join('')}
+      <div style="color:#8b949e;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px">What Would Sharpen This</div>
+      ${sharpen.map(s => `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 10px;margin-bottom:7px">
+          <span style="color:#e6edf3;font-size:11px">${s}</span>
+          <span style="background:#431407;color:#fb923c;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;letter-spacing:.04em">HIGH IMPACT</span>
+        </div>`).join('')}
     </div>`;
 })();
-</script>
 </body>
 </html>

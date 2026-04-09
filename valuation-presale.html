@@ -319,7 +319,7 @@
       color: #7d8590;
       font-size: 11px;
       font-weight: 800;
-      font-style: italic;
+      font-style: normal;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -327,13 +327,13 @@
       flex-shrink: 0;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
       line-height: 1;
-      font-family: Georgia, serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
     .q-btn:hover  { border-color: #8b949e; color: #e6edf3; background: rgba(255,255,255,0.1); }
     .q-btn.active { border-color: #3b82f6; color: #93c5fd; background: rgba(59,130,246,0.15); }
 
     /* list item ? sits right-aligned, vertically centered */
-    .brain-item .q-btn { margin-top: 1px; }
+    .brain-item .q-btn { align-self: center; margin-top: 0; }
 
     .brain-tooltip {
       display: none;

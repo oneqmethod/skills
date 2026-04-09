@@ -519,11 +519,11 @@
     <div style="border-top:1px solid rgba(255,255,255,0.06); margin:28px 0 24px;"></div>
 
     <!-- ── Bar chart ── -->
-    <!-- Total: 344px = 300px plot + 44px x-labels | Scale: 60px = $1M -->
-    <div style="display:flex; height:344px;">
+    <!-- Total: 360px = 310px plot + 50px x-labels | Scale: 62px = $1M -->
+    <div style="display:flex; height:360px;">
 
-      <!-- Y axis labels -->
-      <div style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:44px; font-size:10px; color:#8B8B9E; text-align:right;">
+      <!-- Y axis labels (310px span via padding-bottom:50px) -->
+      <div style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:50px; font-size:10px; color:#8B8B9E; text-align:right; letter-spacing:0.02em;">
         <span style="padding-right:6px;">$5M</span>
         <span style="padding-right:6px;">$4M</span>
         <span style="padding-right:6px;">$3M</span>
@@ -535,38 +535,48 @@
       <!-- Plot column -->
       <div style="flex:1; display:flex; flex-direction:column;">
 
-        <!-- Plot area: 300px, position:relative for bars -->
-        <div style="height:300px; position:relative; border-bottom:1px solid rgba(255,255,255,0.06);">
+        <!-- Plot area: 310px | 62px per $1M -->
+        <div style="height:310px; position:relative;">
 
-          <!-- Grid lines at each $1M -->
+          <!-- Subtle chart background -->
+          <div style="position:absolute; inset:0; background:rgba(255,255,255,0.015); border-radius:8px 8px 0 0;"></div>
+
+          <!-- Grid lines -->
           <div style="position:absolute; left:0; right:0; top:0;       height:1px; background:rgba(255,255,255,0.05);"></div>
-          <div style="position:absolute; left:0; right:0; bottom:240px; height:1px; background:rgba(255,255,255,0.05);"></div>
-          <div style="position:absolute; left:0; right:0; bottom:180px; height:1px; background:rgba(255,255,255,0.05);"></div>
-          <div style="position:absolute; left:0; right:0; bottom:120px; height:1px; background:rgba(255,255,255,0.05);"></div>
-          <div style="position:absolute; left:0; right:0; bottom:60px;  height:1px; background:rgba(255,255,255,0.05);"></div>
-          <div style="position:absolute; left:0; right:0; bottom:0;     height:1px; background:rgba(255,255,255,0.08);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:248px; height:1px; background:rgba(255,255,255,0.04);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:186px; height:1px; background:rgba(255,255,255,0.04);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:124px; height:1px; background:rgba(255,255,255,0.04);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:62px;  height:1px; background:rgba(255,255,255,0.04);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:0;     height:1px; background:rgba(255,255,255,0.1);"></div>
 
-          <!-- Bar 1: Pre MVP $0–$0.5M → bottom:0, height:30px -->
-          <div style="position:absolute; left:8%; width:21%; bottom:0; height:30px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#7C3AED,#6D28D9); display:flex; align-items:center; justify-content:center; font-size:11px; color:#C4B5FD; font-weight:700;">$0–$0.5M</div>
+          <!-- Bar 1: Pre MVP $0–$0.5M → bottom:0, height:31px -->
+          <div style="position:absolute; left:8%; width:22%; bottom:0; height:31px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#7C3AED,#5B21B6); box-shadow:0 0 16px rgba(109,40,217,0.5),0 0 32px rgba(109,40,217,0.2);">
+            <!-- value label above bar -->
+            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#A78BFA; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$0.5M</div>
+          </div>
 
-          <!-- Bar 2: Post MVP $1M–$2M → bottom:60px, height:60px -->
-          <div style="position:absolute; left:37%; width:21%; bottom:60px; height:60px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#A78BFA,#8B5CF6); display:flex; align-items:center; justify-content:center; font-size:11px; color:#EDE9FE; font-weight:700;">$1M–$2M</div>
+          <!-- Bar 2: Post MVP $1M–$2M → bottom:62px, height:62px -->
+          <div style="position:absolute; left:37%; width:22%; bottom:62px; height:62px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#A78BFA,#7C3AED); box-shadow:0 0 20px rgba(139,92,246,0.6),0 0 40px rgba(139,92,246,0.25);">
+            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#C4B5FD; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$2M</div>
+          </div>
 
-          <!-- Bar 3: Post 2nd $3M–$5M → bottom:180px, height:120px -->
-          <div style="position:absolute; left:66%; width:21%; bottom:180px; height:120px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#C8FF00,rgba(200,255,0,0.65)); display:flex; align-items:center; justify-content:center; font-size:11px; color:#0F0F14; font-weight:800;">$3M–$5M</div>
+          <!-- Bar 3: Post 2nd $3M–$5M → bottom:186px, height:124px -->
+          <div style="position:absolute; left:66%; width:22%; bottom:186px; height:124px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#C8FF00,rgba(200,255,0,0.5)); box-shadow:0 0 20px rgba(200,255,0,0.4),0 0 48px rgba(200,255,0,0.15);">
+            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#C8FF00; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$5M</div>
+          </div>
 
         </div>
 
-        <!-- X labels row: 44px -->
-        <div style="height:44px; display:flex;">
+        <!-- X labels row: 50px -->
+        <div style="height:50px; display:flex; border-top:1px solid rgba(255,255,255,0.06);">
           <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
-            <span style="background:rgba(109,40,217,0.2); color:#A78BFA; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Pre MVP</span>
+            <span style="background:rgba(109,40,217,0.2); color:#A78BFA; font-size:10px; font-weight:700; padding:3px 10px; border-radius:9999px; white-space:nowrap;">Pre MVP</span>
           </div>
           <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
-            <span style="background:rgba(139,92,246,0.2); color:#C4B5FD; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Post MVP · Yango ✓</span>
+            <span style="background:rgba(139,92,246,0.2); color:#C4B5FD; font-size:10px; font-weight:700; padding:3px 10px; border-radius:9999px; white-space:nowrap;">Post MVP · Yango 😁</span>
           </div>
           <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
-            <span style="background:rgba(200,255,0,0.1); color:#C8FF00; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Post 2nd customer</span>
+            <span style="background:rgba(200,255,0,0.1); color:#C8FF00; font-size:10px; font-weight:700; padding:3px 10px; border-radius:9999px; white-space:nowrap;">Post 2nd customer</span>
           </div>
         </div>
 

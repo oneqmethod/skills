@@ -310,25 +310,30 @@
       position: relative;
     }
 
-    .brain-help {
-      width: 18px; height: 18px;
+    /* ? button — used on phase cards AND list items */
+    .q-btn {
+      width: 20px; height: 20px;
       border-radius: 50%;
-      border: 1px solid #30363d;
-      background: #21262d;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
       color: #7d8590;
-      font-size: 10px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
+      font-style: italic;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      margin-top: 2px;
-      transition: border-color 0.15s, color 0.15s;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
       line-height: 1;
+      font-family: Georgia, serif;
     }
-    .brain-help:hover { border-color: #8b949e; color: #e6edf3; }
-    .brain-help.active { border-color: #3b82f6; color: #93c5fd; background: rgba(59,130,246,0.1); }
+    .q-btn:hover  { border-color: #8b949e; color: #e6edf3; background: rgba(255,255,255,0.1); }
+    .q-btn.active { border-color: #3b82f6; color: #93c5fd; background: rgba(59,130,246,0.15); }
+
+    /* list item ? sits right-aligned, vertically centered */
+    .brain-item .q-btn { margin-top: 1px; }
 
     .brain-tooltip {
       display: none;
@@ -356,6 +361,8 @@
       border-top: 1px solid #3b82f6;
       transform: rotate(45deg);
     }
+    .brain-tooltip.bottom { top: auto; bottom: calc(100% + 6px); }
+    .brain-tooltip.bottom::before { top: auto; bottom: -5px; border: none; border-right: 1px solid #3b82f6; border-bottom: 1px solid #3b82f6; }
     .brain-tooltip.visible { display: block; }
     .brain-item:last-child { margin-bottom: 0; }
     .brain-item:hover { border-color: #3b82f6; }
@@ -623,7 +630,7 @@
           <div class="brain-label">Signed contract value with Yango</div>
           <div class="brain-delta">+25% confidence</div>
         </div>
-        <button class="brain-help" onclick="toggleHelp(event, this)">?
+        <button class="q-btn" onclick="toggleHelp(event, this)">?
           <div class="brain-tooltip">What's the total annual value of Yango's contract? This is the single biggest input — it sets the revenue base for every valuation calculation.</div>
         </button>
       </div>
@@ -634,7 +641,7 @@
           <div class="brain-label">Yango's expansion signals</div>
           <div class="brain-delta">+15% confidence</div>
         </div>
-        <button class="brain-help" onclick="toggleHelp(event, this)">?
+        <button class="q-btn" onclick="toggleHelp(event, this)">?
           <div class="brain-tooltip">Is Yango asking for more features, more seats, or more use cases? Early expansion signals are the strongest predictor of long-term retention.</div>
         </button>
       </div>
@@ -645,7 +652,7 @@
           <div class="brain-label">2nd customer pipeline</div>
           <div class="brain-delta">+10% confidence</div>
         </div>
-        <button class="brain-help" onclick="toggleHelp(event, this)">?
+        <button class="q-btn" onclick="toggleHelp(event, this)">?
           <div class="brain-tooltip">Any conversations with a 2nd potential customer? Even informal interest changes the story from "one customer" to "a repeatable market."</div>
         </button>
       </div>
@@ -656,7 +663,7 @@
           <div class="brain-label">Burn rate & runway</div>
           <div class="brain-delta">+5% confidence</div>
         </div>
-        <button class="brain-help" onclick="toggleHelp(event, this)">?
+        <button class="q-btn" onclick="toggleHelp(event, this)">?
           <div class="brain-tooltip">How much does the company spend per month? This tells us how urgently you need to close the raise and affects your negotiating position.</div>
         </button>
       </div>
@@ -667,7 +674,7 @@
           <div class="brain-label">Gross margin %</div>
           <div class="brain-delta">+5% confidence</div>
         </div>
-        <button class="brain-help" onclick="toggleHelp(event, this)">?
+        <button class="q-btn" onclick="toggleHelp(event, this)">?
           <div class="brain-tooltip">What % of revenue stays after direct costs? Margins above 70% justify a higher revenue multiple from investors — it shows scalability.</div>
         </button>
       </div>

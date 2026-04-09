@@ -538,6 +538,32 @@
     }
     .offer-generate-btn:hover { opacity: 0.88; }
     .offer-generate-btn.visible { display: block; }
+    @media (max-width: 768px) {
+      body { padding: 16px 12px; }
+
+      .wrapper {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .side-card {
+        width: 100%;
+      }
+
+      .card {
+        padding: 20px 20px 24px;
+      }
+
+      .title { font-size: 15px; }
+
+      .plot { height: 280px !important; }
+
+      .columns { padding: 0 40px; }
+      .x-labels { padding: 0 40px; }
+      .col { width: 120px; }
+
+      .conf-pct { font-size: 28px; }
+    }
   </style>
 </head>
 <body>

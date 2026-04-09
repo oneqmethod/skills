@@ -45,6 +45,27 @@ Generate dark-themed HTML presentations from any document.
 
 ---
 
+### brainshop
+
+Business validation charts for Brainshop meetings — surfaces the right chart automatically from live conversation context.
+
+- Detects MVP cost, pricing, and viability signals from meeting transcripts
+- Generates self-contained React components (Recharts) styled for Brainshop's dark UI
+- Each chart includes an explanation panel for user comprehension
+- Three chart types: MVP Validation Curve, Break-Even Analysis, Viability Matrix
+
+**Prerequisites:** `recharts` installed in the Brainshop frontend
+
+| Chart | Triggered By |
+|-------|-------------|
+| MVP Validation Curve | Build cost + launch timeline + first paying customer |
+| Break-Even Analysis | Fixed cost + variable cost/user + price + scale questions |
+| Viability Matrix | Feature list + effort vs. value debate |
+
+[Full Documentation](plugins/brainshop/README.md)
+
+---
+
 ### agent-browser
 
 Browser automation for web testing, form filling, and data extraction.

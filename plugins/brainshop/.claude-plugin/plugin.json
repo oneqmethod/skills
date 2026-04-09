@@ -1,0 +1,8 @@
+{
+  "name": "brainshop",
+  "description": "Business validation chart generator for Brainshop meetings — renders interactive React charts (MVP J-Curve, Break-Even, Viability Matrix) from live conversation context",
+  "author": {
+    "name": "Alon",
+    "email": "alon@oneqmethod.com"
+  }
+}

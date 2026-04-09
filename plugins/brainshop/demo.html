@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MVP Value Calculator — Brainshop</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d1117;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  color: #e6edf3;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.wrap { width: 100%; max-width: 620px; }
+
+.header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.logo { width: 30px; height: 30px; background: #3b82f6; border-radius: 7px; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+.header h1 { font-size: 17px; font-weight: 600; }
+.header p  { font-size: 12px; color: #8b949e; margin-top: 1px; }
+
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin-bottom: 14px; }
+
+/* Inputs */
+.inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 6px; font-weight: 500; }
+.input-wrap { position: relative; }
+.prefix, .suffix { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; color: #8b949e; pointer-events: none; }
+.prefix { left: 12px; }
+.suffix { right: 12px; }
+input[type=number] {
+  width: 100%; background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; color: #e6edf3; font-size: 18px; font-weight: 700;
+  padding: 10px 40px 10px 30px; outline: none; -moz-appearance: textfield;
+  transition: border-color .15s;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number]:focus { border-color: #3b82f6; }
+
+/* ARR strip */
+.arr-strip {
+  margin-top: 16px; background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.arr-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .06em; }
+.arr-value { font-size: 20px; font-weight: 700; color: #e6edf3; }
+.arr-sub   { font-size: 11px; color: #8b949e; }
+
+/* Valuation scenarios */
+.scenarios { display: flex; flex-direction: column; gap: 10px; }
+.scenario {
+  background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.scenario.highlight { border-width: 1.5px; }
+.s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.s-name  { font-size: 12px; color: #8b949e; font-weight: 500; width: 110px; flex-shrink: 0; }
+.s-range { font-size: 18px; font-weight: 700; flex: 1; }
+.s-note  { font-size: 11px; color: #8b949e; text-align: right; flex-shrink: 0; }
+
+/* Bar */
+.bar-wrap { margin-top: 4px; height: 5px; background: #21262d; border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; }
+
+/* Recommended badge */
+.rec {
+  margin-top: 14px; padding: 10px 14px;
+  background: #140d1f; border: 1px solid #6b21a8;
+  border-radius: 8px; display: flex; align-items: center; gap: 10px;
+}
+.rec-star { font-size: 16px; }
+.rec-text { font-size: 13px; }
+.rec-text strong { color: #c084fc; }
+.rec-text span { color: #8b949e; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo">B</div>
+    <div>
+      <h1>MVP Value Calculator</h1>
+      <p>What is your MVP worth when it works?</p>
+    </div>
+  </div>
+
+  <!-- Inputs -->
+  <div class="card">
+    <div class="inputs">
+      <div class="field">
+        <label>Price per customer / month</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="price" value="50" min="1" step="1" />
+          <span class="suffix">/mo</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Number of paying customers</label>
+        <div class="input-wrap">
+          <input type="number" id="customers" value="1" min="1" step="1" style="padding-left:14px" />
+        </div>
+      </div>
+    </div>
+
+    <div class="arr-strip">
+      <div>
+        <div class="arr-label">Annual Recurring Revenue (ARR)</div>
+        <div class="arr-value" id="arr-val">$600</div>
+      </div>
+      <div style="text-align:right">
+        <div class="arr-label">Monthly (MRR)</div>
+        <div class="arr-sub" id="mrr-val" style="font-size:15px;font-weight:600;color:#e6edf3">$50/mo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Valuation scenarios -->
+  <div class="card">
+    <div style="font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px">Company Valuation Range</div>
+
+    <div class="scenarios">
+      <div class="scenario" id="s-cons">
+        <div class="s-dot" style="background:#f59e0b"></div>
+        <div class="s-name">Conservative</div>
+        <div>
+          <div class="s-range" id="v-cons" style="color:#f59e0b">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-cons" style="background:#f59e0b;width:25%"></div></div>
+        </div>
+        <div class="s-note">3–4× ARR</div>
+      </div>
+
+      <div class="scenario" id="s-reas">
+        <div class="s-dot" style="background:#3b82f6"></div>
+        <div class="s-name">Reasonable</div>
+        <div>
+          <div class="s-range" id="v-reas" style="color:#3b82f6">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-reas" style="background:#3b82f6;width:50%"></div></div>
+        </div>
+        <div class="s-note">4–6× ARR</div>
+      </div>
+
+      <div class="scenario" id="s-opti">
+        <div class="s-dot" style="background:#00d26a"></div>
+        <div class="s-name">Optimistic</div>
+        <div>
+          <div class="s-range" id="v-opti" style="color:#00d26a">—</div>
+          <div class="bar-wrap"><div class="bar-fill" id="b-opti" style="background:#00d26a;width:90%"></div></div>
+        </div>
+        <div class="s-note">8–10× ARR</div>
+      </div>
+    </div>
+
+    <div class="rec">
+      <div class="rec-star">★</div>
+      <div class="rec-text">
+        Recommended anchor: <strong id="rec-val">—</strong><br>
+        <span>Walk into every room with this number. Strong enough to close, honest enough to defend.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+['price','customers'].forEach(id => document.getElementById(id).addEventListener('input', update));
+
+function fmt(n) {
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtRange(lo, hi) {
+  return fmt(lo) + ' – ' + fmt(hi);
+}
+
+function update() {
+  const price     = Math.max(1, +document.getElementById('price').value     || 1);
+  const customers = Math.max(1, +document.getElementById('customers').value || 1);
+
+  const mrr = price * customers;
+  const arr = mrr * 12;
+
+  document.getElementById('arr-val').textContent = fmt(arr);
+  document.getElementById('mrr-val').textContent = fmt(mrr) + '/mo';
+
+  const cons = [arr * 3, arr * 4];
+  const reas = [arr * 4, arr * 6];
+  const opti = [arr * 8, arr * 10];
+  const rec  = [arr * 4, arr * 6]; // midpoint of reasonable
+
+  document.getElementById('v-cons').textContent = fmtRange(cons[0], cons[1]);
+  document.getElementById('v-reas').textContent = fmtRange(reas[0], reas[1]);
+  document.getElementById('v-opti').textContent = fmtRange(opti[0], opti[1]);
+  document.getElementById('rec-val').textContent = fmtRange(rec[0], rec[1]);
+
+  // Bar widths relative to optimistic max
+  const max = opti[1];
+  document.getElementById('b-cons').style.width = ((cons[1]/max)*100).toFixed(1) + '%';
+  document.getElementById('b-reas').style.width = ((reas[1]/max)*100).toFixed(1) + '%';
+  document.getElementById('b-opti').style.width = '92%';
+}
+
+update();
+</script>
+</body>
+</html>

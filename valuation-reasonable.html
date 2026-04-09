@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reasonable Valuation — Post-MVP + Yango</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .wrapper {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      max-width: 1100px;
+      align-items: flex-start;
+    }
+
+    /* ── Chart card ── */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 36px 40px 36px;
+      flex: 1;
+      min-width: 0;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+
+    .header { margin-bottom: 24px; }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e6edf3;
+      line-height: 1.3;
+    }
+    .title span { color: #3fb950; }
+
+    .subtitle {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #7d8590;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #8b949e;
+    }
+    .legend-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Chart */
+    .chart { display: flex; gap: 0; align-items: stretch; }
+
+    .y-axis {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
+      padding-bottom: 52px;
+      width: 40px;
+      flex-shrink: 0;
+    }
+    .y-tick {
+      font-size: 10px;
+      color: #484f58;
+      text-align: right;
+      padding-right: 8px;
+      line-height: 1;
+    }
+
+    .plot { flex: 1; position: relative; }
+
+    .grid {
+      position: absolute;
+      inset: 0;
+      bottom: 52px;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .grid-line { width: 100%; height: 1px; background: #21262d; }
+
+    .h-band {
+      position: absolute;
+      left: 0; right: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Single centered column */
+    .columns {
+      position: absolute;
+      inset: 0;
+      bottom: 52px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 80px;
+      z-index: 2;
+    }
+
+    .col {
+      width: 160px;
+      position: relative;
+      height: 100%;
+    }
+
+    .range-bar {
+      position: absolute;
+      left: 0; right: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+      cursor: default;
+    }
+    .range-bar:hover { opacity: 0.85; }
+
+    .range-bar-label {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .bar-marker {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 600;
+      color: #8b949e;
+      right: calc(100% + 8px);
+      white-space: nowrap;
+    }
+    .bar-marker.top    { top: 0; }
+    .bar-marker.bottom { bottom: 0; }
+
+    .bar-reasonable {
+      background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
+      border: 1.5px solid #3b82f6;
+      color: #bfdbfe;
+    }
+
+    /* X label */
+    .x-labels {
+      position: absolute;
+      left: 0; right: 0;
+      bottom: 0;
+      height: 52px;
+      display: flex;
+      justify-content: center;
+      padding: 0 80px;
+    }
+    .x-label {
+      width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 4px;
+      gap: 4px;
+    }
+    .x-label-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .x-label-chip.reasonable {
+      background: rgba(29,78,216,0.15);
+      border: 1px solid rgba(59,130,246,0.4);
+      color: #93c5fd;
+    }
+    .x-label-sub { font-size: 10px; color: #484f58; }
+
+    /* Bands */
+    .target-band {
+      background: rgba(163,113,247,0.07);
+      border-top: 2px dashed rgba(163,113,247,0.5);
+      border-bottom: 2px dashed rgba(163,113,247,0.5);
+    }
+    .target-band-label {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(163,113,247,0.9);
+      background: rgba(163,113,247,0.12);
+      border: 1px solid rgba(163,113,247,0.35);
+      border-radius: 4px;
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+
+    /* Milestone line labels */
+    .milestone-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .milestone-label-badge {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 2px 8px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .milestone-line.mvp {
+      background: rgba(251,191,36,0.35);
+    }
+    .milestone-line.mvp .milestone-label-badge {
+      color: #fbbf24;
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+    .milestone-line.mvp .milestone-label-badge .m-arrow {
+      border-bottom-color: #fbbf24;
+    }
+
+    .milestone-line.first-customer {
+      background: rgba(59,130,246,0.35);
+    }
+    .milestone-line.first-customer .milestone-label-badge {
+      color: #93c5fd;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+    .milestone-line.first-customer .milestone-label-badge .m-arrow {
+      border-bottom-color: #3b82f6;
+    }
+
+    .m-arrow {
+      display: inline-block;
+      width: 0; height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 6px solid;
+    }
+
+    /* ── Side card ── */
+    .side-card {
+      width: 300px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-panel {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+
+    .side-panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #7d8590;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .side-panel-title .icon {
+      width: 18px; height: 18px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    /* ── Confidence panel ── */
+    .conf-now { margin-bottom: 4px; }
+    .conf-pct {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #f87171;
+      line-height: 1;
+    }
+    .conf-pct.high { color: #4ade80; }
+    .conf-pct.mid  { color: #fbbf24; }
+
+    .conf-desc {
+      font-size: 11px;
+      color: #7d8590;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .conf-bar-wrap { position: relative; margin-bottom: 6px; }
+    .conf-bar-track {
+      height: 8px;
+      background: #21262d;
+      border-radius: 99px;
+      overflow: hidden;
+      position: relative;
+    }
+    .conf-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #f87171 0%, #fbbf24 60%, #4ade80 100%);
+      transition: width 0.4s ease;
+    }
+    .conf-bar-potential {
+      position: absolute;
+      top: 0; height: 100%;
+      border-radius: 99px;
+      background: rgba(74,222,128,0.15);
+      border-right: 2px dashed rgba(74,222,128,0.5);
+    }
+    .conf-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 10px;
+      color: #484f58;
+    }
+    .conf-bar-labels .potential { color: rgba(74,222,128,0.7); }
+
+    /* How we got here */
+    .method-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .method-item:last-child { margin-bottom: 0; }
+
+    .method-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .method-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #c9d1d9;
+      margin-bottom: 2px;
+    }
+    .method-desc {
+      font-size: 11px;
+      color: #7d8590;
+      line-height: 1.5;
+    }
+
+    /* Accuracy data */
+    .data-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #0d1117;
+      border: 1px solid #21262d;
+      margin-bottom: 7px;
+    }
+    .data-item:last-child { margin-bottom: 0; }
+
+    .data-icon {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.18);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .data-icon svg {
+      width: 15px; height: 15px;
+      stroke: #fbbf24; fill: none;
+      stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .data-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #c9d1d9;
+      margin-bottom: 2px;
+    }
+    .data-desc {
+      font-size: 10px;
+      color: #484f58;
+      line-height: 1.45;
+    }
+
+    .impact-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .impact-high   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3);  }
+    .impact-medium { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .impact-low    { background: rgba(99,102,241,0.12); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ── Chart card ── -->
+  <div class="card">
+    <div class="header">
+      <div class="title">Post-MVP + 1st Paying Customer <span>(Yango)</span></div>
+      <div class="subtitle">Most likely valuation — reasonable scenario</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#3b82f6;"></div> Reasonable (most likely)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:rgba(163,113,247,0.5); border:1px dashed rgba(163,113,247,0.8);"></div> Target raise zone
+      </div>
+    </div>
+
+    <!--
+      Scale: $0 – $3M  |  Usable height: 320px  |  px/$1M = 64px (same scale)
+      bottom offset = 52px (x-labels)
+
+      Reasonable   : $1M–$2M    → bottom=116px, height=64px
+      Target raise : $1.3M–$1.9M→ bottom=135px, height=38px
+      MVP          : $0.5M      → bottom=84px
+      1st customer : $1M        → bottom=116px
+    -->
+
+    <div class="chart">
+      <div class="y-axis">
+        <div class="y-tick">$0</div>
+        <div class="y-tick">$1M</div>
+        <div class="y-tick">$2M</div>
+        <div class="y-tick">$3M</div>
+        <div class="y-tick">$4M</div>
+        <div class="y-tick">$5M</div>
+      </div>
+
+      <div class="plot" style="height:372px;">
+
+        <div class="grid">
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+        </div>
+
+        <!-- MVP milestone at $0.5M -->
+        <div class="milestone-line mvp" style="bottom:84px;">
+          <div class="milestone-label-badge">
+            <span class="m-arrow"></span> MVP
+          </div>
+        </div>
+
+        <!-- 1st customer milestone at $1M -->
+        <div class="milestone-line first-customer" style="bottom:116px;">
+          <div class="milestone-label-badge">
+            <span class="m-arrow"></span> 1st customer · Yango
+          </div>
+        </div>
+
+        <!-- Target raise band: $1.3M–$1.9M -->
+        <div class="h-band target-band" style="bottom:135px; height:38px;">
+          <div class="target-band-label">Target raise $1.3M–$1.9M</div>
+        </div>
+
+        <!-- Columns -->
+        <div class="columns">
+
+          <!-- Reasonable: $1M–$2M -->
+          <div class="col">
+            <div class="range-bar bar-reasonable" style="bottom:116px; height:64px;">
+              <span class="range-bar-label">$1M–$2M</span>
+              <div class="bar-marker top">$2M</div>
+              <div class="bar-marker bottom">$1M</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- X label -->
+        <div class="x-labels">
+          <div class="x-label">
+            <div class="x-label-chip reasonable">Reasonable</div>
+            <div class="x-label-sub">Most likely</div>
+          </div>
+        </div>
+
+      </div><!-- /plot -->
+    </div><!-- /chart -->
+  </div><!-- /card -->
+
+  <!-- ── Side card ── -->
+  <div class="side-card">
+
+    <!-- Confidence + data to unlock -->
+    <div class="side-panel">
+
+      <div class="conf-now" style="text-align:center;">
+        <div class="conf-pct">25%</div>
+      </div>
+      <div style="font-size:11px; color:#7d8590; margin-bottom:6px; text-align:center;">confidence · benchmarks only</div>
+      <div class="conf-desc">No real company data yet — ranges are estimates from comparable pre-seed SaaS deals.</div>
+
+      <div class="conf-bar-wrap">
+        <div class="conf-bar-track">
+          <div class="conf-bar-potential" style="left:0; width:85%;"></div>
+          <div class="conf-bar-fill" style="width:25%;"></div>
+        </div>
+        <div class="conf-bar-labels">
+          <span>Now: 25%</span>
+          <span class="potential">Potential: 85%</span>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #21262d; margin: 16px 0 14px;"></div>
+
+      <div class="side-panel-title" style="margin-bottom:12px;">
+        <span class="icon" style="background:rgba(251,191,36,0.12); color:#fbbf24;">◎</span>
+        Share these to unlock
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div>
+          <div class="data-label">Signed contract value (ARR)</div>
+          <div class="data-desc">The single biggest input — moves the valuation range by ±50%.</div>
+          <span class="impact-badge impact-high">+25% confidence</span>
+        </div>
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+        <div>
+          <div class="data-label">Expansion signals from Yango</div>
+          <div class="data-desc">NPS, seat growth, additional use cases requested.</div>
+          <span class="impact-badge impact-high">+15% confidence</span>
+        </div>
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <div>
+          <div class="data-label">2nd customer pipeline</div>
+          <div class="data-desc">Named prospect at similar ACV instantly shifts scenario toward optimistic.</div>
+          <span class="impact-badge impact-high">+10% confidence</span>
+        </div>
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div>
+          <div class="data-label">Comparable funding rounds</div>
+          <div class="data-desc">Recent pre-seed rounds in logistics / fleet SaaS in your region.</div>
+          <span class="impact-badge impact-medium">+5% confidence</span>
+        </div>
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div>
+          <div class="data-label">Burn rate & runway</div>
+          <div class="data-desc">Affects how urgently you need to raise and your negotiating position.</div>
+          <span class="impact-badge impact-medium">+5% confidence</span>
+        </div>
+      </div>
+
+      <div class="data-item">
+        <div class="data-icon"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div>
+        <div>
+          <div class="data-label">Gross margin %</div>
+          <div class="data-desc">Higher margins (>70%) justify a higher revenue multiple.</div>
+          <span class="impact-badge impact-low">+5% confidence</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- How we got these numbers -->
+    <div class="side-panel">
+      <div class="side-panel-title">
+        <span class="icon" style="background:rgba(59,130,246,0.15); color:#3b82f6;">→</span>
+        How we got this number
+      </div>
+
+      <div class="method-item">
+        <div class="method-dot" style="background:#3b82f6; margin-top:6px;"></div>
+        <div>
+          <div class="method-label">Reasonable — $1M–$2M</div>
+          <div class="method-desc">4–6× multiple on $300K–$500K ARR. Contract signed, product live, 1–2 use cases validated with a Tier-1 customer.</div>
+        </div>
+      </div>
+
+      <div class="method-item">
+        <div class="method-dot" style="background:rgba(163,113,247,0.8); margin-top:6px;"></div>
+        <div>
+          <div class="method-label">Target raise zone — $1.3M–$1.9M</div>
+          <div class="method-desc">Typical pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /side-card -->
+
+</div><!-- /wrapper -->
+</body>
+</html>

@@ -10,9 +10,9 @@
     html, body { overflow-x: hidden; }
 
     body {
-      background: #0d1117;
-      color: #e6edf3;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0F0F14;
+      color: #F0F0F5;
+      font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       display: flex;
       align-items: flex-start;
       justify-content: center;
@@ -29,18 +29,14 @@
       align-items: flex-start;
     }
 
-    .card { flex: 1; min-width: 300px; }
-    .side-card { min-width: 280px; }
-
     /* ── Chart card ── */
     .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
-      padding: 32px 40px 36px;
+      background: #1A1A24;
+      border-radius: 20px;
+      padding: 24px 28px 28px;
       flex: 1;
       min-width: 0;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
     /* Context bar */
@@ -49,65 +45,58 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 20px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid #21262d;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .context-tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 4px 12px;
-      border-radius: 20px;
+      border-radius: 9999px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
-    .tag-entrepreneur, .tag-customer {
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.3);
-      color: #93c5fd;
+    .tag-entrepreneur {
+      background: rgba(139,92,246,0.15);
+      color: #C4B5FD;
     }
-    .context-sep {
-      font-size: 16px;
-      color: #30363d;
-      font-weight: 300;
+    .tag-customer {
+      background: rgba(6,182,212,0.12);
+      color: #67E8F9;
     }
+    .context-sep { font-size: 14px; color: rgba(255,255,255,0.15); font-weight: 300; }
     .context-label {
       margin-left: auto;
       font-size: 11px;
-      color: #484f58;
+      color: #8B8B9E;
       font-weight: 500;
+      letter-spacing: 0.03em;
     }
 
-    .header { margin-bottom: 22px; }
+    .header { margin-bottom: 20px; }
     .title {
       font-size: 18px;
-      font-weight: 700;
-      color: #e6edf3;
+      font-weight: 600;
+      color: #F0F0F5;
+      letter-spacing: -0.01em;
       line-height: 1.3;
     }
-    .title span { color: #3fb950; }
-    .subtitle {
-      margin-top: 5px;
-      font-size: 12px;
-      color: #7d8590;
-    }
-
-
 
     /* ── Phase cards ── */
     .phases {
       display: flex;
       align-items: stretch;
       gap: 0;
-      margin-top: 4px;
     }
 
     .phase-arrow {
       display: flex;
       align-items: center;
-      padding: 0 6px;
-      color: #484f58;
-      font-size: 18px;
+      padding: 0 8px;
+      color: rgba(255,255,255,0.2);
+      font-size: 16px;
       flex-shrink: 0;
     }
 
@@ -127,53 +116,56 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 3px;
+      height: 2px;
       border-radius: 12px 12px 0 0;
     }
 
-    .phase.phase-1 { background: rgba(180,83,9,0.08); border: 1px solid rgba(217,119,6,0.25); }
-    .phase.phase-1::before { background: linear-gradient(90deg, #d97706, #b45309); }
+    /* Phase 1: deep violet */
+    .phase.phase-1 { background: rgba(109,40,217,0.12); border: 1px solid rgba(139,92,246,0.2); }
+    .phase.phase-1::before { background: #7C3AED; }
 
+    /* Phase 2: purple brand — highlighted */
     .phase.phase-2 {
-      background: rgba(29,78,216,0.10);
-      border: 1.5px solid rgba(59,130,246,0.45);
-      box-shadow: 0 0 20px rgba(59,130,246,0.1);
+      background: rgba(139,92,246,0.14);
+      border: 1.5px solid rgba(139,92,246,0.5);
+      box-shadow: 0 0 24px rgba(139,92,246,0.12);
     }
-    .phase.phase-2::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+    .phase.phase-2::before { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
 
-    .phase.phase-3 { background: rgba(22,101,52,0.08); border: 1px solid rgba(34,197,94,0.25); }
-    .phase.phase-3::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    /* Phase 3: lime accent */
+    .phase.phase-3 { background: rgba(200,255,0,0.05); border: 1px solid rgba(200,255,0,0.2); }
+    .phase.phase-3::before { background: #C8FF00; }
 
     .phase-num {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
-    .phase-1 .phase-num { color: #d97706; }
-    .phase-2 .phase-num { color: #3b82f6; }
-    .phase-3 .phase-num { color: #22c55e; }
+    .phase-1 .phase-num { color: #A78BFA; }
+    .phase-2 .phase-num { color: #C4B5FD; }
+    .phase-3 .phase-num { color: rgba(200,255,0,0.7); }
 
     .phase-name {
       font-size: 13px;
-      font-weight: 700;
-      color: #e6edf3;
+      font-weight: 600;
+      color: #F0F0F5;
       line-height: 1.3;
     }
 
     .phase-val {
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 20px;
+      font-weight: 700;
       letter-spacing: -0.02em;
       line-height: 1;
     }
-    .phase-1 .phase-val { color: #fbbf24; }
-    .phase-2 .phase-val { color: #93c5fd; }
-    .phase-3 .phase-val { color: #4ade80; }
+    .phase-1 .phase-val { color: #A78BFA; }
+    .phase-2 .phase-val { color: #C4B5FD; }
+    .phase-3 .phase-val { color: #C8FF00; }
 
     .phase-desc {
       font-size: 10px;
-      color: #7d8590;
+      color: #8B8B9E;
       line-height: 1.5;
     }
 
@@ -181,37 +173,24 @@
       display: inline-flex;
       align-items: center;
       padding: 2px 8px;
-      border-radius: 20px;
+      border-radius: 9999px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       margin-top: auto;
       align-self: flex-start;
     }
-    .phase-1 .phase-badge {
-      background: rgba(180,83,9,0.15);
-      border: 1px solid rgba(217,119,6,0.3);
-      color: #fbbf24;
-    }
-    .phase-2 .phase-badge {
-      background: rgba(29,78,216,0.2);
-      border: 1px solid rgba(59,130,246,0.5);
-      color: #93c5fd;
-    }
-    .phase-3 .phase-badge {
-      background: rgba(22,101,52,0.15);
-      border: 1px solid rgba(34,197,94,0.3);
-      color: #4ade80;
-    }
+    .phase-1 .phase-badge { background: rgba(109,40,217,0.2); color: #A78BFA; }
+    .phase-2 .phase-badge { background: rgba(139,92,246,0.25); color: #C4B5FD; }
+    .phase-3 .phase-badge { background: rgba(200,255,0,0.1); color: #C8FF00; }
 
     @media (max-width: 720px) {
       .phases { gap: 0; }
       .phase { padding: 12px 10px; }
-      .phase-val { font-size: 14px; }
+      .phase-val { font-size: 15px; }
       .phase-name { font-size: 11px; }
       .phase-desc { display: none; }
       .phase-arrow { padding: 0 3px; font-size: 14px; }
     }
-
 
     /* ── Side card ── */
     .side-card {
@@ -223,11 +202,10 @@
     }
 
     .side-panel {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
+      background: #1A1A24;
+      border-radius: 20px;
       padding: 20px 22px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
     .side-panel-title {
@@ -235,7 +213,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #7d8590;
+      color: #8B8B9E;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
@@ -255,71 +233,71 @@
     .conf-now { margin-bottom: 4px; }
     .conf-pct {
       font-size: 36px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: -0.03em;
-      color: #f87171;
+      color: #8B5CF6;
       line-height: 1;
+      transition: color 0.4s;
     }
     .conf-desc {
       font-size: 11px;
-      color: #7d8590;
+      color: #8B8B9E;
       margin-bottom: 14px;
       line-height: 1.5;
     }
     .conf-bar-wrap { position: relative; margin-bottom: 6px; }
     .conf-bar-track {
-      height: 8px;
-      background: #21262d;
-      border-radius: 99px;
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 9999px;
       overflow: hidden;
       position: relative;
     }
     .conf-bar-fill {
       height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, #f87171 0%, #fbbf24 60%, #4ade80 100%);
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #6D28D9 0%, #8B5CF6 60%, #A78BFA 100%);
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
     }
     .conf-bar-potential {
       position: absolute;
       top: 0; height: 100%;
-      border-radius: 99px;
-      background: rgba(74,222,128,0.15);
-      border-right: 2px dashed rgba(74,222,128,0.5);
+      border-radius: 9999px;
+      background: rgba(139,92,246,0.12);
+      border-right: 2px dashed rgba(139,92,246,0.4);
     }
     .conf-bar-labels {
       display: flex;
       justify-content: space-between;
       margin-top: 5px;
       font-size: 10px;
-      color: #484f58;
+      color: #8B8B9E;
     }
-    .conf-bar-labels .potential { color: rgba(74,222,128,0.7); }
+    .conf-bar-labels .potential { color: rgba(139,92,246,0.8); }
 
     /* Brainshop items */
     .brain-item {
       display: flex;
       align-items: flex-start;
       gap: 8px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: #0d1117;
-      border: 1px solid #21262d;
-      margin-bottom: 7px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 6px;
       cursor: pointer;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, background 0.15s;
       position: relative;
     }
 
-    /* ? button — used on phase cards AND list items */
     .q-btn {
       width: 20px; height: 20px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: #7d8590;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #8B8B9E;
       font-size: 11px;
       font-weight: 800;
-      font-style: normal;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -327,13 +305,12 @@
       flex-shrink: 0;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
       line-height: 1;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: inherit;
+      font-style: normal;
     }
-    .q-btn:hover  { border-color: #8b949e; color: #e6edf3; background: rgba(255,255,255,0.1); }
-    .q-btn.active { border-color: #3b82f6; color: #93c5fd; background: rgba(59,130,246,0.15); }
-
-    /* list item ? sits right-aligned, vertically centered */
-    .brain-item .q-btn { align-self: center; margin-top: 0; }
+    .q-btn:hover  { border-color: rgba(139,92,246,0.5); color: #C4B5FD; background: rgba(139,92,246,0.1); }
+    .q-btn.active { border-color: #8B5CF6; color: #C4B5FD; background: rgba(139,92,246,0.15); }
+    .brain-item .q-btn { align-self: center; }
 
     .brain-tooltip {
       display: none;
@@ -341,75 +318,66 @@
       right: 0;
       top: calc(100% + 6px);
       width: 220px;
-      background: #1c2128;
-      border: 1px solid #3b82f6;
-      border-radius: 8px;
+      background: #1A1A24;
+      border: 1px solid rgba(139,92,246,0.5);
+      border-radius: 10px;
       padding: 10px 12px;
       font-size: 11px;
-      color: #c9d1d9;
+      color: #F0F0F5;
       line-height: 1.55;
       z-index: 10;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     }
     .brain-tooltip::before {
       content: '';
       position: absolute;
       top: -5px; right: 8px;
       width: 8px; height: 8px;
-      background: #1c2128;
-      border-left: 1px solid #3b82f6;
-      border-top: 1px solid #3b82f6;
+      background: #1A1A24;
+      border-left: 1px solid rgba(139,92,246,0.5);
+      border-top: 1px solid rgba(139,92,246,0.5);
       transform: rotate(45deg);
     }
     .brain-tooltip.bottom { top: auto; bottom: calc(100% + 6px); }
-    .brain-tooltip.bottom::before { top: auto; bottom: -5px; border: none; border-right: 1px solid #3b82f6; border-bottom: 1px solid #3b82f6; }
+    .brain-tooltip.bottom::before { top: auto; bottom: -5px; border: none; border-right: 1px solid rgba(139,92,246,0.5); border-bottom: 1px solid rgba(139,92,246,0.5); }
     .brain-tooltip.visible { display: block; }
     .brain-item:last-child { margin-bottom: 0; }
-    .brain-item:hover { border-color: #3b82f6; }
-    .brain-item.answered { border-color: rgba(74,222,128,0.4); background: rgba(34,197,94,0.04); }
+    .brain-item:hover { border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.05); }
+    .brain-item.answered { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.08); }
 
     .brain-icon {
       width: 28px; height: 28px;
-      border-radius: 7px;
-      background: rgba(251,191,36,0.08);
-      border: 1px solid rgba(251,191,36,0.18);
+      border-radius: 8px;
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.2);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
     .brain-icon svg {
       width: 13px; height: 13px;
-      stroke: #fbbf24; fill: none;
+      stroke: #8B5CF6; fill: none;
       stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
     }
     .brain-item.answered .brain-icon {
-      background: rgba(74,222,128,0.08);
-      border-color: rgba(74,222,128,0.25);
+      background: rgba(200,255,0,0.08);
+      border-color: rgba(200,255,0,0.25);
     }
-    .brain-item.answered .brain-icon svg { stroke: #4ade80; }
+    .brain-item.answered .brain-icon svg { stroke: #C8FF00; }
 
     .brain-text { flex: 1; }
-    .brain-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #c9d1d9;
-      margin-bottom: 1px;
-    }
-    .brain-delta {
-      font-size: 10px;
-      font-weight: 700;
-      color: #4ade80;
-    }
+    .brain-label { font-size: 11px; font-weight: 600; color: #F0F0F5; margin-bottom: 1px; }
+    .brain-delta { font-size: 10px; font-weight: 600; color: #8B5CF6; }
 
     /* CTA button */
     .cta-btn {
       width: 100%;
       padding: 13px 16px;
-      background: linear-gradient(135deg, #1d4ed8, #1e40af);
-      border: 1px solid #3b82f6;
-      border-radius: 10px;
+      background: #8B5CF6;
+      border: none;
+      border-radius: 12px;
       color: #fff;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -418,116 +386,74 @@
       transition: opacity 0.15s, transform 0.1s;
       letter-spacing: 0.01em;
     }
-    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .cta-btn:active { transform: translateY(0); }
+    .cta-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .cta-btn:active { transform: translateY(0); opacity: 0.8; }
     .cta-arrow { font-size: 16px; }
 
     /* Offer panel */
-    .offer-panel {
-      display: none;
-    }
-    .offer-panel.visible {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .offer-panel { display: none; }
+    .offer-panel.visible { display: flex; flex-direction: column; gap: 8px; }
 
     .offer-panel-title {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #7d8590;
+      color: #8B8B9E;
       margin-bottom: 4px;
-      padding: 0 2px;
     }
 
     .offer-option {
-      background: #161b22;
-      border: 1.5px solid #30363d;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.07);
       border-radius: 12px;
       padding: 14px 16px;
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
     }
-    .offer-option:hover { border-color: #3b82f6; background: rgba(29,78,216,0.05); }
-    .offer-option.selected {
-      border-color: #3b82f6;
-      background: rgba(29,78,216,0.08);
-    }
+    .offer-option:hover { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.06); }
+    .offer-option.selected { border-color: #8B5CF6; background: rgba(139,92,246,0.1); }
 
-    .offer-option-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 5px;
-    }
+    .offer-option-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
     .offer-radio {
       width: 14px; height: 14px;
       border-radius: 50%;
-      border: 2px solid #484f58;
+      border: 2px solid rgba(255,255,255,0.2);
       flex-shrink: 0;
-      transition: border-color 0.15s;
       display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s;
     }
-    .offer-option.selected .offer-radio {
-      border-color: #3b82f6;
-      background: #3b82f6;
-    }
-    .offer-radio-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: #fff;
-      opacity: 0;
-    }
+    .offer-option.selected .offer-radio { border-color: #8B5CF6; background: #8B5CF6; }
+    .offer-radio-dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; opacity: 0; }
     .offer-option.selected .offer-radio-dot { opacity: 1; }
 
-    .offer-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: #e6edf3;
-    }
-    .offer-desc {
-      font-size: 11px;
-      color: #7d8590;
-      line-height: 1.5;
-      padding-left: 24px;
-    }
+    .offer-name { font-size: 12px; font-weight: 600; color: #F0F0F5; }
+    .offer-desc { font-size: 11px; color: #8B8B9E; line-height: 1.5; padding-left: 24px; }
 
     .offer-generate-btn {
       width: 100%;
       margin-top: 4px;
       padding: 11px;
-      background: #238636;
-      border: 1px solid #2ea043;
-      border-radius: 8px;
-      color: #fff;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.3);
+      border-radius: 10px;
+      color: #C8FF00;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, background 0.15s;
       display: none;
+      font-family: inherit;
     }
-    .offer-generate-btn:hover { opacity: 0.88; }
+    .offer-generate-btn:hover { background: rgba(200,255,0,0.14); }
     .offer-generate-btn.visible { display: block; }
+
     @media (max-width: 720px) {
       body { padding: 16px 12px; }
-
       .wrapper { gap: 12px; }
-
-      .card {
-        min-width: 0;
-        width: 100%;
-        padding: 20px 16px 24px;
-      }
-
-      .side-card {
-        min-width: 0;
-        width: 100%;
-      }
-
+      .card { min-width: 0; width: 100%; padding: 20px 16px 24px; }
+      .side-card { min-width: 0; width: 100%; }
       .title { font-size: 15px; }
-      .subtitle { font-size: 11px; }
       .conf-pct { font-size: 28px; }
     }
   </style>
@@ -591,14 +517,14 @@
 
     </div>
 
-    <div style="border-top:1px solid #21262d; margin:28px 0 24px;"></div>
+    <div style="border-top:1px solid rgba(255,255,255,0.06); margin:28px 0 24px;"></div>
 
     <!-- ── Bar chart ── -->
-    <!-- Total: 344px = 300px plot + 44px x-labels -->
+    <!-- Total: 344px = 300px plot + 44px x-labels | Scale: 60px = $1M -->
     <div style="display:flex; height:344px;">
 
-      <!-- Y axis labels (344px col, labels span top 300px via padding-bottom:44px) -->
-      <div style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:44px; font-size:10px; color:#484f58; text-align:right;">
+      <!-- Y axis labels -->
+      <div style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:44px; font-size:10px; color:#8B8B9E; text-align:right;">
         <span style="padding-right:6px;">$5M</span>
         <span style="padding-right:6px;">$4M</span>
         <span style="padding-right:6px;">$3M</span>
@@ -611,38 +537,37 @@
       <div style="flex:1; display:flex; flex-direction:column;">
 
         <!-- Plot area: 300px, position:relative for bars -->
-        <!-- Scale: 300px = $5M → 60px per $1M -->
-        <div style="height:300px; position:relative; border-bottom:1px solid #30363d;">
+        <div style="height:300px; position:relative; border-bottom:1px solid rgba(255,255,255,0.06);">
 
-          <!-- Grid lines ($1M increments) -->
-          <div style="position:absolute; left:0; right:0; top:0;    height:1px; background:#21262d;"></div>
-          <div style="position:absolute; left:0; right:0; bottom:240px; height:1px; background:#21262d;"></div>
-          <div style="position:absolute; left:0; right:0; bottom:180px; height:1px; background:#21262d;"></div>
-          <div style="position:absolute; left:0; right:0; bottom:120px; height:1px; background:#21262d;"></div>
-          <div style="position:absolute; left:0; right:0; bottom:60px;  height:1px; background:#21262d;"></div>
-          <div style="position:absolute; left:0; right:0; bottom:0;     height:1px; background:#21262d;"></div>
+          <!-- Grid lines at each $1M -->
+          <div style="position:absolute; left:0; right:0; top:0;       height:1px; background:rgba(255,255,255,0.05);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:240px; height:1px; background:rgba(255,255,255,0.05);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:180px; height:1px; background:rgba(255,255,255,0.05);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:120px; height:1px; background:rgba(255,255,255,0.05);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:60px;  height:1px; background:rgba(255,255,255,0.05);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:0;     height:1px; background:rgba(255,255,255,0.08);"></div>
 
           <!-- Bar 1: Pre MVP $0–$0.5M → bottom:0, height:30px -->
-          <div style="position:absolute; left:8%; width:21%; bottom:0; height:30px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#92400e,#78350f); border:1.5px solid #d97706; border-bottom:none; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fde68a; font-weight:700;">$0–$0.5M</div>
+          <div style="position:absolute; left:8%; width:21%; bottom:0; height:30px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#7C3AED,#6D28D9); display:flex; align-items:center; justify-content:center; font-size:11px; color:#C4B5FD; font-weight:700;">$0–$0.5M</div>
 
           <!-- Bar 2: Post MVP $1M–$2M → bottom:60px, height:60px -->
-          <div style="position:absolute; left:37%; width:21%; bottom:60px; height:60px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#1d4ed8,#1e40af); border:1.5px solid #3b82f6; border-bottom:none; display:flex; align-items:center; justify-content:center; font-size:11px; color:#bfdbfe; font-weight:700;">$1M–$2M</div>
+          <div style="position:absolute; left:37%; width:21%; bottom:60px; height:60px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#A78BFA,#8B5CF6); display:flex; align-items:center; justify-content:center; font-size:11px; color:#EDE9FE; font-weight:700;">$1M–$2M</div>
 
           <!-- Bar 3: Post 2nd $3M–$5M → bottom:180px, height:120px -->
-          <div style="position:absolute; left:66%; width:21%; bottom:180px; height:120px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#166534,#14532d); border:1.5px solid #22c55e; border-bottom:none; display:flex; align-items:center; justify-content:center; font-size:11px; color:#bbf7d0; font-weight:700;">$3M–$5M</div>
+          <div style="position:absolute; left:66%; width:21%; bottom:180px; height:120px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#C8FF00,rgba(200,255,0,0.65)); display:flex; align-items:center; justify-content:center; font-size:11px; color:#0F0F14; font-weight:800;">$3M–$5M</div>
 
         </div>
 
         <!-- X labels row: 44px -->
         <div style="height:44px; display:flex;">
-          <div style="flex:0 0 33.33%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;">
-            <span style="background:rgba(180,83,9,0.15); border:1px solid rgba(217,119,6,0.4); color:#fbbf24; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">Pre MVP</span>
+          <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
+            <span style="background:rgba(109,40,217,0.2); color:#A78BFA; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Pre MVP</span>
           </div>
-          <div style="flex:0 0 33.33%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;">
-            <span style="background:rgba(29,78,216,0.15); border:1px solid rgba(59,130,246,0.4); color:#93c5fd; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">Post MVP · Yango ✓</span>
+          <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
+            <span style="background:rgba(139,92,246,0.2); color:#C4B5FD; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Post MVP · Yango ✓</span>
           </div>
-          <div style="flex:0 0 33.33%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;">
-            <span style="background:rgba(22,101,52,0.15); border:1px solid rgba(34,197,94,0.4); color:#4ade80; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">Post 2nd customer</span>
+          <div style="flex:0 0 33.33%; display:flex; align-items:center; justify-content:center;">
+            <span style="background:rgba(200,255,0,0.1); color:#C8FF00; font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; white-space:nowrap;">Post 2nd customer</span>
           </div>
         </div>
 
@@ -660,7 +585,7 @@
       <div class="conf-now" style="text-align:center;">
         <div class="conf-pct" id="confPct">25%</div>
       </div>
-      <div style="font-size:11px; color:#7d8590; margin-bottom:6px; text-align:center;">confidence now</div>
+      <div style="font-size:11px; color:#8B8B9E; margin-bottom:6px; text-align:center;">confidence now</div>
       <div class="conf-desc">Based on benchmarks only. Go through the questions below to sharpen this together.</div>
 
       <div class="conf-bar-wrap">
@@ -674,14 +599,13 @@
         </div>
       </div>
 
-      <div style="border-top:1px solid #21262d; margin: 16px 0 14px;"></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.06); margin:16px 0 14px;"></div>
 
       <div class="side-panel-title">
-        <span class="icon" style="background:rgba(251,191,36,0.12); color:#fbbf24;">◎</span>
+        <span class="icon" style="background:rgba(139,92,246,0.15); color:#8B5CF6;">◎</span>
         Brainshop  more Confidence
       </div>
 
-      <!-- Each item toggles "answered" on click and updates confidence -->
       <div class="brain-item" data-boost="25" onclick="toggleBrain(this)">
         <div class="brain-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <div class="brain-text">
@@ -737,7 +661,7 @@
         </button>
       </div>
 
-      <div style="margin-top: 18px;">
+      <div style="margin-top:18px;">
         <button class="cta-btn" onclick="showOffer()">
           Build the offer <span class="cta-arrow">→</span>
         </button>
@@ -795,30 +719,34 @@
   }
 
   function updateConfidence() {
-    document.getElementById('confPct').textContent = baseConfidence + '%';
     document.getElementById('confBar').style.width = baseConfidence + '%';
     document.getElementById('confNowLabel').textContent = 'Now: ' + baseConfidence + '%';
     const pct = document.getElementById('confPct');
-    pct.style.color = baseConfidence >= 70 ? '#4ade80' : baseConfidence >= 45 ? '#fbbf24' : '#f87171';
+    pct.textContent = baseConfidence + '%';
+    pct.style.color = baseConfidence >= 70 ? '#C8FF00' : baseConfidence >= 50 ? '#A78BFA' : '#8B5CF6';
   }
 
   function toggleHelp(e, btn) {
     e.stopPropagation();
     const tooltip = btn.querySelector('.brain-tooltip');
     const isVisible = tooltip.classList.contains('visible');
-    // close all others
     document.querySelectorAll('.brain-tooltip.visible').forEach(t => t.classList.remove('visible'));
-    document.querySelectorAll('.brain-help.active').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.q-btn.active').forEach(b => b.classList.remove('active'));
     if (!isVisible) {
       tooltip.classList.add('visible');
       btn.classList.add('active');
+      const rect = tooltip.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 20) {
+        tooltip.classList.add('bottom');
+      } else {
+        tooltip.classList.remove('bottom');
+      }
     }
   }
 
-  // close tooltips on outside click
   document.addEventListener('click', () => {
     document.querySelectorAll('.brain-tooltip.visible').forEach(t => t.classList.remove('visible'));
-    document.querySelectorAll('.brain-help.active').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.q-btn.active').forEach(b => b.classList.remove('active'));
   });
 
   function showOffer() {

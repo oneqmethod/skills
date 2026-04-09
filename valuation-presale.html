@@ -92,251 +92,126 @@
       color: #7d8590;
     }
 
-    /* Legend */
-    .legend {
+
+
+    /* ── Phase cards ── */
+    .phases {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 4px;
     }
-    .legend-item {
+
+    .phase-arrow {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: #8b949e;
-    }
-    .legend-dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Chart */
-    .chart { display: flex; gap: 0; align-items: stretch; }
-
-    .y-axis {
-      display: flex;
-      flex-direction: column-reverse;
-      justify-content: space-between;
-      padding-bottom: 52px;
-      width: 40px;
-      flex-shrink: 0;
-    }
-    .y-tick {
-      font-size: 10px;
+      padding: 0 6px;
       color: #484f58;
-      text-align: right;
-      padding-right: 8px;
-      line-height: 1;
-    }
-
-    .plot { flex: 1; position: relative; }
-
-    .grid {
-      position: absolute;
-      inset: 0;
-      bottom: 52px;
-      display: flex;
-      flex-direction: column-reverse;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-    .grid-line { width: 100%; height: 1px; background: #21262d; }
-
-    .h-band {
-      position: absolute;
-      left: 0; right: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .columns {
-      position: absolute;
-      inset: 0;
-      bottom: 52px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-around;
-      padding: 0 24px;
-      z-index: 2;
-    }
-
-    .col {
-      flex: 1;
-      max-width: 140px;
-      position: relative;
-      height: 100%;
-    }
-
-    /* Arrow connector between bars */
-    .col-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 52px;
-      flex-shrink: 0;
-      color: #30363d;
       font-size: 18px;
+      flex-shrink: 0;
     }
 
-    .range-bar {
-      position: absolute;
-      left: 8%; right: 8%;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: default;
-    }
-    .range-bar-label {
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .bar-marker {
-      position: absolute;
-      font-size: 10px;
-      font-weight: 600;
-      color: #8b949e;
-      white-space: nowrap;
-    }
-    .bar-marker.top    { top: -1px; right: calc(100% + 6px); }
-    .bar-marker.bottom { bottom: -1px; right: calc(100% + 6px); }
-
-    .bar-pre1 {
-      background: linear-gradient(180deg, #92400e 0%, #78350f 100%);
-      border: 1.5px solid #d97706;
-      color: #fde68a;
-    }
-    .bar-pre2 {
-      background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
-      border: 1.5px solid #3b82f6;
-      color: #bfdbfe;
-    }
-    .bar-pre3 {
-      background: linear-gradient(180deg, #166534 0%, #14532d 100%);
-      border: 1.5px solid #22c55e;
-      color: #bbf7d0;
-    }
-
-    /* X labels */
-    .x-labels {
-      position: absolute;
-      left: 0; right: 0;
-      bottom: 0;
-      height: 52px;
-      display: flex;
-      justify-content: space-around;
-      padding: 0 24px;
-      align-items: flex-end;
-    }
-    .x-label {
+    .phase {
       flex: 1;
-      max-width: 140px;
+      border-radius: 12px;
+      padding: 16px 14px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 4px;
-      gap: 3px;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
     }
-    .x-label-arrow { flex-shrink: 0; width: 32px; }
-    .x-label-chip {
+
+    .phase::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .phase.phase-1 { background: rgba(180,83,9,0.08); border: 1px solid rgba(217,119,6,0.25); }
+    .phase.phase-1::before { background: linear-gradient(90deg, #d97706, #b45309); }
+
+    .phase.phase-2 {
+      background: rgba(29,78,216,0.10);
+      border: 1.5px solid rgba(59,130,246,0.45);
+      box-shadow: 0 0 20px rgba(59,130,246,0.1);
+    }
+    .phase.phase-2::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+
+    .phase.phase-3 { background: rgba(22,101,52,0.08); border: 1px solid rgba(34,197,94,0.25); }
+    .phase.phase-3::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+
+    .phase-num {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .phase-1 .phase-num { color: #d97706; }
+    .phase-2 .phase-num { color: #3b82f6; }
+    .phase-3 .phase-num { color: #22c55e; }
+
+    .phase-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e6edf3;
+      line-height: 1.3;
+    }
+
+    .phase-val {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .phase-1 .phase-val { color: #fbbf24; }
+    .phase-2 .phase-val { color: #93c5fd; }
+    .phase-3 .phase-val { color: #4ade80; }
+
+    .phase-desc {
+      font-size: 10px;
+      color: #7d8590;
+      line-height: 1.5;
+    }
+
+    .phase-badge {
       display: inline-flex;
       align-items: center;
-      padding: 3px 10px;
+      padding: 2px 8px;
       border-radius: 20px;
       font-size: 10px;
       font-weight: 700;
+      margin-top: auto;
+      align-self: flex-start;
     }
-    .x-label-chip.pre1 {
+    .phase-1 .phase-badge {
       background: rgba(180,83,9,0.15);
-      border: 1px solid rgba(217,119,6,0.4);
+      border: 1px solid rgba(217,119,6,0.3);
       color: #fbbf24;
     }
-    .x-label-chip.pre2 {
-      background: rgba(29,78,216,0.15);
-      border: 1px solid rgba(59,130,246,0.4);
+    .phase-2 .phase-badge {
+      background: rgba(29,78,216,0.2);
+      border: 1px solid rgba(59,130,246,0.5);
       color: #93c5fd;
     }
-    .x-label-chip.pre3 {
-      background: rgba(22,101,52,0.2);
-      border: 1px solid rgba(34,197,94,0.4);
-      color: #4ade80;
-    }
-    .x-label-sub { font-size: 9px; color: #484f58; text-align: center; }
-
-    /* Bands */
-    .target-band {
-      background: rgba(163,113,247,0.07);
-      border-top: 2px dashed rgba(163,113,247,0.5);
-      border-bottom: 2px dashed rgba(163,113,247,0.5);
-    }
-    .target-band-label {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      font-weight: 700;
-      color: rgba(163,113,247,0.9);
-      background: rgba(163,113,247,0.12);
-      border: 1px solid rgba(163,113,247,0.35);
-      border-radius: 4px;
-      padding: 2px 6px;
-      white-space: nowrap;
-    }
-
-    /* Milestone lines */
-    .milestone-line {
-      position: absolute;
-      left: 0; right: 0;
-      height: 1px;
-      z-index: 4;
-      pointer-events: none;
-    }
-    .milestone-label-badge {
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      font-weight: 700;
-      border-radius: 4px;
-      padding: 2px 8px;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .milestone-line.mvp { background: rgba(251,191,36,0.35); }
-    .milestone-line.mvp .milestone-label-badge {
-      color: #fbbf24;
-      background: rgba(251,191,36,0.1);
-      border: 1px solid rgba(251,191,36,0.3);
-    }
-    .milestone-line.first-customer { background: rgba(59,130,246,0.35); }
-    .milestone-line.first-customer .milestone-label-badge {
-      color: #93c5fd;
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.3);
-    }
-    .milestone-line.second-customer { background: rgba(34,197,94,0.35); }
-    .milestone-line.second-customer .milestone-label-badge {
-      color: #4ade80;
-      background: rgba(34,197,94,0.1);
+    .phase-3 .phase-badge {
+      background: rgba(22,101,52,0.15);
       border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80;
     }
 
-    .m-arrow {
-      display: inline-block;
-      width: 0; height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-bottom: 6px solid currentColor;
+    @media (max-width: 720px) {
+      .phases { gap: 0; }
+      .phase { padding: 12px 10px; }
+      .phase-val { font-size: 14px; }
+      .phase-name { font-size: 11px; }
+      .phase-desc { display: none; }
+      .phase-arrow { padding: 0 3px; font-size: 14px; }
     }
+
 
     /* ── Side card ── */
     .side-card {
@@ -597,14 +472,6 @@
 
       .title { font-size: 15px; }
       .subtitle { font-size: 11px; }
-
-      .columns { padding: 0 4px; }
-      .x-labels { padding: 0 4px; }
-      .col { max-width: 90px; }
-      .range-bar-label { font-size: 10px; }
-      .col-arrow { font-size: 14px; }
-      .bar-marker { font-size: 9px; }
-
       .conf-pct { font-size: 28px; }
     }
   </style>
@@ -634,104 +501,40 @@
       <div class="subtitle">Valuation journey: pre-MVP to 2nd paying customer</div>
     </div>
 
-    <div class="legend">
-      <div class="legend-item">
-        <div class="legend-dot" style="background:#d97706;"></div> Pre MVP (you arrive here)
+    <div class="phases">
+
+      <!-- Phase 1: Pre MVP -->
+      <div class="phase phase-1">
+        <div class="phase-num">Phase 1</div>
+        <div class="phase-name">Pre MVP</div>
+        <div class="phase-val">$0–$0.5M</div>
+        <div class="phase-desc">Strong first customer in pipeline. No product built yet. You come to OneQ here.</div>
+        <div class="phase-badge">You arrive here</div>
       </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background:#3b82f6;"></div> Post MVP · Yango happy ✓
+
+      <div class="phase-arrow">→</div>
+
+      <!-- Phase 2: Post MVP · Yango happy -->
+      <div class="phase phase-2">
+        <div class="phase-num">Phase 2</div>
+        <div class="phase-name">Post MVP · Yango happy ✓</div>
+        <div class="phase-val">$1M–$2M</div>
+        <div class="phase-desc">MVP shipped. Yango is a happy paying customer. Ready to raise.</div>
+        <div class="phase-badge">OneQ delivers this</div>
       </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background:#22c55e;"></div> Post 2nd customer
+
+      <div class="phase-arrow">→</div>
+
+      <!-- Phase 3: Post 2nd customer -->
+      <div class="phase phase-3">
+        <div class="phase-num">Phase 3</div>
+        <div class="phase-name">Post 2nd customer</div>
+        <div class="phase-val">$3M–$5M</div>
+        <div class="phase-desc">2nd paying customer validates product-market fit. Strong fundraising position.</div>
+        <div class="phase-badge">What comes next</div>
       </div>
+
     </div>
-
-    <!--
-      Scale: $0–$5M | 320px usable | 64px per $1M | bottom offset 52px
-      MVP             $0.5M → bottom:84px
-      1st customer    $1M   → bottom:116px
-      Bar             $1M–$2M → bottom:116px h:64px
-      Target raise    $1.3M–$1.9M → bottom:135px h:38px
-      2nd customer    $2.7M → bottom:225px
-    -->
-
-    <div class="chart">
-      <div class="y-axis">
-        <div class="y-tick">$0</div>
-        <div class="y-tick">$1M</div>
-        <div class="y-tick">$2M</div>
-        <div class="y-tick">$3M</div>
-        <div class="y-tick">$4M</div>
-        <div class="y-tick">$5M</div>
-      </div>
-
-      <div class="plot" style="height:372px;">
-
-        <div class="grid">
-          <div class="grid-line"></div>
-          <div class="grid-line"></div>
-          <div class="grid-line"></div>
-          <div class="grid-line"></div>
-          <div class="grid-line"></div>
-          <div class="grid-line"></div>
-        </div>
-
-        <!-- Columns -->
-        <div class="columns">
-
-          <!-- Bar 1: Pre MVP · $0–$0.5M -->
-          <div class="col">
-            <div class="range-bar bar-pre1" style="bottom:52px; height:32px;">
-              <span class="range-bar-label">$0–$0.5M</span>
-              <div class="bar-marker top">$0.5M</div>
-              <div class="bar-marker bottom">$0</div>
-            </div>
-          </div>
-
-          <div class="col-arrow">→</div>
-
-          <!-- Bar 2: Post MVP · Yango happy · $1M–$2M -->
-          <div class="col">
-            <div class="range-bar bar-pre2" style="bottom:116px; height:64px;">
-              <span class="range-bar-label">$1M–$2M</span>
-              <div class="bar-marker top">$2M</div>
-              <div class="bar-marker bottom">$1M</div>
-            </div>
-          </div>
-
-          <div class="col-arrow">→</div>
-
-          <!-- Bar 3: Post 2nd customer · $3M–$5M -->
-          <div class="col">
-            <div class="range-bar bar-pre3" style="bottom:244px; height:128px;">
-              <span class="range-bar-label">$3M–$5M</span>
-              <div class="bar-marker top">$5M</div>
-              <div class="bar-marker bottom">$3M</div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- X labels -->
-        <div class="x-labels">
-          <div class="x-label">
-            <div class="x-label-chip pre1">Pre MVP</div>
-            <div class="x-label-sub">You arrive here</div>
-          </div>
-          <div class="x-label-arrow"></div>
-          <div class="x-label">
-            <div class="x-label-chip pre2">Post MVP · Yango ✓</div>
-            <div class="x-label-sub">OneQ delivers this</div>
-          </div>
-          <div class="x-label-arrow"></div>
-          <div class="x-label">
-            <div class="x-label-chip pre3">Post 2nd customer</div>
-            <div class="x-label-sub">What's next</div>
-          </div>
-        </div>
-
-      </div><!-- /plot -->
-    </div><!-- /chart -->
   </div><!-- /card -->
 
   <!-- ── Side card ── -->

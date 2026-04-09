@@ -151,27 +151,38 @@
       z-index: 1;
     }
 
-    /* Single centered column */
     .columns {
       position: absolute;
       inset: 0;
       bottom: 52px;
       display: flex;
       align-items: flex-end;
-      justify-content: center;
-      padding: 0 80px;
+      justify-content: space-around;
+      padding: 0 24px;
       z-index: 2;
     }
 
     .col {
-      width: 160px;
+      flex: 1;
+      max-width: 140px;
       position: relative;
       height: 100%;
     }
 
+    /* Arrow connector between bars */
+    .col-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 52px;
+      flex-shrink: 0;
+      color: #30363d;
+      font-size: 18px;
+    }
+
     .range-bar {
       position: absolute;
-      left: 0; right: 0;
+      left: 8%; right: 8%;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -179,58 +190,72 @@
       cursor: default;
     }
     .range-bar-label {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
     }
     .bar-marker {
       position: absolute;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       color: #8b949e;
-      right: calc(100% + 8px);
       white-space: nowrap;
     }
-    .bar-marker.top    { top: 0; }
-    .bar-marker.bottom { bottom: 0; }
+    .bar-marker.top    { top: -1px; right: calc(100% + 6px); }
+    .bar-marker.bottom { bottom: -1px; right: calc(100% + 6px); }
 
-    .bar-reasonable {
+    .bar-pre1 {
+      background: linear-gradient(180deg, #92400e 0%, #78350f 100%);
+      border: 1.5px solid #d97706;
+      color: #fde68a;
+    }
+    .bar-pre2 {
       background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
       border: 1.5px solid #3b82f6;
       color: #bfdbfe;
     }
 
-    /* X label */
+    /* X labels */
     .x-labels {
       position: absolute;
       left: 0; right: 0;
       bottom: 0;
       height: 52px;
       display: flex;
-      justify-content: center;
-      padding: 0 80px;
+      justify-content: space-around;
+      padding: 0 24px;
+      align-items: flex-end;
     }
     .x-label {
-      width: 160px;
+      flex: 1;
+      max-width: 140px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
       padding-bottom: 4px;
-      gap: 4px;
+      gap: 3px;
     }
+    .x-label-arrow { flex-shrink: 0; width: 32px; }
     .x-label-chip {
       display: inline-flex;
       align-items: center;
-      padding: 3px 14px;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
+    }
+    .x-label-chip.pre1 {
+      background: rgba(180,83,9,0.15);
+      border: 1px solid rgba(217,119,6,0.4);
+      color: #fbbf24;
+    }
+    .x-label-chip.pre2 {
       background: rgba(29,78,216,0.15);
       border: 1px solid rgba(59,130,246,0.4);
       color: #93c5fd;
     }
-    .x-label-sub { font-size: 10px; color: #484f58; }
+    .x-label-sub { font-size: 9px; color: #484f58; text-align: center; }
 
     /* Bands */
     .target-band {
@@ -564,9 +589,11 @@
       .subtitle { font-size: 11px; }
 
       .plot { height: 260px !important; }
-      .columns { padding: 0 32px; }
-      .x-labels { padding: 0 32px; }
-      .col { width: 100px; }
+      .columns { padding: 0 8px; }
+      .x-labels { padding: 0 8px; }
+      .col { max-width: 100px; }
+      .range-bar-label { font-size: 10px; }
+      .col-arrow { font-size: 14px; }
 
       .conf-pct { font-size: 28px; }
     }
@@ -593,13 +620,16 @@
     </div>
 
     <div class="header">
-      <div class="title">What we build together → <span>your company after MVP</span></div>
-      <div class="subtitle">Reasonable outcome: 1st happy paying customer validated by Yango</div>
+      <div class="title">Where you are → <span>where OneQ takes you</span></div>
+      <div class="subtitle">Valuation impact: from pipeline to 1st happy paying customer</div>
     </div>
 
     <div class="legend">
       <div class="legend-item">
-        <div class="legend-dot" style="background:#3b82f6;"></div> Company value after OneQ engagement
+        <div class="legend-dot" style="background:#d97706;"></div> Pre 1st paying customer (now)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#3b82f6;"></div> Pre 2nd paying customer (after OneQ)
       </div>
     </div>
 
@@ -635,20 +665,39 @@
 
         <!-- Columns -->
         <div class="columns">
+
+          <!-- Bar 1: Pre 1st paying customer · $0.25M–$0.75M -->
           <div class="col">
-            <div class="range-bar bar-reasonable" style="bottom:116px; height:64px;">
+            <div class="range-bar bar-pre1" style="bottom:68px; height:32px;">
+              <span class="range-bar-label">$0.25M–$0.75M</span>
+              <div class="bar-marker top">$0.75M</div>
+              <div class="bar-marker bottom">$0.25M</div>
+            </div>
+          </div>
+
+          <div class="col-arrow">→</div>
+
+          <!-- Bar 2: Pre 2nd paying customer · $1M–$2M -->
+          <div class="col">
+            <div class="range-bar bar-pre2" style="bottom:116px; height:64px;">
               <span class="range-bar-label">$1M–$2M</span>
               <div class="bar-marker top">$2M</div>
               <div class="bar-marker bottom">$1M</div>
             </div>
           </div>
+
         </div>
 
-        <!-- X label -->
+        <!-- X labels -->
         <div class="x-labels">
           <div class="x-label">
-            <div class="x-label-chip">After OneQ engagement</div>
-            <div class="x-label-sub">Most likely</div>
+            <div class="x-label-chip pre1">Pre Yango pays</div>
+            <div class="x-label-sub">Where you are now</div>
+          </div>
+          <div class="x-label-arrow"></div>
+          <div class="x-label">
+            <div class="x-label-chip pre2">Pre 2nd customer</div>
+            <div class="x-label-sub">After OneQ engagement</div>
           </div>
         </div>
 

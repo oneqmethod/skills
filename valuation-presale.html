@@ -55,12 +55,7 @@
       font-size: 12px;
       font-weight: 700;
     }
-    .tag-entrepreneur {
-      background: rgba(251,191,36,0.1);
-      border: 1px solid rgba(251,191,36,0.3);
-      color: #fbbf24;
-    }
-    .tag-customer {
+    .tag-entrepreneur, .tag-customer {
       background: rgba(59,130,246,0.1);
       border: 1px solid rgba(59,130,246,0.3);
       color: #93c5fd;
@@ -553,9 +548,15 @@
 
     <!-- Context bar -->
     <div class="context-bar">
-      <span class="context-tag tag-entrepreneur">👤 Asaf</span>
+      <span class="context-tag tag-entrepreneur">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Asaf
+      </span>
       <span class="context-sep">×</span>
-      <span class="context-tag tag-customer">🏢 Yango</span>
+      <span class="context-tag tag-customer">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Yango
+      </span>
       <span class="context-label">Pre-sale · OneQ</span>
     </div>
 
@@ -566,16 +567,10 @@
 
     <div class="legend">
       <div class="legend-item">
-        <div class="legend-dot" style="background:#fbbf24;"></div> MVP shipped
-      </div>
-      <div class="legend-item">
         <div class="legend-dot" style="background:#3b82f6;"></div> Yango happy & paying
       </div>
       <div class="legend-item">
         <div class="legend-dot" style="background:rgba(163,113,247,0.5); border:1px dashed rgba(163,113,247,0.8);"></div> Target raise zone
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background:#22c55e;"></div> 2nd customer
       </div>
     </div>
 
@@ -609,13 +604,6 @@
           <div class="grid-line"></div>
         </div>
 
-        <!-- MVP milestone at $0.5M -->
-        <div class="milestone-line mvp" style="bottom:84px;">
-          <div class="milestone-label-badge">
-            <span class="m-arrow"></span> MVP shipped
-          </div>
-        </div>
-
         <!-- 1st happy customer at $1M -->
         <div class="milestone-line first-customer" style="bottom:116px;">
           <div class="milestone-label-badge">
@@ -626,13 +614,6 @@
         <!-- Target raise band: $1.3M–$1.9M -->
         <div class="h-band target-band" style="bottom:135px; height:38px;">
           <div class="target-band-label">Target raise $1.3M–$1.9M</div>
-        </div>
-
-        <!-- 2nd customer at $2.7M -->
-        <div class="milestone-line second-customer" style="bottom:225px;">
-          <div class="milestone-label-badge">
-            <span class="m-arrow"></span> 2nd happy customer
-          </div>
         </div>
 
         <!-- Columns -->

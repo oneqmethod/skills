@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Asaf × Yango — OneQ Pre-Sale</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { overflow-x: hidden; }
 
     body {
       background: #0d1117;
@@ -20,11 +22,15 @@
 
     .wrapper {
       display: flex;
+      flex-wrap: wrap;
       gap: 16px;
       width: 100%;
       max-width: 1100px;
       align-items: flex-start;
     }
+
+    .card { flex: 1; min-width: 300px; }
+    .side-card { min-width: 280px; }
 
     /* ── Chart card ── */
     .card {
@@ -538,29 +544,29 @@
     }
     .offer-generate-btn:hover { opacity: 0.88; }
     .offer-generate-btn.visible { display: block; }
-    @media (max-width: 768px) {
+    @media (max-width: 720px) {
       body { padding: 16px 12px; }
 
-      .wrapper {
-        flex-direction: column;
-        gap: 12px;
+      .wrapper { gap: 12px; }
+
+      .card {
+        min-width: 0;
+        width: 100%;
+        padding: 20px 16px 24px;
       }
 
       .side-card {
+        min-width: 0;
         width: 100%;
       }
 
-      .card {
-        padding: 20px 20px 24px;
-      }
-
       .title { font-size: 15px; }
+      .subtitle { font-size: 11px; }
 
-      .plot { height: 280px !important; }
-
-      .columns { padding: 0 40px; }
-      .x-labels { padding: 0 40px; }
-      .col { width: 120px; }
+      .plot { height: 260px !important; }
+      .columns { padding: 0 32px; }
+      .x-labels { padding: 0 32px; }
+      .col { width: 100px; }
 
       .conf-pct { font-size: 28px; }
     }

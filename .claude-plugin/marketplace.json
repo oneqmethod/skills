@@ -24,6 +24,12 @@
       "description": "Browser automation for web testing, form filling, screenshots, and data extraction using agent-browser CLI",
       "source": "./plugins/agent-browser",
       "category": "development"
+    },
+    {
+      "name": "brainstorm",
+      "description": "Guided brainstorming for structured idea generation",
+      "source": "./plugins/brainstorm",
+      "category": "productivity"
     }
   ]
 }

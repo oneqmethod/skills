@@ -58,3 +58,16 @@ Browser automation for web testing, form filling, and data extraction.
 
 [Full Documentation](plugins/agent-browser/README.md)
 
+---
+
+### brainstorm
+
+Guided idea generation that produces structured, categorized lists of actionable ideas.
+
+- Clarifies topic and constraints before generating
+- Auto-generates themed categories relevant to your topic
+- Specific, actionable ideas per category
+- Offers to dive deeper into any area
+
+[Full Documentation](plugins/brainstorm/README.md)
+

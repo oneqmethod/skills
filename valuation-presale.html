@@ -315,6 +315,143 @@
     .brain-label { font-size: 11px; font-weight: 600; color: #FFFFFF; margin-bottom: 1px; }
     .brain-delta { font-size: 10px; font-weight: 600; color: #F5A623; }
 
+    /* ── Live calculator inputs ── */
+    .calc-inputs { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+
+    .inp-grp { display: flex; flex-direction: column; gap: 6px; }
+
+    .inp-lbl {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #888888;
+    }
+    .inp-lbl .inp-val {
+      color: #F5A623;
+      font-size: 11px;
+      text-transform: none;
+      letter-spacing: -0.01em;
+      font-weight: 700;
+    }
+    .inp-lbl .inp-val.empty { color: #3A3A3A; }
+    .inp-lbl .opt-tag {
+      font-size: 9px;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 0.04em;
+      text-transform: lowercase;
+    }
+
+    .inp-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 7px 11px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .inp-wrap:focus-within {
+      border-color: rgba(245,166,35,0.4);
+      background: rgba(245,166,35,0.03);
+    }
+    .inp-pref, .inp-suf { font-size: 12px; color: #666; flex-shrink: 0; font-weight: 500; }
+    .inp-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 0 6px;
+      min-width: 0;
+      letter-spacing: -0.01em;
+    }
+    .inp-wrap input::placeholder { color: #444; font-weight: 500; }
+    .inp-wrap input::-webkit-outer-spin-button,
+    .inp-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .inp-wrap input[type=number] { -moz-appearance: textfield; }
+
+    /* Segmented control */
+    .seg {
+      display: flex;
+      gap: 3px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 3px;
+    }
+    .seg-btn {
+      flex: 1;
+      padding: 7px 2px;
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .seg-btn:hover { color: #BBB; }
+    .seg-btn.active {
+      background: rgba(245,166,35,0.15);
+      color: #FBBF24;
+      box-shadow: 0 0 0 1px rgba(245,166,35,0.25);
+    }
+
+    /* Slider */
+    .slider-row { padding: 2px 2px 0; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px; height: 15px;
+      background: #F5A623;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(245,166,35,0.5);
+      transition: transform 0.1s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-moz-range-thumb {
+      width: 15px; height: 15px;
+      background: #F5A623;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(245,166,35,0.5);
+    }
+    .slider-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #3A3A3A;
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* Phase card — "computed" state */
+    .phase-val.empty { color: #3A3A3A !important; font-weight: 600; }
+
     /* CTA button */
     .cta-btn {
       width: 100%;
@@ -432,7 +569,7 @@
       <!-- Phase 0: Pre MVP -->
       <div class="phase phase-1">
         <div class="phase-name">Pre MVP</div>
-        <div class="phase-val">$0–$0.5M</div>
+        <div class="phase-val" id="phase0-val">$0–$0.5M</div>
         <div class="phase-num" style="margin-top:auto; align-self:flex-end;">Phase 0</div>
       </div>
 
@@ -441,7 +578,7 @@
       <!-- Phase 1: Post MVP -->
       <div class="phase phase-2">
         <div class="phase-name">Post MVP · 1st customer</div>
-        <div class="phase-val">$1M–$2M</div>
+        <div class="phase-val empty" id="phase1-val">Enter ARR →</div>
         <div class="phase-num" style="margin-top:auto; align-self:flex-end;">Phase 1</div>
       </div>
 
@@ -450,7 +587,7 @@
       <!-- Scale: Post 2nd customer -->
       <div class="phase phase-3">
         <div class="phase-name">Post 2nd customer</div>
-        <div class="phase-val">$3M–$5M</div>
+        <div class="phase-val empty" id="phase2-val">—</div>
         <div class="phase-num" style="margin-top:auto; align-self:flex-end;">Scale</div>
       </div>
 
@@ -463,7 +600,7 @@
     <div style="display:flex; height:360px;">
 
       <!-- Y axis labels (310px span via padding-bottom:50px) -->
-      <div style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:50px; font-size:10px; color:#8B8B9E; text-align:right; letter-spacing:0.02em;">
+      <div id="y-axis" style="width:36px; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:50px; font-size:10px; color:#8B8B9E; text-align:right; letter-spacing:0.02em;">
         <span style="padding-right:6px;">$5M</span>
         <span style="padding-right:6px;">$4M</span>
         <span style="padding-right:6px;">$3M</span>
@@ -489,22 +626,21 @@
           <div style="position:absolute; left:0; right:0; bottom:62px;  height:1px; background:rgba(255,255,255,0.04);"></div>
           <div style="position:absolute; left:0; right:0; bottom:0;     height:1px; background:rgba(255,255,255,0.1);"></div>
 
-          <!-- Bar 1: Pre MVP $0–$0.5M → bottom:0, height:31px -->
-          <div style="position:absolute; left:8%; width:22%; bottom:0; height:31px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#B45309,#92400E); box-shadow:0 0 16px rgba(180,83,9,0.5),0 0 32px rgba(180,83,9,0.2);">
-            <!-- value label above bar -->
-            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#D97706; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$0.5M</div>
+          <!-- Bar 1: Pre MVP -->
+          <div id="bar-1" style="position:absolute; left:8%; width:22%; bottom:0; height:31px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#B45309,#92400E); box-shadow:0 0 16px rgba(180,83,9,0.5),0 0 32px rgba(180,83,9,0.2); transition:bottom 0.4s cubic-bezier(0.4,0,0.2,1), height 0.4s cubic-bezier(0.4,0,0.2,1);">
+            <div id="bar-1-top" style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#D97706; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$0.5M</div>
           </div>
 
-          <!-- Bar 2: Post MVP $1M–$2M → bottom:62px, height:62px -->
-          <div style="position:absolute; left:37%; width:22%; bottom:62px; height:62px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#F5A623,#D97706); box-shadow:0 0 20px rgba(245,166,35,0.6),0 0 40px rgba(245,166,35,0.25);">
-            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#FBBF24; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$2M</div>
-            <div style="position:absolute; bottom:6px; left:50%; transform:translateX(-50%); font-size:9px; color:rgba(0,0,0,0.55); font-weight:700; white-space:nowrap; letter-spacing:0.01em;">$1M–$2M</div>
+          <!-- Bar 2: Post MVP -->
+          <div id="bar-2" style="position:absolute; left:37%; width:22%; bottom:62px; height:62px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#F5A623,#D97706); box-shadow:0 0 20px rgba(245,166,35,0.6),0 0 40px rgba(245,166,35,0.25); transition:bottom 0.4s cubic-bezier(0.4,0,0.2,1), height 0.4s cubic-bezier(0.4,0,0.2,1); opacity:0.35;">
+            <div id="bar-2-top" style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#FBBF24; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">—</div>
+            <div id="bar-2-inner" style="position:absolute; bottom:6px; left:50%; transform:translateX(-50%); font-size:9px; color:rgba(0,0,0,0.55); font-weight:700; white-space:nowrap; letter-spacing:0.01em;"></div>
           </div>
 
-          <!-- Bar 3: Post 2nd $3M–$5M → bottom:186px, height:124px -->
-          <div style="position:absolute; left:66%; width:22%; bottom:186px; height:124px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#FBBF24,rgba(251,191,36,0.5)); box-shadow:0 0 20px rgba(251,191,36,0.4),0 0 48px rgba(251,191,36,0.15);">
-            <div style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#FDE68A; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">$5M</div>
-            <div style="position:absolute; bottom:6px; left:50%; transform:translateX(-50%); font-size:9px; color:rgba(0,0,0,0.45); font-weight:700; white-space:nowrap; letter-spacing:0.01em;">$3M–$5M</div>
+          <!-- Bar 3: Post 2nd -->
+          <div id="bar-3" style="position:absolute; left:66%; width:22%; bottom:186px; height:124px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#FBBF24,rgba(251,191,36,0.5)); box-shadow:0 0 20px rgba(251,191,36,0.4),0 0 48px rgba(251,191,36,0.15); transition:bottom 0.4s cubic-bezier(0.4,0,0.2,1), height 0.4s cubic-bezier(0.4,0,0.2,1); opacity:0.35;">
+            <div id="bar-3-top" style="position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); font-size:11px; color:#FDE68A; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">—</div>
+            <div id="bar-3-inner" style="position:absolute; bottom:6px; left:50%; transform:translateX(-50%); font-size:9px; color:rgba(0,0,0,0.45); font-weight:700; white-space:nowrap; letter-spacing:0.01em;"></div>
           </div>
 
         </div>
@@ -534,109 +670,85 @@
     <div class="side-panel">
 
       <svg id="gaugeSvg" viewBox="0 33 200 117" style="width:100%; max-width:210px; display:block; margin:0 auto; overflow:visible;"></svg>
-      <div class="conf-desc" style="margin-top:6px;">Based on benchmarks only. Go through the questions below to sharpen this together.</div>
+      <div class="conf-desc" style="margin-top:6px;" id="conf-desc">Based on benchmarks only. Fill the inputs below to sharpen the numbers.</div>
 
       <div style="border-top:1px solid rgba(255,255,255,0.06); margin:16px 0 14px;"></div>
 
       <div class="side-panel-title">
-        <span class="icon" style="background:rgba(139,92,246,0.15); color:#8B5CF6;">◎</span>
-        Brainshop  more Confidence
+        <span class="icon" style="background:rgba(245,166,35,0.15); color:#F5A623;">◎</span>
+        Valuation inputs
       </div>
 
-      <div class="brain-item" data-boost="25" onclick="toggleBrain(this)">
-        <div class="brain-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-        <div class="brain-text">
-          <div class="brain-label">Signed contract value with Yango</div>
-          <div class="brain-delta">+25% confidence</div>
+      <div class="calc-inputs">
+
+        <!-- ARR -->
+        <div class="inp-grp">
+          <div class="inp-lbl">Signed ARR with Yango</div>
+          <div class="inp-wrap">
+            <span class="inp-pref">$</span>
+            <input type="number" id="inp-arr" placeholder="e.g. 300,000" oninput="onArr()">
+            <span class="inp-suf">/ yr</span>
+          </div>
         </div>
-        <button class="q-btn" onclick="toggleHelp(event, this)">?
-          <div class="brain-tooltip">What's the total annual value of Yango's contract? This is the single biggest input — it sets the revenue base for every valuation calculation.</div>
-        </button>
-      </div>
 
-      <div class="brain-item" data-boost="15" onclick="toggleBrain(this)">
-        <div class="brain-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-        <div class="brain-text">
-          <div class="brain-label">Yango's expansion signals</div>
-          <div class="brain-delta">+15% confidence</div>
+        <!-- Gross margin -->
+        <div class="inp-grp">
+          <div class="inp-lbl">Gross margin <span class="inp-val empty" id="margin-val">—</span></div>
+          <div class="slider-row">
+            <input type="range" id="inp-margin" min="0" max="100" value="0" oninput="onMargin()">
+            <div class="slider-scale"><span>0%</span><span>50%</span><span>100%</span></div>
+          </div>
         </div>
-        <button class="q-btn" onclick="toggleHelp(event, this)">?
-          <div class="brain-tooltip">Is Yango asking for more features, more seats, or more use cases? Early expansion signals are the strongest predictor of long-term retention.</div>
-        </button>
-      </div>
 
-      <div class="brain-item" data-boost="10" onclick="toggleBrain(this)">
-        <div class="brain-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-        <div class="brain-text">
-          <div class="brain-label">2nd customer pipeline</div>
-          <div class="brain-delta">+10% confidence</div>
+        <!-- Contract term -->
+        <div class="inp-grp">
+          <div class="inp-lbl">Contract term</div>
+          <div class="seg" id="seg-term">
+            <button class="seg-btn" data-v="m2m" onclick="onSeg(this,'term')">M2M</button>
+            <button class="seg-btn" data-v="12"  onclick="onSeg(this,'term')">12 mo</button>
+            <button class="seg-btn" data-v="24"  onclick="onSeg(this,'term')">24 mo</button>
+          </div>
         </div>
-        <button class="q-btn" onclick="toggleHelp(event, this)">?
-          <div class="brain-tooltip">Any conversations with a 2nd potential customer? Even informal interest changes the story from "one customer" to "a repeatable market."</div>
-        </button>
-      </div>
 
-      <div class="brain-item" data-boost="5" onclick="toggleBrain(this)">
-        <div class="brain-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-        <div class="brain-text">
-          <div class="brain-label">Burn rate & runway</div>
-          <div class="brain-delta">+5% confidence</div>
+        <!-- Expansion signals -->
+        <div class="inp-grp">
+          <div class="inp-lbl">Yango expansion signals</div>
+          <div class="seg" id="seg-exp">
+            <button class="seg-btn" data-v="none"   onclick="onSeg(this,'expansion')">None</button>
+            <button class="seg-btn" data-v="some"   onclick="onSeg(this,'expansion')">Some</button>
+            <button class="seg-btn" data-v="active" onclick="onSeg(this,'expansion')">Active</button>
+          </div>
         </div>
-        <button class="q-btn" onclick="toggleHelp(event, this)">?
-          <div class="brain-tooltip">How much does the company spend per month? This tells us how urgently you need to close the raise and affects your negotiating position.</div>
-        </button>
-      </div>
 
-      <div class="brain-item" data-boost="5" onclick="toggleBrain(this)">
-        <div class="brain-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-        <div class="brain-text">
-          <div class="brain-label">Gross margin %</div>
-          <div class="brain-delta">+5% confidence</div>
+        <!-- 2nd customer -->
+        <div class="inp-grp">
+          <div class="inp-lbl">2nd customer stage</div>
+          <div class="seg" id="seg-cust">
+            <button class="seg-btn" data-v="none"   onclick="onSeg(this,'second')">None</button>
+            <button class="seg-btn" data-v="cold"   onclick="onSeg(this,'second')">Cold</button>
+            <button class="seg-btn" data-v="warm"   onclick="onSeg(this,'second')">Warm</button>
+            <button class="seg-btn" data-v="talks"  onclick="onSeg(this,'second')">Talks</button>
+            <button class="seg-btn" data-v="signed" onclick="onSeg(this,'second')">Signed</button>
+          </div>
         </div>
-        <button class="q-btn" onclick="toggleHelp(event, this)">?
-          <div class="brain-tooltip">What % of revenue stays after direct costs? Margins above 70% justify a higher revenue multiple from investors — it shows scalability.</div>
-        </button>
+
+        <!-- Runway (optional) -->
+        <div class="inp-grp">
+          <div class="inp-lbl">Runway <span class="opt-tag">optional</span></div>
+          <div class="inp-wrap">
+            <input type="number" id="inp-runway" placeholder="e.g. 18" oninput="onRunway()">
+            <span class="inp-suf">months</span>
+          </div>
+        </div>
+
       </div>
 
-      <div style="margin-top:18px;">
+      <div style="margin-top:auto;">
         <button class="cta-btn" onclick="navigateTo('offer.html')">
           Build the offer <span class="cta-arrow">→</span>
         </button>
       </div>
 
-    </div>
-
-    <!-- Offer panel (hidden until button clicked) -->
-    <div class="side-panel offer-panel" id="offerPanel">
-      <div class="offer-panel-title">What Asaf is looking for</div>
-
-      <div class="offer-option" onclick="selectOffer(this)">
-        <div class="offer-option-header">
-          <div class="offer-radio"><div class="offer-radio-dot"></div></div>
-          <div class="offer-name">Money only</div>
-        </div>
-        <div class="offer-desc">Fixed fee engagement. No equity. OneQ gets paid for delivery.</div>
-      </div>
-
-      <div class="offer-option" onclick="selectOffer(this)">
-        <div class="offer-option-header">
-          <div class="offer-radio"><div class="offer-radio-dot"></div></div>
-          <div class="offer-name">Money + Equity</div>
-        </div>
-        <div class="offer-desc">Reduced fee + a stake in Asaf's company. Aligned on long-term upside.</div>
-      </div>
-
-      <div class="offer-option" onclick="selectOffer(this)">
-        <div class="offer-option-header">
-          <div class="offer-radio"><div class="offer-radio-dot"></div></div>
-          <div class="offer-name">Money + Revenue share</div>
-        </div>
-        <div class="offer-desc">Reduced fee + % of revenue from Yango and future customers.</div>
-      </div>
-
-      <button class="offer-generate-btn" id="generateBtn" onclick="generateProposal()">
-        Generate proposal →
-      </button>
     </div>
 
   </div><!-- /side-card -->
@@ -652,18 +764,18 @@
       <div style="flex:1; min-width:180px; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.3); border-radius:12px; padding:14px 16px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span style="font-size:10px; font-weight:700; color:#F5A623; background:rgba(245,166,35,0.2); padding:2px 8px; border-radius:9999px; white-space:nowrap;">Reasonable</span>
-          <span style="font-size:12px; font-weight:700; color:#F5A623; letter-spacing:-0.01em;">$1M–$2M</span>
+          <span id="meth-reasonable" style="font-size:12px; font-weight:700; color:#F5A623; letter-spacing:-0.01em;">$1M–$2M</span>
         </div>
-        <div style="font-size:11px; color:#8B8B9E; line-height:1.6;">4–6× multiple on $300K–$500K ARR. Contract signed, product live, 1–2 use cases validated with a Tier-1 customer.</div>
+        <div id="meth-reasonable-note" style="font-size:11px; color:#8B8B9E; line-height:1.6;">4–6× multiple on $300K–$500K ARR. Contract signed, product live, 1–2 use cases validated with a Tier-1 customer.</div>
       </div>
 
       <!-- Target raise zone -->
       <div style="flex:1; min-width:180px; background:rgba(251,191,36,0.04); border:1px solid rgba(251,191,36,0.25); border-radius:12px; padding:14px 16px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span style="font-size:10px; font-weight:700; color:#FDE68A; background:rgba(251,191,36,0.1); padding:2px 8px; border-radius:9999px; white-space:nowrap;">Target raise zone</span>
-          <span style="font-size:12px; font-weight:700; color:#FDE68A; letter-spacing:-0.01em;">$1.3M–$1.9M</span>
+          <span id="meth-target" style="font-size:12px; font-weight:700; color:#FDE68A; letter-spacing:-0.01em;">$1.3M–$1.9M</span>
         </div>
-        <div style="font-size:11px; color:#8B8B9E; line-height:1.6;">Typical pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.</div>
+        <div id="meth-target-note" style="font-size:11px; color:#8B8B9E; line-height:1.6;">Typical pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.</div>
       </div>
 
     </div>
@@ -673,21 +785,235 @@
 </div><!-- /wrapper -->
 
 <script>
-  let baseConfidence = 25;
+  // ── State ────────────────────────────────────────────
+  const state = {
+    arr: null,      // dollars / year
+    margin: null,   // 0–100
+    term: null,     // 'm2m' | '12' | '24'
+    expansion: null,// 'none' | 'some' | 'active'
+    second: null,   // 'none' | 'cold' | 'warm' | 'talks' | 'signed'
+    runway: null    // months
+  };
 
-  function toggleBrain(el) {
-    const boost = parseInt(el.dataset.boost);
-    const wasAnswered = el.classList.contains('answered');
-    el.classList.toggle('answered');
-    baseConfidence = wasAnswered ? baseConfidence - boost : baseConfidence + boost;
-    baseConfidence = Math.min(85, Math.max(25, baseConfidence));
-    updateConfidence();
+  // ── Input handlers ───────────────────────────────────
+  function onArr() {
+    const v = parseFloat(document.getElementById('inp-arr').value);
+    state.arr = (isFinite(v) && v > 0) ? v : null;
+    recalc();
+  }
+  function onMargin() {
+    const v = parseInt(document.getElementById('inp-margin').value);
+    state.margin = (v > 0) ? v : null;
+    const el = document.getElementById('margin-val');
+    if (state.margin !== null) { el.textContent = v + '%'; el.classList.remove('empty'); }
+    else { el.textContent = '—'; el.classList.add('empty'); }
+    recalc();
+  }
+  function onRunway() {
+    const v = parseFloat(document.getElementById('inp-runway').value);
+    state.runway = (isFinite(v) && v > 0) ? v : null;
+    recalc();
+  }
+  function onSeg(btn, key) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state[key] = btn.dataset.v;
+    recalc();
   }
 
-  function updateConfidence() {
-    drawGauge(baseConfidence, 85);
+  // ── The engine ───────────────────────────────────────
+  function compute() {
+    // Default / unfilled state
+    if (!state.arr) {
+      return {
+        filled: false,
+        phase0: [0, 0.5],
+        phase1: null,
+        phase2: null,
+        target: [1.3, 1.9],
+        confidence: 25,
+        multipleLo: null, multipleHi: null
+      };
+    }
+
+    const arrM = state.arr / 1_000_000;     // millions
+
+    // Base multiple from margin (defaults to mid band if unset)
+    const m = state.margin ?? 50;
+    let multLo, multHi;
+    if (m >= 70)      { multLo = 6; multHi = 8; }
+    else if (m >= 50) { multLo = 4; multHi = 6; }
+    else if (m >= 30) { multLo = 3; multHi = 4; }
+    else              { multLo = 2; multHi = 3; }
+
+    // Adjustments (additive to multiple)
+    const termBonus = state.term === '12' ? 0.5 : state.term === '24' ? 1.0 : 0;
+    const expAdj    = state.expansion === 'some' ? 0.3 : state.expansion === 'active' ? 0.7 : 0;
+    const custAdj   = ({cold:0.2, warm:0.5, talks:0.8, signed:1.2})[state.second] ?? 0;
+
+    const totalLo = multLo + termBonus + expAdj + custAdj;
+    const totalHi = multHi + termBonus + expAdj + custAdj;
+
+    const phase1Lo = arrM * totalLo;
+    const phase1Hi = arrM * totalHi;
+
+    // Scale: 2–3× the post-MVP high
+    const phase2Lo = phase1Hi * 2;
+    const phase2Hi = phase1Hi * 3;
+
+    // Target raise zone: ~85–95% of phase1 midpoint (pre-seed implied)
+    const mid = (phase1Lo + phase1Hi) / 2;
+    const targetLo = mid * 0.85;
+    const targetHi = mid * 0.95;
+
+    // Confidence: weighted by inputs provided
+    let conf = 10;
+    if (state.arr)        conf += 30;
+    if (state.margin)     conf += 15;
+    if (state.term)       conf += 10;
+    if (state.expansion)  conf += 10;
+    if (state.second)     conf += 20;
+    if (state.runway)     conf += 10;
+    conf = Math.min(90, conf);
+
+    return {
+      filled: true,
+      phase0: [0, 0.5],
+      phase1: [phase1Lo, phase1Hi],
+      phase2: [phase2Lo, phase2Hi],
+      target: [targetLo, targetHi],
+      confidence: conf,
+      multipleLo: totalLo,
+      multipleHi: totalHi
+    };
   }
 
+  // ── Formatting ───────────────────────────────────────
+  function fmt(m) {
+    if (m == null) return '—';
+    if (m < 1)  return '$' + Math.round(m * 1000) + 'K';
+    if (m < 10) return '$' + (+m.toFixed(1)) + 'M';
+    return '$' + Math.round(m) + 'M';
+  }
+  function fmtRange(lo, hi) { return fmt(lo) + '–' + fmt(hi); }
+
+  // ── Render ───────────────────────────────────────────
+  function recalc() {
+    const r = compute();
+
+    // Phase cards
+    document.getElementById('phase0-val').textContent = fmtRange(r.phase0[0], r.phase0[1]);
+
+    const p1 = document.getElementById('phase1-val');
+    const p2 = document.getElementById('phase2-val');
+    if (r.filled) {
+      p1.textContent = fmtRange(r.phase1[0], r.phase1[1]);
+      p1.classList.remove('empty');
+      p2.textContent = fmtRange(r.phase2[0], r.phase2[1]);
+      p2.classList.remove('empty');
+    } else {
+      p1.textContent = 'Enter ARR →';
+      p1.classList.add('empty');
+      p2.textContent = '—';
+      p2.classList.add('empty');
+    }
+
+    // Bar chart
+    updateBars(r);
+
+    // Gauge
+    drawGauge(r.confidence, 90);
+    document.getElementById('conf-desc').textContent = r.filled
+      ? `Based on ${inputsProvided()} of 6 inputs. Fill the rest to sharpen this further.`
+      : 'Based on benchmarks only. Fill the inputs below to sharpen the numbers.';
+
+    // Methodology
+    document.getElementById('meth-reasonable').textContent = r.filled
+      ? fmtRange(r.phase1[0], r.phase1[1]) : '$1M–$2M';
+    document.getElementById('meth-target').textContent = r.filled
+      ? fmtRange(r.target[0], r.target[1]) : '$1.3M–$1.9M';
+    if (r.filled) {
+      const arrK = Math.round(state.arr / 1000);
+      document.getElementById('meth-reasonable-note').textContent =
+        `${(+r.multipleLo.toFixed(1))}–${(+r.multipleHi.toFixed(1))}× multiple on $${arrK}K ARR. Adjusted for margin${state.margin ? ` (${state.margin}%)` : ''}, contract term, expansion signals, and pipeline.`;
+      document.getElementById('meth-target-note').textContent =
+        `A 15–25% dilution on the midpoint (${fmt((r.phase1[0]+r.phase1[1])/2)}) implies a ${fmtRange(r.target[0], r.target[1])} post-money pre-seed valuation.`;
+    } else {
+      document.getElementById('meth-reasonable-note').textContent =
+        '4–6× multiple on $300K–$500K ARR. Contract signed, product live, 1–2 use cases validated with a Tier-1 customer.';
+      document.getElementById('meth-target-note').textContent =
+        'Typical pre-seed check ($300K–$500K) at 15–25% dilution implies a $1.3M–$1.9M post-money valuation.';
+    }
+  }
+
+  function inputsProvided() {
+    let n = 0;
+    if (state.arr)       n++;
+    if (state.margin)    n++;
+    if (state.term)      n++;
+    if (state.expansion) n++;
+    if (state.second)    n++;
+    if (state.runway)    n++;
+    return n;
+  }
+
+  // ── Bar chart rendering ──────────────────────────────
+  function updateBars(r) {
+    const PLOT = 310;
+    // Dynamic y-axis max: at least 5M, round up to nearest integer M
+    const topVal = r.filled ? Math.max(5, Math.ceil(r.phase2[1])) : 5;
+    const pxPerM = PLOT / topVal;
+
+    // Y axis labels
+    const yAxis = document.getElementById('y-axis');
+    const step = topVal / 5;
+    let yhtml = '';
+    for (let i = 5; i >= 0; i--) {
+      const v = i * step;
+      yhtml += `<span style="padding-right:6px;">${v === 0 ? '$0' : fmt(v)}</span>`;
+    }
+    yAxis.innerHTML = yhtml;
+
+    // Bar 1 — Pre MVP (static)
+    setBar('bar-1', r.phase0[0], r.phase0[1], pxPerM, false);
+    document.getElementById('bar-1-top').textContent = fmt(r.phase0[1]);
+
+    // Bar 2 — Post MVP
+    if (r.filled) {
+      setBar('bar-2', r.phase1[0], r.phase1[1], pxPerM, true);
+      document.getElementById('bar-2-top').textContent = fmt(r.phase1[1]);
+      document.getElementById('bar-2-inner').textContent = fmtRange(r.phase1[0], r.phase1[1]);
+    } else {
+      document.getElementById('bar-2').style.opacity = '0.35';
+      document.getElementById('bar-2').style.bottom = '62px';
+      document.getElementById('bar-2').style.height = '62px';
+      document.getElementById('bar-2-top').textContent = '—';
+      document.getElementById('bar-2-inner').textContent = '';
+    }
+
+    // Bar 3 — Scale
+    if (r.filled) {
+      setBar('bar-3', r.phase2[0], r.phase2[1], pxPerM, true);
+      document.getElementById('bar-3-top').textContent = fmt(r.phase2[1]);
+      document.getElementById('bar-3-inner').textContent = fmtRange(r.phase2[0], r.phase2[1]);
+    } else {
+      document.getElementById('bar-3').style.opacity = '0.35';
+      document.getElementById('bar-3').style.bottom = '186px';
+      document.getElementById('bar-3').style.height = '124px';
+      document.getElementById('bar-3-top').textContent = '—';
+      document.getElementById('bar-3-inner').textContent = '';
+    }
+  }
+
+  function setBar(id, lo, hi, pxPerM, active) {
+    const bar = document.getElementById(id);
+    bar.style.bottom = (lo * pxPerM) + 'px';
+    bar.style.height = Math.max(6, (hi - lo) * pxPerM) + 'px';
+    bar.style.opacity = active ? '1' : '0.85';
+  }
+
+  // ── Gauge (unchanged math) ───────────────────────────
   function drawGauge(value, maxValue) {
     const cx = 100, cy = 105;
     const R = 66, r = 48;
@@ -765,25 +1091,8 @@
     window.location.href = base + file;
   }
 
-  function showOffer() {
-    const panel = document.getElementById('offerPanel');
-    panel.classList.add('visible');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function selectOffer(el) {
-    document.querySelectorAll('.offer-option').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    document.getElementById('generateBtn').classList.add('visible');
-  }
-
-  function generateProposal() {
-    const selected = document.querySelector('.offer-option.selected .offer-name')?.textContent;
-    alert('Generating proposal for Asaf · Yango\nStructure: ' + selected + '\nConfidence: ' + baseConfidence + '%');
-  }
-
   // Initial render
-  drawGauge(25, 85);
+  recalc();
 </script>
 </body>
 </html>

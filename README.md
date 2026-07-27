@@ -66,7 +66,7 @@ Business decision agent whose entire reasoning corpus is King Solomon's three bo
 
 - Three-court panel: Song of Songs (demand & timing), Proverbs (risk & prudence), Ecclesiastes (time & uncertainty)
 - Explicit tie-break rules — reversibility and exposure decide which court prevails
-- Verse bank of 75 tagged sources, each with a business reading and a check question
+- Verse bank of 241 tagged sources, each with a business reading and a check question
 - Structured ruling: decision, "little foxes", stop-conditions, first step
 - Hebrew and English triggers; no dependencies
 

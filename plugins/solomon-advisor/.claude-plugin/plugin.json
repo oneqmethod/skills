@@ -1,0 +1,8 @@
+{
+  "name": "solomon-advisor",
+  "description": "Business decision agent that rules through a three-court panel drawn entirely from King Solomon's books: Proverbs, Ecclesiastes and Song of Songs",
+  "author": {
+    "name": "Alon",
+    "email": "alon@oneqmethod.com"
+  }
+}

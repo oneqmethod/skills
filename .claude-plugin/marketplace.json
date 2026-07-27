@@ -24,6 +24,12 @@
       "description": "Browser automation for web testing, form filling, screenshots, and data extraction using agent-browser CLI",
       "source": "./plugins/agent-browser",
       "category": "development"
+    },
+    {
+      "name": "solomon-advisor",
+      "description": "Business decision agent ruling through a three-court panel drawn entirely from King Solomon's books: Proverbs, Ecclesiastes and Song of Songs",
+      "source": "./plugins/solomon-advisor",
+      "category": "productivity"
     }
   ]
 }

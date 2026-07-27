@@ -58,3 +58,17 @@ Browser automation for web testing, form filling, and data extraction.
 
 [Full Documentation](plugins/agent-browser/README.md)
 
+---
+
+### solomon-advisor
+
+Business decision agent whose entire reasoning corpus is King Solomon's three books.
+
+- Three-court panel: Song of Songs (demand & timing), Proverbs (risk & prudence), Ecclesiastes (time & uncertainty)
+- Explicit tie-break rules — reversibility and exposure decide which court prevails
+- Verse bank of 75 tagged sources, each with a business reading and a check question
+- Structured ruling: decision, "little foxes", stop-conditions, first step
+- Hebrew and English triggers; no dependencies
+
+[Full Documentation](plugins/solomon-advisor/README.md)
+
